@@ -7,6 +7,5 @@ namespace Tutorial.Hybrid.Components
 	public class Speed : MonoBehaviour
 	{
 		public float Value;
-		public float REE;
 	}
 }

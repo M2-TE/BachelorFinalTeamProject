@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Tutorial.Pure.Components;
+﻿using Tutorial.Pure.Components;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
