@@ -132,7 +132,7 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int pos = 0; pos < 36; pos++)
             {
-                tris[position] = (amount * 8) + cubes[amount].Triangles[pos];
+                tris[position] = PositionOfItemInArray(vertices,cubes[amount].Vertices[cubes[amount].Triangles[pos]]);
                 position++;
             }
         }
@@ -162,5 +162,15 @@ public class MeshGenerator : MonoBehaviour
             list.Add(item);
         }
         return list;
+    }
+
+    private int PositionOfItemInArray<T>(T[] array, T item)
+    {
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (item.Equals(array[i]))
+                return i;
+        }
+        return -1;
     }
 }
