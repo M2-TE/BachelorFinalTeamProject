@@ -103,3 +103,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4ba66f72bb73254a8423d0b9a0f763c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SerializedData:
+    Amplification: 1
+    Scale: 0.15
+    MovementDirection:
+      x: 0.5
+      y: 0.75
+      z: 0.5

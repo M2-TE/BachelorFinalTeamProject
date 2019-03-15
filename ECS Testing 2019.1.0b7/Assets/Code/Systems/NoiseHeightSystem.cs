@@ -12,6 +12,7 @@ public class NoiseHeightSystem : JobComponentSystem
 {
 	ComponentGroup noiseHeightGroup;
 	private List<NoiseHeight> uniqueTypes = new List<NoiseHeight>(10);
+	private float currentNoiseHeight;
 
 	protected override void OnCreateManager()
 	{
@@ -22,15 +23,16 @@ public class NoiseHeightSystem : JobComponentSystem
 	[RequireComponentTag(typeof(NoiseHeight))]
 	struct NoiseHeightJob : IJobProcessComponentData<Translation>
 	{
-		[ReadOnly] public float Time;
-		//[ReadOnly] public NoiseHeight Settings;
+		[ReadOnly] public float Amplification;
+		[ReadOnly] public float Scale;
+		[ReadOnly] public float3 NoiseOffset;
 
 		public void Execute(ref Translation translation)
 		{
 			var x = translation.Value.x;
 			var z = translation.Value.z;
-			var height = noise.cnoise(new float3(x, math.sin(Time), z));
-			translation.Value = new float3(x, height, z);
+			var height = noise.cnoise(new float3(x, translation.Value.y, z) * Scale + NoiseOffset);
+			translation.Value = new float3(x, height * Amplification, z);
 		}
 	}
 
@@ -44,8 +46,9 @@ public class NoiseHeightSystem : JobComponentSystem
 
 			var job = new NoiseHeightJob
 			{
-				Time = Time.time
-				//Settings = settings
+				NoiseOffset = settings.MovementDirection * Time.time,
+				Amplification = settings.Amplification,
+				Scale = settings.Scale
 			};
 
 			inputDeps = job.ScheduleGroup(noiseHeightGroup, inputDeps);
