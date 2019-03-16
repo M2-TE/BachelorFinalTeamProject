@@ -287,13 +287,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.34907395, y: 0.22384459, z: -0.08625775, w: 0.9058701}
+  m_LocalRotation: {x: 0.30289292, y: 0.2279141, z: -0.07484621, w: 0.9223389}
   m_LocalPosition: {x: 9, y: 40.030457, z: -21.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 42.148003, y: 27.76, z: 0}
+  m_LocalEulerAnglesHint: {x: 36.36, y: 27.76, z: 0}
 --- !u!1001 &1672959420997795762
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -306,10 +306,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spawner
       objectReference: {fileID: 0}
+    - target: {fileID: 2527625789619197430, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1571692155550264662, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1571692155550264662, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
         type: 3}
@@ -365,17 +370,17 @@ PrefabInstance:
         type: 3}
       propertyPath: Prefab
       value: 
-      objectReference: {fileID: 2689562126625908656, guid: afae537d19d50564f87138004c0a6573,
+      objectReference: {fileID: 2253161403368084096, guid: a10dff040ad1ab44ba54f2dc234b3b11,
         type: 3}
     - target: {fileID: 2527625789619197429, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
         type: 3}
       propertyPath: Size.x
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2527625789619197429, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
         type: 3}
       propertyPath: Size.y
-      value: 100
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6d7ab7104ec1a54a8eeea8c47e341f7, type: 3}

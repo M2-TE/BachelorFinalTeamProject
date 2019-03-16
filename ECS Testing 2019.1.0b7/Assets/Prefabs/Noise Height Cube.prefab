@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1878824113540715739}
   - component: {fileID: 3471509441922136652}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Noise Height Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
