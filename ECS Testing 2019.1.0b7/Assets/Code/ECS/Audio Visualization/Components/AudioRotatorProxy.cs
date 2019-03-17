@@ -6,12 +6,12 @@ using UnityEngine;
 namespace ECS.AudioVisualization.Components
 {
 	[Serializable]
-	public struct AudioRotator : ISharedComponentData
+	public struct AudioRotator : IComponentData
 	{
-		public float3 BaseRotation;
+		[NonSerialized] public quaternion BaseRotation;
 		public float3 RotationModifiers;
 	}
 
 	[RequireComponent(typeof(AudioVisualizationInitProxy))]
-	public class AudioRotatorProxy : SharedComponentDataProxy<AudioRotator> { }
+	public class AudioRotatorProxy : ComponentDataProxy<AudioRotator> { }
 }

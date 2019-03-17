@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SerializedData:
-    Amplification: 1
+    Amplification: 3
     Scale: 0.15
     MovementDirection:
       x: 0.5

@@ -21,7 +21,7 @@ namespace ECS.Spawning.Systems
 		{
 			[ReadOnly] public EntityCommandBuffer CommandBuffer;
 
-			public void Execute(Entity entity, int index, [ReadOnly] ref Spawner spawner, [ReadOnly] ref Translation transMatrix)
+			public void Execute(Entity entity, int index, [ReadOnly] ref Spawner spawner, [ReadOnly] ref Translation translation)
 			{
 				for (float x = 0; x < spawner.SizeX; x++)
 				{
@@ -30,7 +30,7 @@ namespace ECS.Spawning.Systems
 						var instance = CommandBuffer.Instantiate(spawner.Prefab);
 						CommandBuffer.SetComponent(instance, new Translation
 						{
-							Value = new float3(x, 0f, y) + transMatrix.Value
+							Value = new float3(x, 0f, y) + translation.Value
 						});
 					}
 				}
