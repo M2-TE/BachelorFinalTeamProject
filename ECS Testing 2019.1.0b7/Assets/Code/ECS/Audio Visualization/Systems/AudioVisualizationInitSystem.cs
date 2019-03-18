@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace ECS.AudioVisualization.Systems
 {
-	[UpdateBefore(typeof(AudioVisualizationSystem))]
 	public class AudioVisualizationInitSystem : JobComponentSystem
 	{
 		EndSimulationEntityCommandBufferSystem entityCommandBufferSystem;
 
 		private ComponentGroup audioTranslatorGroup;
 		private ComponentGroup audioRotatorGroup;
+		private ComponentGroup audioScalerGroup;
 
 		protected override void OnCreateManager()
 		{
@@ -30,6 +30,10 @@ namespace ECS.AudioVisualization.Systems
 				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<Rotation>(),
 				ComponentType.ReadWrite<AudioRotator>());
+
+			audioScalerGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioVisualizationInit>(),
+				ComponentType.ReadWrite<AudioScaler>());
 		}
 
 		[RequireComponentTag(typeof(AudioVisualizationInit))]
@@ -56,6 +60,18 @@ namespace ECS.AudioVisualization.Systems
 			}
 		}
 
+		[RequireComponentTag(typeof(AudioVisualizationInit))]
+		struct AudioScalerInitJob : IJobProcessComponentDataWithEntity<AudioScaler>
+		{
+			[ReadOnly] public EntityCommandBuffer CommandBuffer;
+
+			public void Execute(Entity entity, int index, ref AudioScaler audioScaler)
+			{
+				CommandBuffer.AddComponent(entity, new NonUniformScale { Value = audioScaler.BaseScale });
+				CommandBuffer.RemoveComponent<AudioVisualizationInit>(entity);
+			}
+		}
+
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			var commandBuffer = entityCommandBufferSystem.CreateCommandBuffer();
@@ -72,6 +88,13 @@ namespace ECS.AudioVisualization.Systems
 			{
 				CommandBuffer = commandBuffer
 			}.ScheduleGroupSingle(audioRotatorGroup, inputDeps);
+			entityCommandBufferSystem.AddJobHandleForProducer(inputDeps);
+
+			// Scaler Init Job
+			inputDeps = new AudioScalerInitJob
+			{
+				CommandBuffer = commandBuffer
+			}.ScheduleGroupSingle(audioScalerGroup, inputDeps);
 			entityCommandBufferSystem.AddJobHandleForProducer(inputDeps);
 
 			return inputDeps;

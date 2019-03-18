@@ -12,6 +12,10 @@ GameObject:
   - component: {fileID: 2253161403368084220}
   - component: {fileID: 2253161403368084221}
   - component: {fileID: 374803167269378163}
+  - component: {fileID: 504903531265206578}
+  - component: {fileID: 1860179053699070940}
+  - component: {fileID: 7776232176988173056}
+  - component: {fileID: 117711420879403930}
   m_Layer: 0
   m_Name: Audio Controlled Cube
   m_TagString: Untagged
@@ -90,3 +94,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bf10cdea1344482e91a4f2b58506b77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &504903531265206578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253161403368084096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2704ca97fce96f49b945d4065dcc63a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1860179053699070940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253161403368084096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c21b38a70a8df144abc669cf668a7aa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedData:
+    TranslationModifier:
+      x: 0
+      y: 0
+      z: 0
+--- !u!114 &7776232176988173056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253161403368084096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b0278282170b2b4f91d82cf24326bba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedData:
+    BaseScale:
+      x: 0.5
+      y: 0.5
+      z: 0.5
+    ScaleModifiers:
+      x: 0
+      y: 0.5
+      z: 0
+--- !u!114 &117711420879403930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2253161403368084096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9401727dec634f24eaf1020eca557194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedData:
+    FrequencyRange: 0

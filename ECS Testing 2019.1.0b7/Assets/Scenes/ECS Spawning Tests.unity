@@ -370,12 +370,86 @@ PrefabInstance:
     - target: {fileID: 2527625789619197429, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
         type: 3}
       propertyPath: Size.x
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2527625789619197429, guid: a6d7ab7104ec1a54a8eeea8c47e341f7,
         type: 3}
       propertyPath: Size.y
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a6d7ab7104ec1a54a8eeea8c47e341f7, type: 3}
+--- !u!1001 &3228164740571890952
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3228164739142563308, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_Name
+      value: Game Manager Bootstrapper
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563310, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3228164739142563309, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: audioListener
+      value: 
+      objectReference: {fileID: 963194226}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd, type: 3}

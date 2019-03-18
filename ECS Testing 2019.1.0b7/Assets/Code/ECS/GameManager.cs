@@ -13,5 +13,12 @@ public class GameManager
 	}
 	#endregion
 
+	public GameManagerBootstrapper bootstrapper;
 
+	public void RegisterBootstrapper(GameManagerBootstrapper bootstrapper)
+	{
+		this.bootstrapper = bootstrapper;
+	}
+
+	public void UnregisterBootstrapper() { bootstrapper = null; }
 }

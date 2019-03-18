@@ -11,13 +11,21 @@ using UnityEngine;
 
 namespace ECS.AudioVisualization.Systems
 {
+	[UpdateAfter(typeof(AudioSpikeSystem))]
 	public class AudioVisualizationSystem : JobComponentSystem
 	{
+		private ComponentGroup audioSpikeGroup;
+
 		private ComponentGroup audioTranslatorGroup;
 		private ComponentGroup audioRotatorGroup;
+		private ComponentGroup audioScalerGroup;
 
 		protected override void OnCreateManager()
 		{
+			audioSpikeGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioSpike>()); // DO THIS WHEN AUDIO SPIKE IS SHARED
+
+
 			audioTranslatorGroup = GetComponentGroup(
 				ComponentType.ReadOnly<AudioTranslator>(), 
 				ComponentType.ReadWrite<Translation>());
@@ -25,9 +33,15 @@ namespace ECS.AudioVisualization.Systems
 			audioRotatorGroup = GetComponentGroup(
 				ComponentType.ReadOnly<AudioRotator>(),
 				ComponentType.ReadWrite<Rotation>());
+
+			audioScalerGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioScaler>(),
+				ComponentType.ReadOnly<AudioTranslator>(),
+				ComponentType.ReadWrite<Translation>(),
+				ComponentType.ReadWrite<NonUniformScale>());
 		}
 
-		[BurstCompile]
+		[BurstCompile] [ExcludeComponent(typeof(AudioScaler))]
 		struct AudioTranslatorJob : IJobProcessComponentData<Translation, AudioTranslator>
 		{
 			[ReadOnly] public float Amount;
@@ -50,6 +64,33 @@ namespace ECS.AudioVisualization.Systems
 			}
 		}
 
+		[BurstCompile]
+		struct AudioScalerJob : IJobProcessComponentData<NonUniformScale, Translation, AudioScaler, AudioTranslator>
+		{
+			[ReadOnly] public float Amount;
+
+			public void Execute(ref NonUniformScale scale, ref Translation translation, [ReadOnly] ref AudioScaler audioScaler, [ReadOnly] ref AudioTranslator audioTranslator)
+			{
+				//scale
+				scale.Value = audioScaler.BaseScale + audioScaler.ScaleModifiers * Amount;
+
+				//reposition
+				translation.Value = audioTranslator.BaseTranslation + scale.Value * .5f;
+			}
+
+			//public void Execute(ref NonUniformScale scale, ref Translation translation, 
+			//	[ReadOnly] ref AudioScaler audioScaler, [ReadOnly] ref AudioTranslator audioTranslator, [ReadOnly] ref AudioSpike audioSpike)
+			//{
+			//	Amount = audioSpike.SpikeValue;
+
+			//	//scale
+			//	scale.Value = audioScaler.BaseScale + audioScaler.ScaleModifiers * Amount;
+
+			//	//reposition
+			//	translation.Value = audioTranslator.BaseTranslation + scale.Value * .5f;
+			//}
+		}
+
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			if (!audioTranslatorGroup.IsEmptyIgnoreFilter)
@@ -66,6 +107,14 @@ namespace ECS.AudioVisualization.Systems
 				{
 					Amount = Time.time
 				}.ScheduleGroup(audioRotatorGroup, inputDeps);
+			}
+
+			if (!audioScalerGroup.IsEmptyIgnoreFilter)
+			{
+				inputDeps = new AudioScalerJob
+				{
+					Amount = Time.time
+				}.ScheduleGroup(audioScalerGroup, inputDeps);
 			}
 
 			return inputDeps;

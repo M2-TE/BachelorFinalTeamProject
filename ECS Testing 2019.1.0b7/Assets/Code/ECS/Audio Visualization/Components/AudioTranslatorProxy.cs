@@ -10,6 +10,7 @@ namespace ECS.AudioVisualization.Components
 	{
 		[NonSerialized] public float3 BaseTranslation;
 		public float3 TranslationModifier;
+		public float TranslationIntensity;
 	}
 
 	[RequireComponent(typeof(AudioVisualizationInitProxy))]

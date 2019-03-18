@@ -6,12 +6,13 @@ using UnityEngine;
 namespace ECS.AudioVisualization.Components
 {
 	[Serializable]
-	public struct AudioScaler : ISharedComponentData
+	public struct AudioScaler : IComponentData
 	{
 		public float3 BaseScale;
 		public float3 ScaleModifiers;
+		public float ScaleIntensity;
 	}
 
-	[RequireComponent(typeof(AudioVisualizationInitProxy))]
-	public class AudioScalerProxy : SharedComponentDataProxy<AudioScaler> { }
+	[RequireComponent(typeof(AudioVisualizationInitProxy), typeof(AudioTranslatorProxy))]
+	public class AudioScalerProxy : ComponentDataProxy<AudioScaler> { }
 }
