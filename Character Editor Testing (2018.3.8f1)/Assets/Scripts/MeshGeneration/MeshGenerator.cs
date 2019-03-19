@@ -21,14 +21,14 @@ public class MeshGenerator : MonoBehaviour
     {
         if (Character == null)
             return;
-        allPossibleVertices = new Vector3[Character.Dimesion.x * Character.Dimesion.y * Character.Dimesion.z];
-        for (int i = 0, x = 0; x < Character.Dimesion.x; x++)
+        allPossibleVertices = new Vector3[(Character.Dimesion.x+1) * (Character.Dimesion.y+1) * (Character.Dimesion.z+1)];
+        for (int i = 0, x = 0; x < Character.Dimesion.x +1; x++)
         {
-            for (int y = 0; y < Character.Dimesion.y; y++)
+            for (int y = 0; y < Character.Dimesion.y + 1; y++)
             {
-                for (int z = 0; z < Character.Dimesion.z; z++)
+                for (int z = 0; z < Character.Dimesion.z +1; z++)
                 {
-                    allPossibleVertices[i] = new Vector3(x-.5f, y-.5f, z-.5f);
+                    allPossibleVertices[i] = ScaleVector3( new Vector3(x-.5f, y-.5f, z-.5f));
                     i++;
                 }
             }
@@ -80,7 +80,6 @@ public class MeshGenerator : MonoBehaviour
     //        0,4,2
     //    };
     //}
-
    
     private void CreateShape()
     {
@@ -121,8 +120,9 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int pos = 0; pos < 8; pos++)
             {
-                if(!verts.Contains(cubes[amount].Vertices[pos]))
-                    verts.Add(cubes[amount].Vertices[pos]);
+                Vector3 vec = ScaleVector3(cubes[amount].Vertices[pos]);
+                if(!verts.Contains(vec))
+                    verts.Add(vec);
             }
         }
         return verts.ToArray();
@@ -135,7 +135,7 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int pos = 0; pos < 36; pos++)
             {
-                tris[position] = PositionOfItemInArray(vertices,cubes[amount].Vertices[cubes[amount].Triangles[pos]]);
+                tris[position] = PositionOfItemInArray(vertices,ScaleVector3(cubes[amount].Vertices[cubes[amount].Triangles[pos]]));
                 position++;
             }
         }
@@ -153,7 +153,7 @@ public class MeshGenerator : MonoBehaviour
 
         for (int i = 0; i < allPossibleVertices.Length; i++)
         {
-            Gizmos.DrawSphere(allPossibleVertices[i], .05f);
+            Gizmos.DrawCube(allPossibleVertices[i], new Vector3(.1f / Character.Dimesion.x, .1f / Character.Dimesion.y, .1f / Character.Dimesion.z));
         }
     }
 
@@ -175,5 +175,11 @@ public class MeshGenerator : MonoBehaviour
                 return i;
         }
         return -1;
+    }
+
+    private Vector3 ScaleVector3(Vector3 vector)
+    {
+        Vector3 outVector = new Vector3(vector.x * (1f / Character.Dimesion.x), vector.y * (2f / Character.Dimesion.y), vector.z *(1f / Character.Dimesion.z));
+        return outVector;
     }
 }
