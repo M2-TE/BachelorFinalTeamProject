@@ -1,4 +1,5 @@
 ﻿using ECS.AudioVisualization.Components;
+using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -12,7 +13,15 @@ namespace ECS.AudioVisualization.Systems
 	[UpdateAfter(typeof(AudioVisualizationSpawnerSystem))]
 	public class AudioVisualizationSystem : JobComponentSystem
 	{
-		//private ComponentGroup audioSpikeGroup;
+		private int sampleCount = 64;
+		private int visualizerCount = 64;
+		private float[] samples;
+		private int2[] sampleGroups; // groups samples with x being the begin index and y being the end index (index in samples array)
+
+		private AudioSource audioSource;
+
+		private List<AudioSampleIndex> allVisualizers;
+		private ComponentGroup allVisualizersGroup;
 
 		private ComponentGroup audioTranslatorGroup;
 		private ComponentGroup audioRotatorGroup;
@@ -20,28 +29,53 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override void OnCreateManager()
 		{
-			//audioSpikeGroup = GetComponentGroup(
-				//ComponentType.ReadOnly<AudioAmplitude>()); // DO THIS WHEN AUDIO SPIKE IS SHARED
+			sampleGroups = new int2[sampleCount];
+			sampleGroups[0] = new int2(0, 0); // first group is always the single first sample
+			CalculateSampleGroups();
+
+			samples = new float[sampleCount];
+			audioSource = Object.FindObjectOfType<AudioSource>();
+
+			allVisualizers = new List<AudioSampleIndex>();
+			allVisualizersGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioSampleIndex>());
 
 
 			audioTranslatorGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioSampleIndex>(),
 				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioTranslator>(), 
 				ComponentType.ReadWrite<Translation>());
 
 			audioRotatorGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioSampleIndex>(),
 				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioRotator>(),
 				ComponentType.ReadWrite<Rotation>());
 
 			audioScalerGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioSampleIndex>(),
 				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioScaler>(),
 				ComponentType.ReadWrite<Translation>(),
 				ComponentType.ReadWrite<NonUniformScale>());
 		}
 
-		[BurstCompile] /*[ExcludeComponent(typeof(AudioScaler))]*/
+		private void CalculateSampleGroups()
+		{
+			float fResult = Mathf.Pow(sampleCount, 1f / visualizerCount);
+			for (int i = 1; i < sampleGroups.Length; i++)
+			{
+				sampleGroups[i] = new int2
+					((int)Mathf.Pow(fResult, i) + i - 1,
+					(int)Mathf.Pow(fResult, i + 1) + i - 1);
+				if (sampleGroups[i].x > sampleCount || sampleGroups[i].y > sampleCount)
+					sampleCount--;
+			}
+			sampleGroups[visualizerCount - 1] = new int2(sampleGroups[visualizerCount - 1].x, sampleCount - 1);
+		}
+
+		//[BurstCompile]
 		struct AudioTranslatorJob : IJobProcessComponentData<Translation, AudioTranslator, AudioVisualizationInit>
 		{
 			[ReadOnly] public float Amount;
@@ -53,7 +87,7 @@ namespace ECS.AudioVisualization.Systems
 			}
 		}
 
-		[BurstCompile]
+		//[BurstCompile]
 		struct AudioRotatorJob : IJobProcessComponentData<Rotation, AudioRotator, AudioVisualizationInit>
 		{
 			[ReadOnly] public float Amount;
@@ -66,7 +100,7 @@ namespace ECS.AudioVisualization.Systems
 			}
 		}
 
-		[BurstCompile]
+		//[BurstCompile]
 		struct AudioScalerJob : IJobProcessComponentData<NonUniformScale, Translation, AudioScaler, AudioVisualizationInit>
 		{
 			[ReadOnly] public float Amount;
@@ -82,46 +116,41 @@ namespace ECS.AudioVisualization.Systems
 			}
 		}
 
-		//[BurstCompile]
-		//struct AudioScalerAlternateJob : IJobProcessComponentData<NonUniformScale, Translation, AudioScaler>
-		//{
-		//	[ReadOnly] public float Amount;
-
-		//	public void Execute(ref NonUniformScale scale, ref Translation translation, [ReadOnly] ref AudioScaler audioScaler)
-		//	{
-		//		//scale
-		//		scale.Value = audioScaler.BaseScale + audioScaler.ScaleModifiers * Amount;
-		//		// need to calc diff here
-		//		//reposition
-		//		translation.Value += scale.Value * .5f;
-		//	}
-		//}
-
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
-			if (!audioTranslatorGroup.IsEmptyIgnoreFilter)
-			{
-				inputDeps = new AudioTranslatorJob
-				{
-					Amount = Time.time
-				}.ScheduleGroup(audioTranslatorGroup, inputDeps);
-			}
+			audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
 
-			if (!audioRotatorGroup.IsEmptyIgnoreFilter)
+			EntityManager.GetAllUniqueSharedComponentData(allVisualizers);
+			for (var i = 1; i < allVisualizers.Count; i++)
 			{
-				inputDeps = new AudioRotatorJob
-				{
-					Amount = Time.time
-				}.ScheduleGroup(audioRotatorGroup, inputDeps);
-			}
+				var amplitude = samples[allVisualizers[i].SampleIndex];
 
-			if (!audioScalerGroup.IsEmptyIgnoreFilter)
-			{
-				inputDeps = new AudioScalerJob
+				if (!audioScalerGroup.IsEmptyIgnoreFilter)
 				{
-					Amount = Time.time
-				}.ScheduleGroup(audioScalerGroup, inputDeps);
+					audioScalerGroup.SetFilter(allVisualizers[i]);
+					inputDeps = new AudioScalerJob
+					{
+						Amount = amplitude
+					}.ScheduleGroup(audioScalerGroup, inputDeps);
+				}
+
+				if (!audioTranslatorGroup.IsEmptyIgnoreFilter)
+				{
+					inputDeps = new AudioTranslatorJob
+					{
+						Amount = amplitude
+					}.ScheduleGroup(audioTranslatorGroup, inputDeps);
+				}
+
+				if (!audioRotatorGroup.IsEmptyIgnoreFilter)
+				{
+					inputDeps = new AudioRotatorJob
+					{
+						Amount = amplitude
+					}.ScheduleGroup(audioRotatorGroup, inputDeps);
+				}
 			}
+			allVisualizers.Clear();
 
 			return inputDeps;
 		}

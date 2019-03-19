@@ -364,12 +364,12 @@ PrefabInstance:
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: Size.x
-      value: 5
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: Size.z
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
@@ -460,5 +460,10 @@ PrefabInstance:
       propertyPath: audioListener
       value: 
       objectReference: {fileID: 963194226}
+    - target: {fileID: 3228164739142563311, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
+        type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5b36c45ab9dde8443bf3e20437020d3c, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd, type: 3}
