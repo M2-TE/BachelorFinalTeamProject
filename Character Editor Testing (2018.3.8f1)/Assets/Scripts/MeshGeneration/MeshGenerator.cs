@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 public class MeshGenerator : MonoBehaviour
 {
-    public Vector3Int[] CubePositions;
+    public CharacterMesh Character;
 
     private Mesh mesh;
     private Vector3[] vertices;
@@ -17,16 +17,16 @@ public class MeshGenerator : MonoBehaviour
 
     private Vector3[] allPossibleVertices;
 
-    [SerializeField] private Vector3Int BuildingRange = new Vector3Int(10,10,10);
-
     public void OnEditorStart()
     {
-        allPossibleVertices = new Vector3[BuildingRange.x * BuildingRange.y * BuildingRange.z];
-        for (int i = 0, x = 0; x < BuildingRange.x; x++)
+        if (Character == null)
+            return;
+        allPossibleVertices = new Vector3[Character.Dimesion.x * Character.Dimesion.y * Character.Dimesion.z];
+        for (int i = 0, x = 0; x < Character.Dimesion.x; x++)
         {
-            for (int y = 0; y < BuildingRange.y; y++)
+            for (int y = 0; y < Character.Dimesion.y; y++)
             {
-                for (int z = 0; z < BuildingRange.z; z++)
+                for (int z = 0; z < Character.Dimesion.z; z++)
                 {
                     allPossibleVertices[i] = new Vector3(x-.5f, y-.5f, z-.5f);
                     i++;
@@ -42,6 +42,8 @@ public class MeshGenerator : MonoBehaviour
 
     public void CreateMeshInEditor()
     {
+        if (Character == null)
+            return;
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
@@ -82,10 +84,10 @@ public class MeshGenerator : MonoBehaviour
    
     private void CreateShape()
     {
-        cubes = new CubeMesh[CubePositions.Length];
+        cubes = new CubeMesh[Character.CubePositions.Length];
         for (int amount = 0; amount < cubes.Length; amount++)
         {
-            cubes[amount] = new CubeMesh(CubePositions[amount]);
+            cubes[amount] = new CubeMesh(Character.CubePositions[amount]);
         }
         if(cubes != null)
         {
@@ -97,7 +99,8 @@ public class MeshGenerator : MonoBehaviour
 
     public void RemoveShape()
     {
-        mesh.Clear();
+        if(mesh != null)
+            mesh.Clear();
     }
 
     private void UpdateMesh()

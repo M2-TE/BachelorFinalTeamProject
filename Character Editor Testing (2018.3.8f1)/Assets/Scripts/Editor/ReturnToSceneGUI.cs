@@ -19,23 +19,23 @@ public sealed class ReturnToSceneGUI
     public void RenderSceneGUI(SceneView sceneview)
     {
         Handles.BeginGUI();
-        GUILayout.BeginArea(new Rect(20, 20, 100, 300), style);
+        GUILayout.BeginArea(new Rect(20, 20, 150, 300), style);
         var rect = EditorGUILayout.BeginVertical();
         GUI.Box(rect, GUIContent.none);
 
-        if (GUILayout.Button("Save Mesh", new GUILayoutOption[0]))
+        //if (GUILayout.Button("Save Mesh", new GUILayoutOption[0]))
+        //{
+        //    //PrefabUtility.ReplacePrefab(PrefabInstance, PrefabUtility.GetPrefabParent(PrefabInstance), ReplacePrefabOptions.ConnectToPrefab);
+
+        //    CharacterCreatorEW.CloseWindow();
+        //    SceneView.onSceneGUIDelegate -= RenderSceneGUI;
+        //    PreviousSceneSetup.OpenSetup();
+        //}
+
+        if (GUILayout.Button("Discard and Close", new GUILayoutOption[0]))
         {
-            //PrefabUtility.ReplacePrefab(PrefabInstance, PrefabUtility.GetPrefabParent(PrefabInstance), ReplacePrefabOptions.ConnectToPrefab);
-
-
-            SceneView.onSceneGUIDelegate -= RenderSceneGUI;
-            PreviousSceneSetup.OpenSetup();
-        }
-
-        if (GUILayout.Button("Discard Mesh", new GUILayoutOption[0]))
-        {
-
-
+            EditorUtility.FocusProjectWindow();
+            CharacterCreatorEW.CloseWindow();
             SceneView.onSceneGUIDelegate -= RenderSceneGUI;
             PreviousSceneSetup.OpenSetup();
         }

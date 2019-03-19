@@ -7,8 +7,19 @@ using UnityEngine.SceneManagement;
 
 public class CharacterCreatorEW : EditorWindow
 {
-    [MenuItem("Window/Character Creation")]
+    public static CharacterCreatorEW Instance { get; private set; }
+    public static bool Open => Instance != null;
+
+    [MenuItem("Window/Character Creator")]
     private static void Init()
+    {
+        if (Open)
+            Instance.Focus();
+        else
+            OpenWindow();
+    }
+
+    public static void OpenWindow()
     {
         EditorSceneManager.SaveOpenScenes();
         var currentScenes = new SceneSetupWrapper();
@@ -19,5 +30,13 @@ public class CharacterCreatorEW : EditorWindow
 
         var returnHandler = new ReturnToSceneGUI();
         returnHandler.PreviousSceneSetup = currentScenes;
+
+        Instance = (CharacterCreatorEW)EditorWindow.GetWindow(typeof(CharacterCreatorEW));
+        Instance.Show();
+    }
+
+    public static void CloseWindow()
+    {
+        Instance.Close();
     }
 }
