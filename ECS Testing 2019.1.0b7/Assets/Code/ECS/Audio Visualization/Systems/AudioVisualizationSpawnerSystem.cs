@@ -31,7 +31,8 @@ namespace ECS.AudioVisualization.Systems
 						{
 							var instance = Buffer.Instantiate(spawner.PrefabEntity);
 
-							Buffer.AddSharedComponent(instance, new AudioSampleIndex { SampleIndex = x });
+							Buffer.AddComponent(instance, new AudioSampleIndex { SampleIndex = x });
+							Buffer.AddComponent(instance, new AudioAmplitude());
 							
 							var position = translation.Value + new float3(x, y, z);
 							var rotation = quaternion.identity;
