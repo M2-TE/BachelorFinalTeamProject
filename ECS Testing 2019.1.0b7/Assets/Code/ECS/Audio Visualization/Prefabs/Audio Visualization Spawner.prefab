@@ -60,6 +60,11 @@ MonoBehaviour:
   PrefabGO: {fileID: 5168318092943938128, guid: c463a6a706dcce240bf501a9ffc20584,
     type: 3}
   Size:
-    x: 1
+    x: 30
     y: 1
     z: 1
+  PrefabSize:
+    x: 0.8
+    y: 0.8
+    z: 0.8
+  Centered: 0

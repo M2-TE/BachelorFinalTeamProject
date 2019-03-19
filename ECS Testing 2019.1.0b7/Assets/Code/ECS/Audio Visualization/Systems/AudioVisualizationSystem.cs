@@ -13,8 +13,8 @@ namespace ECS.AudioVisualization.Systems
 	[UpdateAfter(typeof(AudioVisualizationSpawnerSystem))]
 	public class AudioVisualizationSystem : JobComponentSystem
 	{
-		private int sampleCount = 64;
-		private int visualizerCount = 64;
+		private int sampleCount;
+		private int visualizerGroupCount;
 		private float[] samples;
 		private int2[] sampleGroups; // groups samples with x being the begin index and y being the end index (index in samples array)
 
@@ -29,11 +29,12 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override void OnCreateManager()
 		{
-			sampleGroups = new int2[sampleCount];
-			sampleGroups[0] = new int2(0, 0); // first group is always the single first sample
+			sampleCount = 8192;
+			visualizerGroupCount = 200;
+			samples = new float[sampleCount];
+
 			CalculateSampleGroups();
 
-			samples = new float[sampleCount];
 			audioSource = Object.FindObjectOfType<AudioSource>();
 
 			allVisualizers = new List<AudioSampleIndex>();
@@ -63,16 +64,22 @@ namespace ECS.AudioVisualization.Systems
 
 		private void CalculateSampleGroups()
 		{
-			float fResult = Mathf.Pow(sampleCount, 1f / visualizerCount);
-			for (int i = 1; i < sampleGroups.Length; i++)
+			float fResult = Mathf.Pow(sampleCount, 1f / (visualizerGroupCount - 1));
+			List<int2> sampleGroupList = new List<int2> { new int2(0, 0) };
+			for (var i = 1; i < visualizerGroupCount; i++)
 			{
-				sampleGroups[i] = new int2
-					((int)Mathf.Pow(fResult, i) + i - 1,
-					(int)Mathf.Pow(fResult, i + 1) + i - 1);
-				if (sampleGroups[i].x > sampleCount || sampleGroups[i].y > sampleCount)
-					sampleCount--;
+				var groupStartIndex = sampleGroupList[i - 1].y + 1;
+				var groupEndIndex = (int)Mathf.Pow(fResult, i);
+				if (groupEndIndex < groupStartIndex)
+					groupEndIndex = groupStartIndex;
+
+				if (i == visualizerGroupCount - 1)
+					groupEndIndex = sampleCount - 1;
+
+				sampleGroupList.Add(new int2(groupStartIndex, groupEndIndex));
+				//Debug.Log(sampleGroupList[i]);
 			}
-			sampleGroups[visualizerCount - 1] = new int2(sampleGroups[visualizerCount - 1].x, sampleCount - 1);
+			sampleGroups = sampleGroupList.ToArray();
 		}
 
 		//[BurstCompile]
@@ -118,12 +125,26 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
-			audioSource.GetSpectrumData(samples, 0, FFTWindow.BlackmanHarris);
+			audioSource.GetSpectrumData(samples, 0, FFTWindow.Blackman);
+
+			float[] amplitudes = new float[visualizerGroupCount];
+			for(int amplitudeIndex = 0; amplitudeIndex < amplitudes.Length; amplitudeIndex++)
+			{
+				int2 sampleGroup = sampleGroups[amplitudeIndex];
+
+				float additiveAmplitude = 0f;
+				for(int i = sampleGroup.x; i < sampleGroup.y + 1; i++)
+					additiveAmplitude += samples[i];
+
+				additiveAmplitude /= sampleGroup.y - sampleGroup.x + 1;
+
+				amplitudes[amplitudeIndex] = additiveAmplitude;
+			}
 
 			EntityManager.GetAllUniqueSharedComponentData(allVisualizers);
 			for (var i = 1; i < allVisualizers.Count; i++)
 			{
-				var amplitude = samples[allVisualizers[i].SampleIndex];
+				var amplitude = amplitudes[allVisualizers[i].SampleIndex];
 
 				if (!audioScalerGroup.IsEmptyIgnoreFilter)
 				{
