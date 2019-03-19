@@ -37,7 +37,10 @@ namespace ECS.AudioVisualization.Systems
 
 		private void CalculateSampleGroups()
 		{
+			// allocate native array (and previously dispose it if one is already allocated)
+			if (amplitudes.IsCreated) amplitudes.Dispose();
 			amplitudes = new NativeArray<float>(visualizerGroupCount, Allocator.Persistent);
+
 			float fResult = Mathf.Pow(sampleCount, 1f / (visualizerGroupCount - 1));
 			List<int2> sampleGroupList = new List<int2> { new int2(0, 0) };
 			for (var i = 1; i < visualizerGroupCount; i++)
