@@ -1,6 +1,4 @@
 ﻿using ECS.AudioVisualization.Components;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -11,10 +9,10 @@ using UnityEngine;
 
 namespace ECS.AudioVisualization.Systems
 {
-	[UpdateAfter(typeof(AudioSpikeSystem))]
+	[UpdateAfter(typeof(AudioVisualizationSpawnerSystem))]
 	public class AudioVisualizationSystem : JobComponentSystem
 	{
-		private ComponentGroup audioSpikeGroup;
+		//private ComponentGroup audioSpikeGroup;
 
 		private ComponentGroup audioTranslatorGroup;
 		private ComponentGroup audioRotatorGroup;
@@ -22,74 +20,82 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override void OnCreateManager()
 		{
-			audioSpikeGroup = GetComponentGroup(
-				ComponentType.ReadOnly<AudioSpike>()); // DO THIS WHEN AUDIO SPIKE IS SHARED
+			//audioSpikeGroup = GetComponentGroup(
+				//ComponentType.ReadOnly<AudioAmplitude>()); // DO THIS WHEN AUDIO SPIKE IS SHARED
 
 
 			audioTranslatorGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioTranslator>(), 
 				ComponentType.ReadWrite<Translation>());
 
 			audioRotatorGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioRotator>(),
 				ComponentType.ReadWrite<Rotation>());
 
 			audioScalerGroup = GetComponentGroup(
+				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioScaler>(),
-				ComponentType.ReadOnly<AudioTranslator>(),
 				ComponentType.ReadWrite<Translation>(),
 				ComponentType.ReadWrite<NonUniformScale>());
 		}
 
-		[BurstCompile] [ExcludeComponent(typeof(AudioScaler))]
-		struct AudioTranslatorJob : IJobProcessComponentData<Translation, AudioTranslator>
+		[BurstCompile] /*[ExcludeComponent(typeof(AudioScaler))]*/
+		struct AudioTranslatorJob : IJobProcessComponentData<Translation, AudioTranslator, AudioVisualizationInit>
 		{
 			[ReadOnly] public float Amount;
 
-			public void Execute(ref Translation translation,[ReadOnly] ref AudioTranslator audioTranslator)
+			public void Execute(ref Translation translation,
+				[ReadOnly] ref AudioTranslator audioTranslator, [ReadOnly] ref AudioVisualizationInit init)
 			{
-				translation.Value = audioTranslator.BaseTranslation + audioTranslator.TranslationModifier * Amount;
+				translation.Value = init.BasePosition + audioTranslator.TranslationModifier * Amount;
 			}
 		}
 
 		[BurstCompile]
-		struct AudioRotatorJob : IJobProcessComponentData<Rotation, AudioRotator>
+		struct AudioRotatorJob : IJobProcessComponentData<Rotation, AudioRotator, AudioVisualizationInit>
 		{
 			[ReadOnly] public float Amount;
 
-			public void Execute(ref Rotation rotation, [ReadOnly] ref AudioRotator audioRotator)
+			public void Execute(ref Rotation rotation, 
+				[ReadOnly] ref AudioRotator audioRotator, [ReadOnly] ref AudioVisualizationInit init)
 			{
-				//var eulerBase = audioRotator.BaseRotation;
+				//var eulerBase = init.BaseRotation;
 				rotation.Value = quaternion.Euler(audioRotator.RotationModifiers * Amount);
 			}
 		}
 
 		[BurstCompile]
-		struct AudioScalerJob : IJobProcessComponentData<NonUniformScale, Translation, AudioScaler, AudioTranslator>
+		struct AudioScalerJob : IJobProcessComponentData<NonUniformScale, Translation, AudioScaler, AudioVisualizationInit>
 		{
 			[ReadOnly] public float Amount;
 
-			public void Execute(ref NonUniformScale scale, ref Translation translation, [ReadOnly] ref AudioScaler audioScaler, [ReadOnly] ref AudioTranslator audioTranslator)
+			public void Execute(ref NonUniformScale scale, ref Translation translation, 
+				[ReadOnly] ref AudioScaler audioScaler, [ReadOnly] ref AudioVisualizationInit init)
 			{
 				//scale
-				scale.Value = audioScaler.BaseScale + audioScaler.ScaleModifiers * Amount;
+				scale.Value = init.BaseScale + audioScaler.ScaleModifiers * Amount;
 
 				//reposition
-				translation.Value = audioTranslator.BaseTranslation + scale.Value * .5f;
+				translation.Value = init.BasePosition + scale.Value * .5f;
 			}
-
-			//public void Execute(ref NonUniformScale scale, ref Translation translation, 
-			//	[ReadOnly] ref AudioScaler audioScaler, [ReadOnly] ref AudioTranslator audioTranslator, [ReadOnly] ref AudioSpike audioSpike)
-			//{
-			//	Amount = audioSpike.SpikeValue;
-
-			//	//scale
-			//	scale.Value = audioScaler.BaseScale + audioScaler.ScaleModifiers * Amount;
-
-			//	//reposition
-			//	translation.Value = audioTranslator.BaseTranslation + scale.Value * .5f;
-			//}
 		}
+
+		//[BurstCompile]
+		//struct AudioScalerAlternateJob : IJobProcessComponentData<NonUniformScale, Translation, AudioScaler>
+		//{
+		//	[ReadOnly] public float Amount;
+
+		//	public void Execute(ref NonUniformScale scale, ref Translation translation, [ReadOnly] ref AudioScaler audioScaler)
+		//	{
+		//		//scale
+		//		scale.Value = audioScaler.BaseScale + audioScaler.ScaleModifiers * Amount;
+		//		// need to calc diff here
+		//		//reposition
+		//		translation.Value += scale.Value * .5f;
+		//	}
+		//}
 
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
