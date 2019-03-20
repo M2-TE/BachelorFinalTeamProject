@@ -443,7 +443,7 @@ PrefabInstance:
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: Size.z
-      value: 3
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}

@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace ECS.Movement.Systems
 {
@@ -23,6 +24,7 @@ namespace ECS.Movement.Systems
 			{
 				var instance = CommandBuffer.Instantiate(playerSpawner.Prefab);
 				CommandBuffer.SetComponent(entity, new Translation { Value = translation.Value });
+				Debug.Log(translation.Value);
 
 				CommandBuffer.DestroyEntity(entity);
 			}
