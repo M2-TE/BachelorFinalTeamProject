@@ -3,18 +3,33 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class CharacterBuilder : Editor
+public class CharacterBuilder
 {
     internal GameObject NewCharacter;
 
-    public void OnEnable()
+    private List<Vector3Int> cubePositions;
+
+    public CharacterBuilder()
     {
         NewCharacter = new GameObject("New Character");
         NewCharacter.hideFlags = HideFlags.NotEditable;
         new PrimitiveCube().transform.parent = NewCharacter.transform;
     }
-    
 
+    public void Update()
+    {
+        if (CharacterCreatorEW.Open)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
+            RaycastHit hit;
+            /*
+            if(Physics.Raycast(HandleUtility.GUIPointToWorldRay(Event.current.mousePosition), out hit,1000,9))
+            {
+                Debug.Log("yay");
+            }
+            */
+        }
+    }
 
     public CharacterMesh GetCurrentMesh
     {

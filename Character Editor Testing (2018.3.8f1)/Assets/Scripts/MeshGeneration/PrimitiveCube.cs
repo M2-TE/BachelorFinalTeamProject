@@ -13,6 +13,6 @@ public class PrimitiveCube
         Instance = GameObject.CreatePrimitive(PrimitiveType.Cube);
         Instance.hideFlags = HideFlags.NotEditable;
         Instance.AddComponent<CharacterCubeModule>().Init();
-        Instance.tag = "BodyPart";
+        Instance.layer = 9;
     }
 }

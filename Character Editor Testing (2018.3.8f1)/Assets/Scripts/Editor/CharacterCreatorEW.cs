@@ -14,14 +14,19 @@ public class CharacterCreatorEW : EditorWindow
 
     internal CharacterBuilder cBuilder;
 
+    public void OnEnable()
+    {
+        cBuilder = new CharacterBuilder();
+    }
+
+    public void Update()
+    {
+        cBuilder.Update();
+    }
+
     private void OnDestroy()
     {
         CloseWindow(true);
-    }
-
-    public void OnEnable()
-    {
-        cBuilder = ScriptableObject.CreateInstance<CharacterBuilder>();
     }
 
     [MenuItem("Window/Character Creator")]
