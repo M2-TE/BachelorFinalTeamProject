@@ -10,6 +10,20 @@ public class CharacterCreatorEW : EditorWindow
     public static CharacterCreatorEW Instance { get; private set; }
     public static bool Open => Instance != null;
 
+    public static ReturnToSceneGUI returnHandler;
+
+    internal CharacterBuilder cBuilder;
+
+    private void OnDestroy()
+    {
+        CloseWindow(true);
+    }
+
+    public void OnEnable()
+    {
+        cBuilder = ScriptableObject.CreateInstance<CharacterBuilder>();
+    }
+
     [MenuItem("Window/Character Creator")]
     private static void Init()
     {
@@ -28,15 +42,21 @@ public class CharacterCreatorEW : EditorWindow
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
         SceneView.lastActiveSceneView.FrameSelected();
 
-        var returnHandler = new ReturnToSceneGUI();
-        returnHandler.PreviousSceneSetup = currentScenes;
+        returnHandler = new ReturnToSceneGUI
+        {
+            PreviousSceneSetup = currentScenes
+        };
 
         Instance = (CharacterCreatorEW)EditorWindow.GetWindow(typeof(CharacterCreatorEW));
         Instance.Show();
     }
 
-    public static void CloseWindow()
+    public static void CloseWindow(bool onDestroy)
     {
-        Instance.Close();
+        SceneView.onSceneGUIDelegate -= returnHandler.RenderSceneGUI;
+        returnHandler.PreviousSceneSetup.OpenSetup();
+        if (!onDestroy) Instance.Close();
+        Instance = null;
+        returnHandler = null;
     }
 }

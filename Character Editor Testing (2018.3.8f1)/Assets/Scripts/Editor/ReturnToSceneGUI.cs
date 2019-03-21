@@ -35,9 +35,7 @@ public sealed class ReturnToSceneGUI
         if (GUILayout.Button("Discard and Close", new GUILayoutOption[0]))
         {
             EditorUtility.FocusProjectWindow();
-            CharacterCreatorEW.CloseWindow();
-            SceneView.onSceneGUIDelegate -= RenderSceneGUI;
-            PreviousSceneSetup.OpenSetup();
+            CharacterCreatorEW.CloseWindow(false);
         }
 
         EditorGUILayout.EndVertical();
