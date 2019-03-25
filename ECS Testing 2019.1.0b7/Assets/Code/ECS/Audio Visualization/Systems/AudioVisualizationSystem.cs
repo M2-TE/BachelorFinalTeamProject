@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace ECS.AudioVisualization.Systems
 {
-	[UpdateAfter(typeof(AudioVisualizationSpawnerSystem))]
+	[UpdateAfter(typeof(AudioAmplitudeSystem))]
 	public class AudioVisualizationSystem : JobComponentSystem
 	{
 		private ComponentGroup audioTranslatorGroup;
