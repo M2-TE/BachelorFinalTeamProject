@@ -93,9 +93,6 @@ namespace ECS.AudioVisualization.Systems
 							}
 						}
 						break;
-
-					case 2:
-						break;
 				}
 
 				Buffer.DestroyEntity(entity);

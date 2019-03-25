@@ -19,20 +19,19 @@ namespace ECS.AudioVisualization.Systems
 		private int sampleCount;
 		private int visualizerGroupCount;
 		private float[] samples;
-		//private int2[] sampleGroups; // groups samples with x being the begin index and y being the end index (index in samples array)
 		private AudioSource audioSource;
 
-		private ComponentGroup group;
+		private ComponentGroup audioEntities;
 
 		protected override void OnCreateManager()
 		{
 			audioSource = Object.FindObjectOfType<AudioSource>();
 			sampleCount = 8192;
 			//sampleCount = 4096;
-			visualizerGroupCount = 51;
+			visualizerGroupCount = 201;
 			CalculateSampleGroups();
 
-			group = GetComponentGroup(
+			audioEntities = GetComponentGroup(
 				ComponentType.ReadOnly<AudioSampleIndex>(),
 				ComponentType.ReadWrite<AudioAmplitude>());
 		}
@@ -111,11 +110,11 @@ namespace ECS.AudioVisualization.Systems
 				SampleArr = sampleArr,
 				AmplitudeArr = amplitudeArr
 			}.Schedule(amplitudeArr.Length, 32, inputDeps);
-			
+
 			var ampJob = new AudioAmplitudeJob
 			{
 				Amplitudes = amplitudeArr
-			}.ScheduleGroup(group, samplerJob);
+			}.ScheduleGroup(audioEntities, samplerJob);
 
 			return ampJob;
 		}
