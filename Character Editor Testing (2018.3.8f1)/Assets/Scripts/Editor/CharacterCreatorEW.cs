@@ -17,8 +17,8 @@ public class CharacterCreatorEW : EditorWindow
     private GameObject newCharacter;
 
     private bool characterTypeChosen = false;
-    private Vector2 scrollPosition;
     private Tool currentTool = Tool.Additive;
+    private int counter = 0;
 
     private void OnGUI()
     {
@@ -59,6 +59,7 @@ public class CharacterCreatorEW : EditorWindow
 
     public void OnScene(SceneView sceneview)
     {
+        Debug.Log(counter++);
         HandleUtility.AddDefaultControl(GUIUtility.GetControlID(FocusType.Passive));
         Handles.BeginGUI();
         GUI.Box(new Rect(10, 10, 120, sceneview.position.size.y-40), "Tools");
@@ -73,12 +74,21 @@ public class CharacterCreatorEW : EditorWindow
         GUI.Label(new Rect(sceneview.position.size.x/2 - 100, 10, 200, 40), "Edit Mode: "+currentTool.ToString(), new GUIStyle() { alignment = TextAnchor.MiddleCenter });
         Handles.EndGUI();
 
-        if(Event.current != null)
+        if (Event.current != null)
         {
+            Debug.Log(counter);
             Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
-            if (Physics.Raycast(ray,out RaycastHit hit,100) && hit.transform.gameObject.GetComponent<CharacterCubeModule>())
+            if (Physics.Raycast(ray, out RaycastHit hit, 100) && hit.transform.gameObject.GetComponent<CharacterCubeModule>())
             {
-                Handles.DrawWireCube(hit.transform.position + hit.normal, Vector3.one);
+                if (currentTool.Equals(Tool.Additive))
+                {
+                    Handles.DrawWireCube(hit.transform.position + hit.normal, Vector3.one);
+
+                }
+                else if (currentTool.Equals(Tool.Subtractive))
+                {
+                    Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
+                }
             }
         }
     }
