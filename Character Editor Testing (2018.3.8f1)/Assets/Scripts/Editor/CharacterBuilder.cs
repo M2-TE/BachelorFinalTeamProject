@@ -2,32 +2,24 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class CharacterBuilder : MonoBehaviour
+[ExecuteInEditMode]
+public class CharacterBuilder : Editor
 {
-    internal GameObject NewCharacter;
-
     private CharacterMesh character;
 
-    public void Init()
+    public void OnSceneGUI()
     {
-        NewCharacter = new GameObject("New Character");
-        NewCharacter.hideFlags = HideFlags.NotEditable;
-        new PrimitiveCube().transform.parent = NewCharacter.transform;
-    }
+        GUI.Box(new Rect(10, 10, 100, 90), "Loader Menu");
 
-    public void Update(Event current)
-    {
-        if (CharacterCreatorEW.Open)
+        if (GUI.Button(new Rect(20, 40, 80, 20), "Level 1"))
         {
-
-            Ray ray = HandleUtility.GUIPointToWorldRay(current.mousePosition);
-            RaycastHit hit;
-
-            if(Physics.Raycast(HandleUtility.GUIPointToWorldRay(Event.current.mousePosition), out hit,1000,9))
-            {
-                Debug.Log("yay");
-            }
+            SceneManager.LoadScene(1);
+        }
+        if (GUI.Button(new Rect(20, 70, 80, 20), "Level 2"))
+        {
+            SceneManager.LoadScene(2);
         }
     }
 }
