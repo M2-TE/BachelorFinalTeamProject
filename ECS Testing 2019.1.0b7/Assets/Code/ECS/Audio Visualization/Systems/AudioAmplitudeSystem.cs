@@ -28,7 +28,7 @@ namespace ECS.AudioVisualization.Systems
 			audioSource = Object.FindObjectOfType<AudioSource>();
 			sampleCount = 8192;
 			//sampleCount = 4096;
-			visualizerGroupCount = 201;
+			visualizerGroupCount = 10;
 			CalculateSampleGroups();
 
 			audioEntities = GetComponentGroup(
