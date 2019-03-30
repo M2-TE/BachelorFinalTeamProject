@@ -16,7 +16,7 @@ namespace ECS.AudioVisualization.Components
 	[DisallowMultipleComponent]
 	public class AudioVisualizationSpawnerProxy : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 	{
-		public enum Mode { Standard, CircularCentered }
+		public enum Mode { Standard, CircularCentered, CubeTower }
 		public GameObject PrefabGO;
 		public int3 Size;
 		public float3 PrefabSize;

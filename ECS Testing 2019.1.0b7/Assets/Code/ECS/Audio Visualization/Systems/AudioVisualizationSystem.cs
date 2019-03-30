@@ -74,7 +74,7 @@ namespace ECS.AudioVisualization.Systems
 				scale.Value = init.BaseScale + audioScaler.ScaleModifiers * amplitude.Value;
 
 				//reposition
-				translation.Value = init.BasePosition + scale.Value * .5f;
+				//translation.Value = init.BasePosition + scale.Value * .5f;
 			}
 		}
 
