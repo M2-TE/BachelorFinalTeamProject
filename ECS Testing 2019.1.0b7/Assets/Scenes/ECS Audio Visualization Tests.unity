@@ -204,9 +204,9 @@ MonoBehaviour:
   SampleGroupIndex: 3
   Scale: 1
   ScaleModifiers:
-    x: 10
+    x: 30
     y: 0
-    z: 10
+    z: 30
 --- !u!114 &209279719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1185,9 +1185,9 @@ MonoBehaviour:
   SampleGroupIndex: 6
   Scale: 1
   ScaleModifiers:
-    x: 10
+    x: 30
     y: 0
-    z: 10
+    z: 30
 --- !u!114 &939279190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1295,9 +1295,9 @@ MonoBehaviour:
   SampleGroupIndex: 5
   Scale: 1
   ScaleModifiers:
-    x: 10
+    x: 30
     y: 0
-    z: 10
+    z: 30
 --- !u!114 &944966786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1405,9 +1405,9 @@ MonoBehaviour:
   SampleGroupIndex: 2
   Scale: 1
   ScaleModifiers:
-    x: 10
+    x: 30
     y: 0
-    z: 10
+    z: 30
 --- !u!114 &961972826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2073,9 +2073,9 @@ MonoBehaviour:
   SampleGroupIndex: 4
   Scale: 1
   ScaleModifiers:
-    x: 10
+    x: 30
     y: 0
-    z: 10
+    z: 30
 --- !u!114 &1408455813
 MonoBehaviour:
   m_ObjectHideFlags: 0
