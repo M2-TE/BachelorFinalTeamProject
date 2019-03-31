@@ -76,6 +76,7 @@ public class CharacterCreatorEW : EditorWindow
             Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100) && hit.transform.gameObject.GetComponent<CharacterCubeModule>())
             {
+                Debug.Log(Event.current.mousePosition);
                 if (currentTool.Equals(Tool.Additive))
                 {
                     Handles.DrawWireCube(hit.transform.position + hit.normal, Vector3.one);
