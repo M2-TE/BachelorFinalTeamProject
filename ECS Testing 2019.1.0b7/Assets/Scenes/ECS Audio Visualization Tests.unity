@@ -776,7 +776,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 5b36c45ab9dde8443bf3e20437020d3c, type: 3}
+      objectReference: {fileID: 8300000, guid: e4067fc5c808f014ab79a21e3b9d8490, type: 3}
     - target: {fileID: 3228164739142563311, guid: 4e862432f9ca3ae4eb90f01b8c3ab2cd,
         type: 3}
       propertyPath: Loop
@@ -2514,22 +2514,22 @@ PrefabInstance:
     - target: {fileID: 1224224472718940807, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940800, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -12.1
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940800, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -18.63
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940800, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -37.7
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940800, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
@@ -2574,17 +2574,17 @@ PrefabInstance:
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: Size.x
-      value: 100
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: Size.z
-      value: 100
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: PrefabSize.x
-      value: 0.5
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
@@ -2594,7 +2594,7 @@ PrefabInstance:
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}
       propertyPath: PrefabSize.z
-      value: 0.5
+      value: 0.9
       objectReference: {fileID: 0}
     - target: {fileID: 1224224472718940801, guid: 2929050a3fc95cb41b1c45e8a07498d1,
         type: 3}

@@ -17,5 +17,6 @@ namespace ECS.AudioVisualization.Components
 		public float3 BasePosition;
 		public quaternion BaseRotation;
 		public float3 BaseScale;
+		public int LockedScaling;
 	}
 }
