@@ -11,6 +11,7 @@ namespace ECS.AudioVisualization.Components
 		public float3 Size;
 		public float3 PrefabSize;
 		public int SpawnMode;
+		public int LockedScaling;
 	}
 
 	[DisallowMultipleComponent]
@@ -20,6 +21,7 @@ namespace ECS.AudioVisualization.Components
 		public GameObject PrefabGO;
 		public int3 Size;
 		public float3 PrefabSize;
+		public bool LockedScaling;
 		public Mode SpawnMode;
 
 		public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
@@ -34,7 +36,8 @@ namespace ECS.AudioVisualization.Components
 				PrefabEntity = conversionSystem.GetPrimaryEntity(PrefabGO),
 				Size = Size,
 				PrefabSize = PrefabSize,
-				SpawnMode = (int)SpawnMode
+				SpawnMode = (int)SpawnMode,
+				LockedScaling = LockedScaling ? 1 : 0
 			};
 			dstManager.AddComponentData(entity, spawnerData);
 		}

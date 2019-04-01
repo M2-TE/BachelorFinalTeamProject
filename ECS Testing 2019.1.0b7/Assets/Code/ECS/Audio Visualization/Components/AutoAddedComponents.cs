@@ -5,7 +5,7 @@ namespace ECS.AudioVisualization.Components
 {
 	public struct AudioSampleIndex : IComponentData
 	{
-		public int SampleIndex;
+		public int Value;
 	}
 	public struct AudioAmplitude : IComponentData
 	{

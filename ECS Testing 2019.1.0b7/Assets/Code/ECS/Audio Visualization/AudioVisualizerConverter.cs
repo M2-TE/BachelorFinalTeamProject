@@ -27,7 +27,7 @@ namespace ECS.AudioVisualization
 			else dstManager.AddComponentData(entity, new NonUniformScale { Value = transform.lossyScale });
 
 			// set vital components for visualization system
-			dstManager.AddComponentData(entity, new AudioSampleIndex { SampleIndex = SampleGroupIndex });
+			dstManager.AddComponentData(entity, new AudioSampleIndex { Value = SampleGroupIndex });
 			dstManager.AddComponentData(entity, new AudioAmplitude());
 			dstManager.AddComponentData(entity, new AudioVisualizationInit
 			{

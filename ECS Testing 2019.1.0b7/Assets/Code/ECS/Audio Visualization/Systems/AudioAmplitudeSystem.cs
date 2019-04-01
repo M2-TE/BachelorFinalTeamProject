@@ -4,6 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
+using Unity.Jobs.LowLevel.Unsafe;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace ECS.AudioVisualization.Systems
 	{
 		private NativeArray<float> sampleArr;
 		private NativeArray<float> amplitudeArr;
+		private NativeArray<float> totalAmplitude;
 		private NativeArray<int2> sampleGroupArr;
 
 		private int sampleCount;
@@ -27,7 +29,6 @@ namespace ECS.AudioVisualization.Systems
 		{
 			audioSource = Object.FindObjectOfType<AudioSource>();
 			sampleCount = 8192;
-			//sampleCount = 4096;
 			visualizerGroupCount = 10;
 			CalculateSampleGroups();
 
@@ -40,6 +41,7 @@ namespace ECS.AudioVisualization.Systems
 		{
 			// allocate native array (and previously dispose it if one is already allocated)
 			if (amplitudeArr.IsCreated) amplitudeArr.Dispose();
+			if (totalAmplitude.IsCreated) totalAmplitude.Dispose();
 			if (sampleArr.IsCreated) sampleArr.Dispose();
 			if (sampleGroupArr.IsCreated) sampleGroupArr.Dispose();
 
@@ -63,6 +65,7 @@ namespace ECS.AudioVisualization.Systems
 			}
 
 			amplitudeArr = new NativeArray<float>(visualizerGroupCount, Allocator.Persistent);
+			totalAmplitude = new NativeArray<float>(JobsUtility.MaxJobThreadCount, Allocator.Persistent);
 			sampleArr = new NativeArray<float>(sampleCount, Allocator.Persistent);
 			sampleGroupArr = new NativeArray<int2>(sampleGroupList.Count, Allocator.Persistent);
 			sampleGroupArr.CopyFrom(sampleGroupList.ToArray());
@@ -74,6 +77,7 @@ namespace ECS.AudioVisualization.Systems
 			[ReadOnly] public NativeArray<int2> SampleGroupArr;
 			[ReadOnly] public NativeArray<float> SampleArr;
 			public NativeArray<float> AmplitudeArr;
+			public NativeArray<float> TotalAmplitude;
 
 			public void Execute(int amplitudeIndex)
 			{
@@ -86,6 +90,7 @@ namespace ECS.AudioVisualization.Systems
 				additiveAmplitude /= sampleGroup.y - sampleGroup.x + 1;
 
 				AmplitudeArr[amplitudeIndex] = additiveAmplitude;
+				TotalAmplitude[0] += additiveAmplitude;
 			}
 		}
 
@@ -93,10 +98,11 @@ namespace ECS.AudioVisualization.Systems
 		struct AudioAmplitudeJob : IJobProcessComponentData<AudioSampleIndex, AudioAmplitude>
 		{
 			[ReadOnly] public NativeArray<float> Amplitudes;
+			[ReadOnly] public NativeArray<float> TotalAmplitude;
 
-			public void Execute([ReadOnly] ref AudioSampleIndex c0, ref AudioAmplitude c1)
+			public void Execute([ReadOnly] ref AudioSampleIndex sampleIndex, ref AudioAmplitude amplitude)
 			{
-				c1.Value = Amplitudes[c0.SampleIndex];
+				amplitude.Value = sampleIndex.Value > -1 ? Amplitudes[sampleIndex.Value] : TotalAmplitude[0] / Amplitudes.Length;
 			}
 		}
 
@@ -104,16 +110,20 @@ namespace ECS.AudioVisualization.Systems
 		{
 			audioSource.GetSpectrumData(samples, 0, FFTWindow.Blackman);
 			sampleArr.CopyFrom(samples);
+			totalAmplitude[0] = 0f;
+
 			var samplerJob = new AudioAmplitudeCalcJob
 			{
 				SampleGroupArr = sampleGroupArr,
 				SampleArr = sampleArr,
-				AmplitudeArr = amplitudeArr
-			}.Schedule(amplitudeArr.Length, 32, inputDeps);
+				AmplitudeArr = amplitudeArr,
+				TotalAmplitude = totalAmplitude
+			}.Schedule(sampleGroupArr.Length, 1024, inputDeps);
 
 			var ampJob = new AudioAmplitudeJob
 			{
-				Amplitudes = amplitudeArr
+				Amplitudes = amplitudeArr,
+				TotalAmplitude = totalAmplitude
 			}.ScheduleGroup(audioEntities, samplerJob);
 
 			return ampJob;
@@ -122,6 +132,7 @@ namespace ECS.AudioVisualization.Systems
 		protected override void OnDestroyManager()
 		{
 			amplitudeArr.Dispose();
+			totalAmplitude.Dispose();
 			sampleArr.Dispose();
 			sampleGroupArr.Dispose();
 		}
