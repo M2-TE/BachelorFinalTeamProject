@@ -22,6 +22,10 @@ public class InputMaster : InputActionAssetReference
         m_Player = asset.GetActionMap("Player");
         m_Player_Movement = m_Player.GetAction("Movement");
         m_Player_Shoot = m_Player.GetAction("Shoot");
+        m_Player_Aim = m_Player.GetAction("Aim");
+        // General
+        m_General = asset.GetActionMap("General");
+        m_General_RegisterDevice = m_General.GetAction("RegisterDevice");
         m_Initialized = true;
     }
     private void Uninitialize()
@@ -29,6 +33,9 @@ public class InputMaster : InputActionAssetReference
         m_Player = null;
         m_Player_Movement = null;
         m_Player_Shoot = null;
+        m_Player_Aim = null;
+        m_General = null;
+        m_General_RegisterDevice = null;
         m_Initialized = false;
     }
     public void SetAsset(InputActionAsset newAsset)
@@ -45,12 +52,14 @@ public class InputMaster : InputActionAssetReference
     private InputActionMap m_Player;
     private InputAction m_Player_Movement;
     private InputAction m_Player_Shoot;
+    private InputAction m_Player_Aim;
     public struct PlayerActions
     {
         private InputMaster m_Wrapper;
         public PlayerActions(InputMaster wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement { get { return m_Wrapper.m_Player_Movement; } }
         public InputAction @Shoot { get { return m_Wrapper.m_Player_Shoot; } }
+        public InputAction @Aim { get { return m_Wrapper.m_Player_Aim; } }
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -66,24 +75,27 @@ public class InputMaster : InputActionAssetReference
             return new PlayerActions(this);
         }
     }
-    private int m_GamepadSchemeIndex = -1;
-    public InputControlScheme GamepadScheme
+    // General
+    private InputActionMap m_General;
+    private InputAction m_General_RegisterDevice;
+    public struct GeneralActions
     {
-        get
-
-        {
-            if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.GetControlSchemeIndex("Gamepad");
-            return asset.controlSchemes[m_GamepadSchemeIndex];
-        }
+        private InputMaster m_Wrapper;
+        public GeneralActions(InputMaster wrapper) { m_Wrapper = wrapper; }
+        public InputAction @RegisterDevice { get { return m_Wrapper.m_General_RegisterDevice; } }
+        public InputActionMap Get() { return m_Wrapper.m_General; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled { get { return Get().enabled; } }
+        public InputActionMap Clone() { return Get().Clone(); }
+        public static implicit operator InputActionMap(GeneralActions set) { return set.Get(); }
     }
-    private int m_KeyboardAndMouseSchemeIndex = -1;
-    public InputControlScheme KeyboardAndMouseScheme
+    public GeneralActions @General
     {
         get
-
         {
-            if (m_KeyboardAndMouseSchemeIndex == -1) m_KeyboardAndMouseSchemeIndex = asset.GetControlSchemeIndex("KeyboardAndMouse");
-            return asset.controlSchemes[m_KeyboardAndMouseSchemeIndex];
+            if (!m_Initialized) Initialize();
+            return new GeneralActions(this);
         }
     }
 }
