@@ -1,27 +1,61 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Experimental.Input;
 
-public class PlayerCharacter : MonoBehaviour
+public abstract class InputSystemMonoBehaviour : MonoBehaviour
 {
+	private void OnEnable() => RegisterActions();
+	private void OnDisable() => UnregisterActions();
+
+	protected abstract void RegisterActions();
+	protected abstract void UnregisterActions();
+}
+
+public class PlayerCharacter : InputSystemMonoBehaviour
+{
+	private enum ControlType { Mouse, Controller }
+
+	[SerializeField] private InputMaster inputMaster;
 	[SerializeField] private int controlID;
+	[SerializeField] private ControlType controlType;
+	[Space]
 	[SerializeField] private float movespeedMod;
 
 	private GameManager gameManager;
 	private CharacterController charController;
+	private InputMaster input;
 
 	private const string horizontalAxis = "Horizontal";
 	private const string verticalAxis = "Vertical";
+	
+	protected override void RegisterActions()
+	{
+		input.Player.Movement.performed += DoThing;
+		Debug.Log("noted");
+	}
+
+	protected override void UnregisterActions()
+	{
+		input.Player.Movement.performed -= DoThing;
+	}
 
 	private void Awake()
 	{
 		gameManager = GameManager.Instance;
+		input = gameManager.InputMaster;
 		charController = GetComponent<CharacterController>();
+
+	}
+
+	private void DoThing(InputAction.CallbackContext ctx)
+	{
+
 	}
 
 	private void Update()
 	{
-		UpdateMovement();
-		UpdateLookRotation();
+		//UpdateMovement();
+		//UpdateLookRotation();
 	}
 
 	private void UpdateMovement()
@@ -41,9 +75,21 @@ public class PlayerCharacter : MonoBehaviour
 
 	private void UpdateLookRotation()
 	{
-		var objectPos = gameManager.MainCam.WorldToScreenPoint(transform.position, Camera.MonoOrStereoscopicEye.Mono);
-		objectPos.z = 0f;
-		var lookDir =  Input.mousePosition - objectPos;
+		Vector3 lookDir = default;
+		switch (controlType)
+		{
+			default:
+			case ControlType.Mouse:
+				var objectPos = gameManager.MainCam.WorldToScreenPoint(transform.position, Camera.MonoOrStereoscopicEye.Mono);
+				objectPos.z = 0f;
+				lookDir = Input.mousePosition - objectPos;
+				break;
+
+			case ControlType.Controller:
+				//Input.GetAxis()
+				break;
+		}
+
 		transform.rotation = Quaternion.LookRotation(new Vector3(lookDir.x, 0f, lookDir.y), transform.up);
 	}
 }

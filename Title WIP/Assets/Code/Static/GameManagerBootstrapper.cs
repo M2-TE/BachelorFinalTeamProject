@@ -2,7 +2,8 @@
 
 public class GameManagerBootstrapper : MonoBehaviour
 {
-	[SerializeField] internal Camera mainCam;
+	public InputMaster InputMaster;
+	public Camera MainCam;
 
 	private void OnEnable() => GameManager.Instance.RegisterBootstrapper(this);
 	private void OnDisable() => GameManager.Instance.UnregisterBootstrapper();
@@ -10,6 +11,7 @@ public class GameManagerBootstrapper : MonoBehaviour
 	private void Awake()
 	{
 		Cursor.lockState = CursorLockMode.Confined;
+		InputMaster.Enable();
 	}
 
 	private void Start()

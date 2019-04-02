@@ -8,7 +8,8 @@ public class GameManager
 	public static GameManager Instance { get => instance ?? (instance = new GameManager()); }
 	#endregion
 
-	public Camera MainCam { get => bootstrapper?.mainCam; }
+	public Camera MainCam { get => bootstrapper?.MainCam; }
+	public InputMaster InputMaster { get => bootstrapper?.InputMaster; }
 
 	private GameManagerBootstrapper bootstrapper;
 
