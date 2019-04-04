@@ -13,7 +13,8 @@ public class GameManagerBootstrapper : MonoBehaviour
 
 	private void Awake()
 	{
-		Cursor.lockState = CursorLockMode.Confined;
+		//Cursor.lockState = CursorLockMode.Locked;
+		//Cursor.visible = false;
 		InputMaster.Enable();
 	}
 
