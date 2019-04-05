@@ -106,4 +106,14 @@ public class InputMaster : InputActionAssetReference
             return new GeneralActions(this);
         }
     }
+    private int m_MainGamepadSchemeSchemeIndex = -1;
+    public InputControlScheme MainGamepadSchemeScheme
+    {
+        get
+
+        {
+            if (m_MainGamepadSchemeSchemeIndex == -1) m_MainGamepadSchemeSchemeIndex = asset.GetControlSchemeIndex("MainGamepadScheme");
+            return asset.controlSchemes[m_MainGamepadSchemeSchemeIndex];
+        }
+    }
 }

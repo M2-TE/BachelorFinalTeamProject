@@ -63,7 +63,7 @@
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Gamepad",
+                    "groups": "Gamepad;MainGamepadScheme",
                     "action": "Movement",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -76,7 +76,7 @@
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Gamepad",
+                    "groups": "Gamepad;MainGamepadScheme",
                     "action": "Shoot",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -89,7 +89,7 @@
                     "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";MainGamepadScheme",
                     "action": "Shoot",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -102,7 +102,7 @@
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Gamepad",
+                    "groups": "Gamepad;MainGamepadScheme",
                     "action": "Aim",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -115,7 +115,7 @@
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";MainGamepadScheme",
                     "action": "Debug",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -128,7 +128,7 @@
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";MainGamepadScheme",
                     "action": "Jump",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -182,5 +182,18 @@
             ]
         }
     ],
-    "controlSchemes": []
+    "controlSchemes": [
+        {
+            "name": "MainGamepadScheme",
+            "basedOn": "",
+            "bindingGroup": "MainGamepadScheme",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
 }

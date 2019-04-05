@@ -21,7 +21,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private InputMaster inputMaster;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
-	[SerializeField] private GameObject looseProjectile;
+	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private int controlDeviceIndex;
 	[SerializeField] private ControlType controlType;
 
@@ -80,8 +80,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input = gameManager.InputMaster;
 		charController = GetComponent<CharacterController>();
 
-		SetProjectileEnabled(looseProjectile.GetComponent<Projectile>(), false);
-		loadedProjectiles.Add(looseProjectile.GetComponent<Projectile>());
+		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 	}
 
 	private void Update()
@@ -124,17 +123,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
 		if (IsMatchingDeviceID(ctx))
-		{
-			var projectile = looseProjectile.GetComponent<Projectile>();
-			loadedProjectiles.Remove(projectile);
-			loadedProjectiles.Add(projectile);
-
-			var rgb = looseProjectile.GetComponent<Rigidbody>();
-			rgb.velocity = Vector3.zero;
-			rgb.angularVelocity = Vector3.zero;
-
-			SetProjectileEnabled(projectile, false);
-		}
+			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 	}
 	#endregion
 
@@ -149,6 +138,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (enableState) projectile.rgb.WakeUp();
 		else projectile.rgb.Sleep();
 
+		projectile.rgb.useGravity = enableState;
 		projectile.collider.enabled = enableState;
 	}
 
@@ -221,7 +211,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		// move projectile to launch position
 		SetProjectileEnabled(currentShootingProjectile, false);
-		for(int iteration = 0; Vector3.Distance(currentShootingProjectile.transform.position, projectileLaunchPos.position) > .1f; iteration++)
+		for(int iteration = 0; currentShootingProjectile != null && Vector3.Distance(currentShootingProjectile.transform.position, projectileLaunchPos.position) > .1f; iteration++)
 		{
 			currentShootingProjectile.transform.position = Vector3.MoveTowards(currentShootingProjectile.transform.position,
 				projectileLaunchPos.position,
@@ -229,13 +219,45 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 			yield return null;
 		}
-		SetProjectileEnabled(currentShootingProjectile, true);
 
-		// launch projectile in aim direction
-		var forceVec = projectileLaunchPos.position - transform.position;
-		forceVec.y = 0f;
-		currentShootingProjectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
+		if (currentShootingProjectile != null) // if projectile has not yet been destroyed
+		{
+			SetProjectileEnabled(currentShootingProjectile, true);
 
-		currentShootingProjectile = null;
+			// launch projectile in aim direction
+			var forceVec = projectileLaunchPos.position - transform.position;
+			forceVec.y = 0f;
+			currentShootingProjectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
+
+			currentShootingProjectile = null;
+		}
+	}
+
+	public void TriggerDeath()
+	{
+		Debug.Log(name + " died");
+		for (int i = 0; i < loadedProjectiles.Count; i++)
+		{
+			SetProjectileEnabled(loadedProjectiles[i], true);
+			loadedProjectiles[i].rgb.constraints = RigidbodyConstraints.None;
+			loadedProjectiles[i].canPickup = true;
+		}
+		Destroy(gameObject);
+	}
+
+	public void PickupProjectile(Projectile projectile)
+	{
+		loadedProjectiles.Add(projectile);
+		SetProjectileEnabled(projectile, false);
+		projectile.canPickup = false;
+	}
+
+	private void OnControllerColliderHit(ControllerColliderHit hit) // pickup logic
+	{
+		if(hit.collider.CompareTag("Projectile"))
+		{
+			var projectile = hit.collider.GetComponent<Projectile>();
+			if (projectile.canPickup) PickupProjectile(projectile);
+		}
 	}
 }
