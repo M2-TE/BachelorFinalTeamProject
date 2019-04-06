@@ -19,6 +19,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private enum ControlType { Controller, Mouse }
 
 	[SerializeField] private InputMaster inputMaster;
+	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
 	[SerializeField] private GameObject projectilePrefab;
@@ -47,7 +48,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private InputMaster input;
 
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
-	private Projectile currentShootingProjectile;
 	private Vector2 movementInput;
 	private Vector2 aimInput;
 
@@ -60,6 +60,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Aim.performed += UpdateLookRotationControlled;
 		input.Player.Shoot.performed += TriggerShotControlled;
 		input.Player.Jump.performed += TriggerJump;
+		input.Player.Parry.performed += TriggerParry;
 
 		input.Player.Debug.performed += TriggerDebugAction;
 	}
@@ -70,6 +71,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Aim.performed -= UpdateLookRotationControlled;
 		input.Player.Shoot.performed -= TriggerShotControlled;
 		input.Player.Jump.performed -= TriggerJump;
+		input.Player.Parry.performed -= TriggerParry;
 
 		input.Player.Debug.performed -= TriggerDebugAction;
 	}
@@ -112,12 +114,22 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
 	{
-		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsMatchingDeviceID(ctx)) StartCoroutine(StartShootingSequence());
+		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsMatchingDeviceID(ctx))
+		{
+			var projectile = loadedProjectiles[0];
+			loadedProjectiles.Remove(projectile);
+			StartCoroutine(StartShootingSequence(projectile));
+		}
 	}
 
 	private void TriggerJump(InputAction.CallbackContext ctx)
 	{
 		if(charController.isGrounded && IsMatchingDeviceID(ctx)) currentJumpForce = jumpForce;
+	}
+
+	private void TriggerParry(InputAction.CallbackContext ctx)
+	{
+		if (IsMatchingDeviceID(ctx)) parryAnimator.SetTrigger("ConstructParryShield");
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
@@ -204,32 +216,29 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		currentShotCooldown = currentShotCooldown > 0f ? currentShotCooldown - Time.deltaTime : 0f;
 	}
 
-	private IEnumerator StartShootingSequence()
+	private IEnumerator StartShootingSequence(Projectile projectile)
 	{
-		currentShootingProjectile = loadedProjectiles[0];
-		loadedProjectiles.Remove(currentShootingProjectile);
-
 		// move projectile to launch position
-		SetProjectileEnabled(currentShootingProjectile, false);
-		for(int iteration = 0; currentShootingProjectile != null && Vector3.Distance(currentShootingProjectile.transform.position, projectileLaunchPos.position) > .1f; iteration++)
+		SetProjectileEnabled(projectile, false);
+		for(int iteration = 0; projectile != null && Vector3.Distance(projectile.transform.position, projectileLaunchPos.position) > .2f; iteration++)
 		{
-			currentShootingProjectile.transform.position = Vector3.MoveTowards(currentShootingProjectile.transform.position,
+			projectile.transform.position = Vector3.MoveTowards(projectile.transform.position,
 				projectileLaunchPos.position,
 				(shotPrepSpeed + iteration * chargeupIterationSpeedMod * Time.deltaTime) * Time.deltaTime);
 
 			yield return null;
 		}
 
-		if (currentShootingProjectile != null) // if projectile has not yet been destroyed
+		if (projectile != null) // if projectile has not yet been destroyed
 		{
-			SetProjectileEnabled(currentShootingProjectile, true);
+			SetProjectileEnabled(projectile, true);
 
 			// launch projectile in aim direction
 			var forceVec = projectileLaunchPos.position - transform.position;
 			forceVec.y = 0f;
-			currentShootingProjectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
+			projectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
 
-			currentShootingProjectile = null;
+			projectile = null;
 		}
 	}
 

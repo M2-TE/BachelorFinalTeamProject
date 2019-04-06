@@ -54,6 +54,16 @@
                     "processors": "",
                     "interactions": "Press",
                     "bindings": []
+                },
+                {
+                    "name": "Parry",
+                    "id": "e6fc2243-b2ee-4b74-8965-1ccf8b038271",
+                    "expectedControlLayout": "",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
                 }
             ],
             "bindings": [
@@ -65,19 +75,6 @@
                     "processors": "",
                     "groups": "Gamepad;MainGamepadScheme",
                     "action": "Movement",
-                    "chainWithPrevious": false,
-                    "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
-                },
-                {
-                    "name": "",
-                    "id": "b79f4914-6df9-40c6-94de-2cb0a5b57978",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad;MainGamepadScheme",
-                    "action": "Shoot",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,
@@ -125,11 +122,24 @@
                 {
                     "name": "",
                     "id": "234d1d3c-3a88-424a-8ad7-201fa5aa17ce",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": ";MainGamepadScheme",
                     "action": "Jump",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "ab751518-f79c-4da8-bb78-d816e6fabc55",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MainGamepadScheme",
+                    "action": "Parry",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,
