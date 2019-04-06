@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Projectile
+  - ParryShield
   layers:
   - Default
   - TransparentFX
