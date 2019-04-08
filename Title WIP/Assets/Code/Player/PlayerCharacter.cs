@@ -44,6 +44,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private float projectileRotationMin;
 	[SerializeField] private float projectileRotationMax;
 
+	[Header("Shake Magnitudes")]
+	[SerializeField] private float shotShakeMagnitude;
+	[SerializeField] private float deathShakeMagnitude; 
+
 	private GameManager gameManager;
 	private CharacterController charController;
 	private InputMaster input;
@@ -132,6 +136,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsMatchingDeviceID(ctx))
 		{
+			gameManager.ShakeMagnitude = shotShakeMagnitude;
+			currentShotCooldown = shotCooldown;
+
 			var projectile = loadedProjectiles[0];
 			loadedProjectiles.Remove(projectile);
 			Shoot(projectile);
@@ -159,21 +166,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 	}
 	#endregion
-
-	private bool IsMatchingDeviceID(InputAction.CallbackContext ctx)
-	{
-		return gameManager.registeredControlDeviceIDs.Count > controlDeviceIndex
-			&& ctx.control.device.id == gameManager.registeredControlDeviceIDs[controlDeviceIndex];
-	}
-
-	private void SetProjectileEnabled(Projectile projectile, bool enableState)
-	{
-		if (enableState) projectile.rgb.WakeUp();
-		else projectile.rgb.Sleep();
-
-		projectile.rgb.useGravity = enableState;
-		projectile.collider.enabled = enableState;
-	}
 
 	private void UpdateMovement()
 	{
@@ -290,6 +282,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			loadedProjectiles[i].rgb.constraints = RigidbodyConstraints.None;
 			loadedProjectiles[i].canPickup = true;
 		}
+
+		gameManager.ShakeMagnitude = deathShakeMagnitude;
+
 		Destroy(gameObject);
 	}
 
@@ -299,6 +294,22 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		SetProjectileEnabled(projectile, false);
 		projectile.canPickup = false;
 	}
+
+	private bool IsMatchingDeviceID(InputAction.CallbackContext ctx)
+	{
+		return gameManager.registeredControlDeviceIDs.Count > controlDeviceIndex
+			&& ctx.control.device.id == gameManager.registeredControlDeviceIDs[controlDeviceIndex];
+	}
+
+	private void SetProjectileEnabled(Projectile projectile, bool enableState)
+	{
+		if (enableState) projectile.rgb.WakeUp();
+		else projectile.rgb.Sleep();
+
+		projectile.rgb.useGravity = enableState;
+		projectile.collider.enabled = enableState;
+	}
+
 
 	private void OnControllerColliderHit(ControllerColliderHit hit) // pickup logic
 	{

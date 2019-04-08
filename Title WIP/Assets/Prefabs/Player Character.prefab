@@ -593,7 +593,7 @@ MonoBehaviour:
   movespeedMod: 8
   gravityMod: 0.05
   jumpForce: 0.15
-  shotCooldown: 5
+  shotCooldown: 0.1
   shotPrepSpeed: 20
   chargeupIterationSpeedMod: 20
   shotStrength: 50
@@ -605,6 +605,8 @@ MonoBehaviour:
   projectileOrbitHeightMod: 1.25
   projectileRotationMin: 0
   projectileRotationMax: 0
+  shotShakeMagnitude: 0.35
+  deathShakeMagnitude: 1
 --- !u!1 &4422398641255969907
 GameObject:
   m_ObjectHideFlags: 0
