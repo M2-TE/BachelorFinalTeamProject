@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &139282227
 Transform:
   m_ObjectHideFlags: 0
@@ -94,7 +94,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &337325222
 Transform:
   m_ObjectHideFlags: 0
@@ -171,7 +171,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &377511028
 Transform:
   m_ObjectHideFlags: 0
@@ -248,7 +248,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &470872247
 Transform:
   m_ObjectHideFlags: 0
@@ -394,7 +394,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1835353168
 Transform:
   m_ObjectHideFlags: 0
@@ -590,7 +590,6 @@ MonoBehaviour:
   projectilePrefab: {fileID: 8900639728585163238, guid: dc2e0ed5918ca324d953b4a4257d119c,
     type: 3}
   controlDeviceIndex: 0
-  controlType: 0
   movespeedMod: 8
   gravityMod: 0.05
   jumpForce: 0.15
@@ -604,8 +603,8 @@ MonoBehaviour:
   projectileMovementInterpolation: 0.7
   projectileOrbitDist: 1
   projectileOrbitHeightMod: 1.25
-  projectileRotationMin: 10
-  projectileRotationMax: 100
+  projectileRotationMin: 0
+  projectileRotationMax: 0
 --- !u!1 &4422398641255969907
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,8 +935,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4286677377
-  m_fontColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+    rgba: 4280361249
+  m_fontColor: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

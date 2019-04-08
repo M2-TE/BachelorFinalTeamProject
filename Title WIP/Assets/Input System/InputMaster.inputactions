@@ -64,6 +64,16 @@
                     "processors": "",
                     "interactions": "Press",
                     "bindings": []
+                },
+                {
+                    "name": "LockAim",
+                    "id": "3d8b3dbd-e039-4a66-84f8-c52cbd53eba2",
+                    "expectedControlLayout": "",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
                 }
             ],
             "bindings": [
@@ -140,6 +150,19 @@
                     "processors": "",
                     "groups": "MainGamepadScheme",
                     "action": "Parry",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "cda99926-f724-42ce-a843-114381c83b24",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "LockAim",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,

@@ -16,15 +16,13 @@ public abstract class InputSystemMonoBehaviour : MonoBehaviour
 
 public class PlayerCharacter : InputSystemMonoBehaviour
 {
-	private enum ControlType { Controller, Mouse }
-
+	#region Fields
 	[SerializeField] private InputMaster inputMaster;
 	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
 	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private int controlDeviceIndex;
-	[SerializeField] private ControlType controlType;
 
 	[Header("Combat")]
 	[SerializeField] private float movespeedMod;
@@ -51,6 +49,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private InputMaster input;
 
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
+
 	private Vector2 movementInput;
 	private Vector2 aimInput;
 	private Quaternion currentCoreRotation = Quaternion.identity;
@@ -59,6 +58,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private float currentJumpForce = 0f;
 	private float currentShotCooldown = 0f;
 
+	private PlayerCharacter aimLockTarget;
+	private bool aimLocked = false;
+	#endregion
+
 	protected override void RegisterActions()
 	{
 		input.Player.Movement.performed += UpdateMovementControlled;
@@ -66,6 +69,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Shoot.performed += TriggerShotControlled;
 		input.Player.Jump.performed += TriggerJump;
 		input.Player.Parry.performed += TriggerParry;
+		input.Player.LockAim.performed += TriggerAimLock;
 
 		input.Player.Debug.performed += TriggerDebugAction;
 	}
@@ -77,6 +81,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Shoot.performed -= TriggerShotControlled;
 		input.Player.Jump.performed -= TriggerJump;
 		input.Player.Parry.performed -= TriggerParry;
+		input.Player.LockAim.performed -= TriggerAimLock;
 
 		input.Player.Debug.performed -= TriggerDebugAction;
 	}
@@ -85,10 +90,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		gameManager = GameManager.Instance;
 		input = gameManager.InputMaster;
+		gameManager.RegisterPlayerCharacter(this);
+
 		charController = GetComponent<CharacterController>();
 
+		// convert core rotation v3 to quaternion
 		coreRotationDelta = Quaternion.Euler(projectileOrbitDelta);
+	}
 
+	private void Start()
+	{
+		// since its only 1o1, this only needs to be called once
+		aimLockTarget = gameManager.RequestNearestPlayer(this);
+
+		// spawn initial projectile
 		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 	}
 
@@ -98,12 +113,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateLookRotation();
 
 		UpdateProjectileOrbit();
-		//Projectile projectile;
-		//for(int i = 0; i < loadedProjectiles.Count; i++)
-		//{
-		//	projectile = loadedProjectiles[i];
-		//	UpdateProjectileRotation(projectile);
-		//}
 
 		UpdateMiscValues();
 	}
@@ -137,6 +146,11 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private void TriggerParry(InputAction.CallbackContext ctx)
 	{
 		if (IsMatchingDeviceID(ctx)) parryAnimator.SetTrigger("ConstructParryShield");
+	}
+
+	private void TriggerAimLock(InputAction.CallbackContext ctx)
+	{
+		if (IsMatchingDeviceID(ctx)) aimLocked = !aimLocked;
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
@@ -180,53 +194,38 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void UpdateLookRotation()
 	{
-		Vector3 lookDir = default;
-		switch (controlType)
+		Vector3 lookDir;
+		if (aimLocked)
 		{
-			default:
-			case ControlType.Mouse:
-				if (aimInput.sqrMagnitude < 1.1f) return;
-				var objectPos = gameManager.MainCam.WorldToScreenPoint(transform.position, Camera.MonoOrStereoscopicEye.Mono);
-				objectPos.z = 0f;
-				lookDir = new Vector3(aimInput.x, aimInput.y, 0f) - objectPos;
-				break;
-
-			case ControlType.Controller:
-				if (aimInput.sqrMagnitude > .1f) lookDir = aimInput;
-				else return;
-				break;
+			if (aimLockTarget == null)
+			{
+				aimLocked = false;
+				return;
+			}
+			else lookDir = (aimLockTarget.transform.position - transform.position).normalized;
 		}
+		else if (aimInput.sqrMagnitude < .1f) return;
+		else lookDir = new Vector3(aimInput.x, 0f, aimInput.y);
 
-		transform.rotation = Quaternion.LookRotation(new Vector3(lookDir.x, 0f, lookDir.y), transform.up);
+		transform.rotation = Quaternion.LookRotation(lookDir, transform.up);
 	}
 
 	private void UpdateProjectileOrbit()
 	{
-		//Projectile projectile;
-		//for (int i = 0; i < loadedProjectiles.Count; i++)
-		//{
-		//	projectile = loadedProjectiles[i];
-
-		//	var rotation = Quaternion.Euler(0f, projectileOrbitSpeed * Time.deltaTime, 0f);
-
-		//	var resultingOffset = rotation * ((projectile.transform.position - projectileOrbitCenter.position).normalized * projectileOrbitDist);
-		//	resultingOffset.y = (Mathf.PerlinNoise(Time.time, 0f) - .5f) * projectileOrbitHeightMod;
-		//	projectile.transform.position = projectileOrbitCenter.position + resultingOffset;
-		//}
-
 		// calc current core rotation (a.k.a rotation that applies to all projectiles onto their individual ones)
 		currentCoreRotation = Quaternion.LerpUnclamped(currentCoreRotation, currentCoreRotation * coreRotationDelta, Time.deltaTime);
 
-		int numProjectiles = loadedProjectiles.Count;
 		Projectile projectile;
 		Vector3 targetPos;
 		for (int i = 0; i < loadedProjectiles.Count; i++)
 		{
 			projectile = loadedProjectiles[i];
 
-			Quaternion selfRotation = Quaternion.Euler(new Vector3(0f, (360 / numProjectiles) * i, 0f)) * currentCoreRotation;
-			Vector3 orbitVec = Vector3.forward * projectileOrbitDist;
-			orbitVec = selfRotation * orbitVec;
+			Quaternion selfRotation = 
+				Quaternion.Euler(new Vector3(0f, (360 / loadedProjectiles.Count) * i, 0f)) 
+				* currentCoreRotation; // combine partial rotation with core rotation for this particles rotation around the orbit center
+			Vector3 orbitVec = Vector3.forward * projectileOrbitDist; // identity vector for all projectiles
+			orbitVec = selfRotation * orbitVec; // vector from orbit center to target position (local space)
 			targetPos = projectileOrbitCenter.position + orbitVec;
 
 			if (movementInput.sqrMagnitude > .5f)
@@ -239,6 +238,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 				(projectile.transform.position, 
 				targetPos, 
 				Vector3.Distance(projectile.transform.position, targetPos) * projectileMaxOrbitDistPerFrame * Time.deltaTime);
+
+			UpdateProjectileRotation(projectile);
 		}
 	}
 

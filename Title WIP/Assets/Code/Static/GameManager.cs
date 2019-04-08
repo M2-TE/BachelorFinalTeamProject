@@ -11,6 +11,7 @@ public class GameManager
 	public static GameManager Instance { get => instance ?? (instance = new GameManager()); }
 	#endregion
 
+	#region Properties
 	private GameManagerBootstrapper _bootstrapper;
 	private GameManagerBootstrapper bootstrapper
 	{
@@ -28,11 +29,19 @@ public class GameManager
 
 	public Camera MainCam { get => bootstrapper?.MainCam; }
 	public InputMaster InputMaster { get => bootstrapper?.InputMaster; }
+	#endregion
 
 	public readonly List<int> registeredControlDeviceIDs = new List<int>();
+	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>();
 
 	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper) => this.bootstrapper = bootstrapper;
 	internal void UnregisterBootstrapper() => bootstrapper = null;
+
+	public void RegisterPlayerCharacter(PlayerCharacter playerCharacter) => registeredPlayerCharacters.Add(playerCharacter);
+	public bool UnregisterPlayerCharacter(PlayerCharacter playerCharacter) => registeredPlayerCharacters.Remove(playerCharacter);
+
+	public PlayerCharacter RequestNearestPlayer(PlayerCharacter requestSender) // TODO make this good or dad will get the belt
+		=> registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
 
 	private void RegisterControlDevice(InputAction.CallbackContext ctx)
 	{
