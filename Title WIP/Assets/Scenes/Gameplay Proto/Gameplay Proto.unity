@@ -863,6 +863,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player Character (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214208, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4422398640955214209, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1318,6 +1323,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: projectileOrbitDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: projectileMaxOrbitDistPerFrame
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: projectileMovementOrbitDist
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: projectileMovementInterpolation
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 4422398641901648830, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}

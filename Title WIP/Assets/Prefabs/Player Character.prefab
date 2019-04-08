@@ -598,7 +598,10 @@ MonoBehaviour:
   shotPrepSpeed: 20
   chargeupIterationSpeedMod: 20
   shotStrength: 50
-  projectileOrbitSpeed: 180
+  projectileOrbitDelta: {x: 0, y: 100, z: 0}
+  projectileMaxOrbitDistPerFrame: 10
+  projectileMovementOrbitDist: 2.5
+  projectileMovementInterpolation: 0.7
   projectileOrbitDist: 1
   projectileOrbitHeightMod: 1.25
   projectileRotationMin: 10

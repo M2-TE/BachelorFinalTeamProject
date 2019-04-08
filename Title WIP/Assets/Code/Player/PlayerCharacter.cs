@@ -36,8 +36,11 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private float chargeupIterationSpeedMod;
 	[SerializeField] private float shotStrength;
 
-	[Header("Projectile")]
-	[SerializeField] private float projectileOrbitSpeed;
+	[Header("Projectile Orbit")]
+	[SerializeField] private Vector3 projectileOrbitDelta;
+	[SerializeField] private float projectileMaxOrbitDistPerFrame;
+	[SerializeField] private float projectileMovementOrbitDist;
+	[SerializeField] private float projectileMovementInterpolation;
 	[SerializeField] private float projectileOrbitDist;
 	[SerializeField] private float projectileOrbitHeightMod;
 	[SerializeField] private float projectileRotationMin;
@@ -50,6 +53,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
 	private Vector2 movementInput;
 	private Vector2 aimInput;
+	private Quaternion currentCoreRotation = Quaternion.identity;
+	private Quaternion coreRotationDelta = Quaternion.identity;
 
 	private float currentJumpForce = 0f;
 	private float currentShotCooldown = 0f;
@@ -82,6 +87,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input = gameManager.InputMaster;
 		charController = GetComponent<CharacterController>();
 
+		coreRotationDelta = Quaternion.Euler(projectileOrbitDelta);
+
 		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 	}
 
@@ -90,13 +97,13 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateMovement();
 		UpdateLookRotation();
 
-		Projectile projectile;
-		for(int i = 0; i < loadedProjectiles.Count; i++)
-		{
-			projectile = loadedProjectiles[i];
-			UpdateProjectileOrbit(projectile);
-			UpdateProjectileRotation(projectile);
-		}
+		UpdateProjectileOrbit();
+		//Projectile projectile;
+		//for(int i = 0; i < loadedProjectiles.Count; i++)
+		//{
+		//	projectile = loadedProjectiles[i];
+		//	UpdateProjectileRotation(projectile);
+		//}
 
 		UpdateMiscValues();
 	}
@@ -118,7 +125,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			var projectile = loadedProjectiles[0];
 			loadedProjectiles.Remove(projectile);
-			StartCoroutine(StartShootingSequence(projectile));
+			Shoot(projectile);
 		}
 	}
 
@@ -193,13 +200,46 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		transform.rotation = Quaternion.LookRotation(new Vector3(lookDir.x, 0f, lookDir.y), transform.up);
 	}
 
-	private void UpdateProjectileOrbit(Projectile projectile)
+	private void UpdateProjectileOrbit()
 	{
-		var rotation = Quaternion.Euler(0f, projectileOrbitSpeed * Time.deltaTime, 0f);
+		//Projectile projectile;
+		//for (int i = 0; i < loadedProjectiles.Count; i++)
+		//{
+		//	projectile = loadedProjectiles[i];
 
-		var resultingOffset = rotation * ((projectile.transform.position - projectileOrbitCenter.position).normalized * projectileOrbitDist);
-		resultingOffset.y = (Mathf.PerlinNoise(Time.time, 0f) - .5f) * projectileOrbitHeightMod;
-		projectile.transform.position = projectileOrbitCenter.position + resultingOffset;
+		//	var rotation = Quaternion.Euler(0f, projectileOrbitSpeed * Time.deltaTime, 0f);
+
+		//	var resultingOffset = rotation * ((projectile.transform.position - projectileOrbitCenter.position).normalized * projectileOrbitDist);
+		//	resultingOffset.y = (Mathf.PerlinNoise(Time.time, 0f) - .5f) * projectileOrbitHeightMod;
+		//	projectile.transform.position = projectileOrbitCenter.position + resultingOffset;
+		//}
+
+		// calc current core rotation (a.k.a rotation that applies to all projectiles onto their individual ones)
+		currentCoreRotation = Quaternion.LerpUnclamped(currentCoreRotation, currentCoreRotation * coreRotationDelta, Time.deltaTime);
+
+		int numProjectiles = loadedProjectiles.Count;
+		Projectile projectile;
+		Vector3 targetPos;
+		for (int i = 0; i < loadedProjectiles.Count; i++)
+		{
+			projectile = loadedProjectiles[i];
+
+			Quaternion selfRotation = Quaternion.Euler(new Vector3(0f, (360 / numProjectiles) * i, 0f)) * currentCoreRotation;
+			Vector3 orbitVec = Vector3.forward * projectileOrbitDist;
+			orbitVec = selfRotation * orbitVec;
+			targetPos = projectileOrbitCenter.position + orbitVec;
+
+			if (movementInput.sqrMagnitude > .5f)
+			{
+				Vector3 targetPosTwo = transform.position + transform.up * projectileMovementOrbitDist;
+				targetPos = Vector3.Lerp(targetPos, targetPosTwo, projectileMovementInterpolation);
+			}
+
+			projectile.transform.position = Vector3.MoveTowards
+				(projectile.transform.position, 
+				targetPos, 
+				Vector3.Distance(projectile.transform.position, targetPos) * projectileMaxOrbitDistPerFrame * Time.deltaTime);
+		}
 	}
 
 	private void UpdateProjectileRotation(Projectile projectile)
@@ -216,30 +256,28 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		currentShotCooldown = currentShotCooldown > 0f ? currentShotCooldown - Time.deltaTime : 0f;
 	}
 
-	private IEnumerator StartShootingSequence(Projectile projectile)
+	private void Shoot(Projectile projectile)
 	{
 		// move projectile to launch position
-		SetProjectileEnabled(projectile, false);
-		for(int iteration = 0; projectile != null && Vector3.Distance(projectile.transform.position, projectileLaunchPos.position) > .2f; iteration++)
-		{
-			projectile.transform.position = Vector3.MoveTowards(projectile.transform.position,
-				projectileLaunchPos.position,
-				(shotPrepSpeed + iteration * chargeupIterationSpeedMod * Time.deltaTime) * Time.deltaTime);
+		//SetProjectileEnabled(projectile, false);
+		//for(int iteration = 0; projectile != null && Vector3.Distance(projectile.transform.position, projectileLaunchPos.position) > .2f; iteration++)
+		//{
+		//	projectile.transform.position = Vector3.MoveTowards(projectile.transform.position,
+		//		projectileLaunchPos.position,
+		//		(shotPrepSpeed + iteration * chargeupIterationSpeedMod * Time.deltaTime) * Time.deltaTime);
 
-			yield return null;
-		}
+		//	yield return null;
+		//}
 
-		if (projectile != null) // if projectile has not yet been destroyed
-		{
-			SetProjectileEnabled(projectile, true);
+		projectile.transform.position = projectileLaunchPos.transform.position;
+		SetProjectileEnabled(projectile, true);
 
-			// launch projectile in aim direction
-			var forceVec = projectileLaunchPos.position - transform.position;
-			forceVec.y = 0f;
-			projectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
+		// launch projectile in aim direction
+		var forceVec = projectileLaunchPos.position - transform.position;
+		forceVec.y = 0f;
+		projectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
 
-			projectile = null;
-		}
+		projectile = null;
 	}
 
 	public void TriggerDeath()
