@@ -307,5 +307,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			var projectile = hit.collider.GetComponent<Projectile>();
 			if (projectile.canPickup) PickupProjectile(projectile);
 		}
+		else if (hit.collider.CompareTag("PowerUp"))
+		{
+			Debug.Log("power up collected");
+			Destroy(hit.gameObject);
+		}
 	}
 }
