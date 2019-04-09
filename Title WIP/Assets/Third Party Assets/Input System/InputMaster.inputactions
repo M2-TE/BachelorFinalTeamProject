@@ -48,7 +48,7 @@
                 {
                     "name": "Jump",
                     "id": "a222af30-5322-4a60-9f99-50ffa77d96e2",
-                    "expectedControlLayout": "",
+                    "expectedControlLayout": "Button",
                     "continuous": true,
                     "passThrough": true,
                     "processors": "",
@@ -60,7 +60,7 @@
                     "id": "e6fc2243-b2ee-4b74-8965-1ccf8b038271",
                     "expectedControlLayout": "",
                     "continuous": true,
-                    "passThrough": true,
+                    "passThrough": false,
                     "processors": "",
                     "interactions": "Press",
                     "bindings": []
@@ -68,7 +68,7 @@
                 {
                     "name": "LockAim",
                     "id": "3d8b3dbd-e039-4a66-84f8-c52cbd53eba2",
-                    "expectedControlLayout": "",
+                    "expectedControlLayout": "Button",
                     "continuous": true,
                     "passThrough": true,
                     "processors": "",

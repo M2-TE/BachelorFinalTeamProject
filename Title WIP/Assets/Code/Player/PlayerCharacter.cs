@@ -17,21 +17,23 @@ public abstract class InputSystemMonoBehaviour : MonoBehaviour
 public class PlayerCharacter : InputSystemMonoBehaviour
 {
 	#region Fields
-	[SerializeField] private InputMaster inputMaster;
+	[SerializeField] private int controlDeviceIndex;
+	//[SerializeField] private InputMaster inputMaster;
 	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
 	[SerializeField] private GameObject projectilePrefab;
-	[SerializeField] private int controlDeviceIndex;
+	[SerializeField] private LineRenderer aimLineRenderer;
 
 	[Header("Combat")]
 	[SerializeField] private float movespeedMod;
 	[SerializeField] private float gravityMod; 
 	[SerializeField] private float jumpForce; 
 
+	[Space]
+	[SerializeField] private float aimLineLengthMax;
+	[SerializeField] private float parryCooldown;
 	[SerializeField] private float shotCooldown;
-	[SerializeField] private float shotPrepSpeed;
-	[SerializeField] private float chargeupIterationSpeedMod;
 	[SerializeField] private float shotStrength;
 
 	[Header("Projectile Orbit")]
@@ -61,9 +63,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private float currentJumpForce = 0f;
 	private float currentShotCooldown = 0f;
+	private float currentParryCooldown = 0f;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
+	private bool aimLockInputBlocked = false; //               \/
+	private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
 	#endregion
 
 	protected override void RegisterActions()
@@ -147,23 +152,38 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerJump(InputAction.CallbackContext ctx)
 	{
-		if(charController.isGrounded && IsMatchingDeviceID(ctx)) currentJumpForce = jumpForce;
+		if (charController.isGrounded && IsMatchingDeviceID(ctx)) currentJumpForce = jumpForce;
 	}
 
 	private void TriggerParry(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx)) parryAnimator.SetTrigger("ConstructParryShield");
+		if (currentParryCooldown == 0f && IsMatchingDeviceID(ctx))
+		{
+			parryAnimator.SetTrigger("ConstructParryShield");
+			currentParryCooldown = parryCooldown;
+		}
 	}
 
 	private void TriggerAimLock(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx)) aimLocked = !aimLocked;
+		if (IsMatchingDeviceID(ctx))
+		{
+			providingAimLockInputThisFrame = true;
+			if (!aimLockInputBlocked)
+			{
+				aimLocked = !aimLocked;
+				aimLockInputBlocked = true;
+			}
+		}
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx))
+		if (IsMatchingDeviceID(ctx) && currentShotCooldown == 0f)
+		{
+			currentShotCooldown = shotCooldown;
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+		}
 	}
 	#endregion
 
@@ -194,10 +214,22 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 				aimLocked = false;
 				return;
 			}
-			else lookDir = (aimLockTarget.transform.position - transform.position).normalized;
+
+			lookDir = (aimLockTarget.transform.position - transform.position).normalized;
+			lookDir.y = 0f;
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, aimLineLengthMax));
 		}
-		else if (aimInput.sqrMagnitude < .1f) return;
-		else lookDir = new Vector3(aimInput.x, 0f, aimInput.y);
+		else if (aimInput.sqrMagnitude < .1f)
+		{
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, 1f));
+			return;
+		}
+		else
+		{
+			lookDir = new Vector3(aimInput.x, 0f, aimInput.y);
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, aimInput.magnitude * aimLineLengthMax));
+		}
+
 
 		transform.rotation = Quaternion.LookRotation(lookDir, transform.up);
 	}
@@ -246,7 +278,11 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	
 	private void UpdateMiscValues()
 	{
-		currentShotCooldown = currentShotCooldown > 0f ? currentShotCooldown - Time.deltaTime : 0f;
+		if (!providingAimLockInputThisFrame && aimLockInputBlocked) aimLockInputBlocked = false;
+		providingAimLockInputThisFrame = false;
+
+		CountDownVal(ref currentShotCooldown);
+		CountDownVal(ref currentParryCooldown);
 	}
 
 	private void Shoot(Projectile projectile)
@@ -310,6 +346,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		projectile.collider.enabled = enableState;
 	}
 
+	private void CountDownVal(ref float val) => val = val > 0f ? val - Time.deltaTime : 0f;
 
 	private void OnControllerColliderHit(ControllerColliderHit hit) // pickup logic
 	{

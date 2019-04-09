@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Input System/InputMaster.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Third Party Assets/Input System/InputMaster.inputactions'
 
 using System;
 using UnityEngine;
