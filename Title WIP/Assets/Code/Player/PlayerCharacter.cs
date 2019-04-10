@@ -18,7 +18,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 {
 	#region Fields
 	[SerializeField] private int controlDeviceIndex;
-	//[SerializeField] private InputMaster inputMaster;
 	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
@@ -67,6 +66,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
+
+
 	private bool aimLockInputBlocked = false; //               \/
 	private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
 	#endregion
@@ -281,8 +282,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (!providingAimLockInputThisFrame && aimLockInputBlocked) aimLockInputBlocked = false;
 		providingAimLockInputThisFrame = false;
 
-		CountDownVal(ref currentShotCooldown);
-		CountDownVal(ref currentParryCooldown);
+		Utilities.CountDownVal(ref currentShotCooldown);
+		Utilities.CountDownVal(ref currentParryCooldown);
 	}
 
 	private void Shoot(Projectile projectile)
@@ -345,8 +346,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		projectile.rgb.useGravity = enableState;
 		projectile.collider.enabled = enableState;
 	}
-
-	private void CountDownVal(ref float val) => val = val > 0f ? val - Time.deltaTime : 0f;
 
 	private void OnControllerColliderHit(ControllerColliderHit hit) // pickup logic
 	{
