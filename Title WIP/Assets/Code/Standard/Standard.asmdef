@@ -1,0 +1,18 @@
+{
+    "name": "Standard",
+    "references": [
+        "GUID:0d9b5e2481b89ab459b707057cb9887d",
+        "GUID:1a6a79fb9f5b9d145b25d8381514a431",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:1262288369142064b9531eef3647adb6"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
