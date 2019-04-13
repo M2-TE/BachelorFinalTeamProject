@@ -200,8 +200,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			(camHorizontal * movementInput.x 
 			+ camVertical * movementInput.y, 1f) * mod; // move player relative to camera
 
-		movement.y = currentJumpForce += Physics.gravity.y * Time.deltaTime * gravityMod; // gravity and jumping
-		
+		movement.y = currentJumpForce += charController.isGrounded ? 0f : Physics.gravity.y * Time.deltaTime * gravityMod; // gravity and jumping
 		charController.Move(movement);
 	}
 
