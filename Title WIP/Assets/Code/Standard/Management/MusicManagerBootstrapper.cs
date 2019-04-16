@@ -1,8 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class MusicManagerBootstrapper : MonoBehaviour
+public class MusicManagerBootstrapper : Bootstrapper<MusicManager>
 {
+	private AudioSource ownAudioSource;
+	private MusicManager musicManager;
 
+	protected override void Awake()
+	{
+		base.Awake();
+		ownAudioSource = GetComponent<AudioSource>();
+	}
 }

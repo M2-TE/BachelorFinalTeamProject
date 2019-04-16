@@ -57,10 +57,3 @@ public sealed class GameManager
 	public PlayerCharacter RequestNearestPlayer(PlayerCharacter requestSender) // TODO improve this or dad will get the belt
 		=> registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
 }
-
-public abstract class Manager
-{
-	protected Manager() => GameManager.Instance.extendedUpdates.Add(ExtendedUpdate);
-
-	protected abstract void ExtendedUpdate();
-}

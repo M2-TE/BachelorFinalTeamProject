@@ -39,8 +39,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - ReflectionOnly
+  - IgnoreReflection
   m_SortingLayers:
   - name: Default
     uniqueID: 0
