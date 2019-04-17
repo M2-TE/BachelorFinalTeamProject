@@ -693,7 +693,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 2147499831
-  m_RenderingPath: 3
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3

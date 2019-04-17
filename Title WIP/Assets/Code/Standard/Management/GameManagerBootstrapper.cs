@@ -1,7 +1,7 @@
 ﻿using EZCameraShake;
 using UnityEngine;
 
-public class GameManagerBootstrapper : MonoBehaviour
+public class GameManagerBootstrapper : Bootstrapper
 {
 	public InputMaster InputMaster;
 	public Camera MainCam;

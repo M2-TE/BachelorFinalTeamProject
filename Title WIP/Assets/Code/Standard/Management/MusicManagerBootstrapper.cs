@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 
-public class MusicManagerBootstrapper : Bootstrapper<MusicManager>
+public class MusicManagerBootstrapper : Bootstrapper
 {
-	private AudioSource ownAudioSource;
-	private MusicManager musicManager;
-
-	protected override void Awake()
+	[SerializeField] internal AudioSource[] audioSources;
+	[SerializeField] internal float maxVolume = .2f;
+	
+	private void Awake()
 	{
-		base.Awake();
-		ownAudioSource = GetComponent<AudioSource>();
+		MusicManager.Instance.RegisterBootstrapper(this);
 	}
 }

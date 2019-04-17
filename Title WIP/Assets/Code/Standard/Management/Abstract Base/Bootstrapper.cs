@@ -1,11 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Bootstrapper<T> : MonoBehaviour where T : Manager
+public class Bootstrapper : MonoBehaviour
 {
-	private T bootstrapper;
 
-	protected virtual void Awake()
-	{
-		
-	}
 }

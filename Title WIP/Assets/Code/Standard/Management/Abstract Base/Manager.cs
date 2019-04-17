@@ -1,11 +1,9 @@
-﻿public abstract class Manager
+﻿public abstract class Manager<T> where T : Manager<T>, new()
 {
-	protected Manager() => GameManager.Instance.extendedUpdates.Add(ExtendedUpdate);
+	public Manager() => GameManager.Instance.extendedUpdates.Add(ExtendedUpdate);
 
-	protected virtual void Register()
-	{
-
-	}
+	private static T instance;
+	public static T Instance { get => instance ?? (instance = new T()); }
 
 	protected abstract void ExtendedUpdate();
 }
