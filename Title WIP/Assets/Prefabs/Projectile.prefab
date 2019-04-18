@@ -55,8 +55,8 @@ MeshRenderer:
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -124,6 +124,6 @@ MonoBehaviour:
   playerTag: Player
   wallTag: Wall
   velocityChangeOnWallHit: 0.1
-  canPickup: 0
+  actualVelocity: {x: 0, y: 0, z: 0}
   rgb: {fileID: 8900639728585163242}
   collider: {fileID: 8900639728585163243}

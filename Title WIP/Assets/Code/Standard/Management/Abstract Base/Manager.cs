@@ -5,5 +5,5 @@
 	private static T instance;
 	public static T Instance { get => instance ?? (instance = new T()); }
 
-	protected abstract void ExtendedUpdate();
+	protected virtual void ExtendedUpdate() { }
 }

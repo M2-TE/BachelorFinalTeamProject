@@ -3,7 +3,10 @@
 public class MusicManagerBootstrapper : Bootstrapper
 {
 	[SerializeField] internal AudioSource[] audioSources;
+	[SerializeField] internal AnimationCurve fadeInCurve;
+	[SerializeField] internal AnimationCurve fadeOutCurve;
 	[SerializeField] internal float maxVolume = .2f;
+	[SerializeField] internal float fadeDuration = 1f;
 	
 	private void Awake()
 	{

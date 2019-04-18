@@ -5,8 +5,11 @@ using UnityEngine;
 using UnityEngine.Experimental.Input;
 using Random = UnityEngine.Random;
 
-public abstract class InputSystemMonoBehaviour : MonoBehaviour
+public abstract class InputSystemMonoBehaviour : MonoBehaviour, ITeleportable
 {
+	private bool _canBeTeleported = true;
+	public bool CanBeTeleported { get => _canBeTeleported; set => _canBeTeleported = value; }
+
 	private void OnEnable() => RegisterActions();
 	private void OnDisable() => UnregisterActions();
 
@@ -307,7 +310,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		// launch projectile in aim direction
 		var forceVec = projectileLaunchPos.position - transform.position;
 		forceVec.y = 0f;
-		projectile.rgb.AddForce(forceVec.normalized * shotStrength, ForceMode.Impulse);
+
+		Vector3 shotVec = forceVec.normalized * shotStrength;
+		projectile.rgb.AddForce(shotVec, ForceMode.Impulse);
+		projectile.actualVelocity = shotVec; // for portal/wall bounces
 
 		projectile = null;
 	}
@@ -319,7 +325,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			SetProjectileEnabled(loadedProjectiles[i], true);
 			loadedProjectiles[i].rgb.constraints = RigidbodyConstraints.None;
-			loadedProjectiles[i].canPickup = true;
+			loadedProjectiles[i].CanPickup = true;
 		}
 
 		camShakeManager.ShakeMagnitude = deathShakeMagnitude;
@@ -331,7 +337,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		loadedProjectiles.Add(projectile);
 		SetProjectileEnabled(projectile, false);
-		projectile.canPickup = false;
+		projectile.CanPickup = false;
 	}
 
 	private bool IsMatchingDeviceID(InputAction.CallbackContext ctx)
@@ -354,7 +360,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if(hit.collider.CompareTag("Projectile"))
 		{
 			var projectile = hit.collider.GetComponent<Projectile>();
-			if (projectile.canPickup) PickupProjectile(projectile);
+			if (projectile.CanPickup) PickupProjectile(projectile);
 		}
 		else if (hit.collider.CompareTag("PowerUp"))
 		{
