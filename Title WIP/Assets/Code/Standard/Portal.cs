@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,48 +7,25 @@ public class Portal : MonoBehaviour
 {
 	[SerializeField] private Portal opposingPortal;
 	[SerializeField] private Transform postTeleportPosition;
-	[SerializeField] private float teleportCooldown = 1f;
 	[SerializeField] private float postTeleportForce = 30f;
-
-	private readonly List<ITeleportable> recentlyTeleportedObjects = new List<ITeleportable>();
-	private readonly List<float> recentlyTeleportedObjectsCooldowns = new List<float>();
-
-	private void Update()
-	{
-		int index = 0;
-		while(index < recentlyTeleportedObjectsCooldowns.Count)
-		{
-			if (recentlyTeleportedObjectsCooldowns[index] > 0f) recentlyTeleportedObjectsCooldowns[index] -= Time.deltaTime;
-			else
-			{
-				recentlyTeleportedObjects.RemoveAt(index);
-				recentlyTeleportedObjectsCooldowns.RemoveAt(index);
-			}
-
-			index++;
-		}
-	}
 
 	private void OnTriggerEnter(Collider other)
 	{
-		var teleBool = other.GetComponent<ITeleportable>();
-		if (teleBool != null && teleBool.CanBeTeleported)
+		var teleportable = other.GetComponent<ITeleportable>();
+		if (teleportable != null && teleportable.CanBeTeleported)
 		{
-			teleBool.CanBeTeleported = false;
-			recentlyTeleportedObjects.Add(teleBool);
-			recentlyTeleportedObjectsCooldowns.Add(teleportCooldown);
-
+			teleportable.CanBeTeleported = false;
+			StartCoroutine(ReenableTeleportation(teleportable));
 			opposingPortal.OnPortalEnter(this, other);
 		}
 	}
 
-	private void OnTriggerExit(Collider other)
+	private IEnumerator ReenableTeleportation(ITeleportable teleportable)
 	{
-		var teleBool = other.GetComponent<ITeleportable>();
-		if(teleBool != null && !recentlyTeleportedObjects.Contains(teleBool))
-		{
-			teleBool.CanBeTeleported = true;
-		}
+		var fixedUpdateWaiter = new WaitForFixedUpdate();
+		yield return fixedUpdateWaiter; // during this physics update, the object entered and exited the first teleporter collider
+		yield return fixedUpdateWaiter; // during this one, the object may have entered the teleporter collider of the opposing teleporter
+		teleportable.CanBeTeleported = true;
 	}
 
 	internal void OnPortalEnter(Portal senderPortal, Collider collider)
@@ -64,8 +42,14 @@ public class Portal : MonoBehaviour
 
 				Vector3 originalVelocity = projectile.actualVelocity;
 				Vector3 newVelocity = Vector3.Reflect(originalVelocity, transform.up);
-				newVelocity.y = 0f;
+				newVelocity.y = 0f; // keep vector in x,z and ignore y
+									
+				// rotate new velocity according to both portals' rotations
+				float rotationDiff = senderPortal.transform.rotation.eulerAngles.y - transform.rotation.eulerAngles.y;
+				Quaternion correctiveRotation = Quaternion.Euler(0f, rotationDiff, 0f);
+				newVelocity = correctiveRotation * newVelocity; 
 
+				// apply force
 				rgb.velocity = Vector3.zero;
 				rgb.AddForce(newVelocity.normalized * postTeleportForce, ForceMode.Impulse);
 				rgb.angularVelocity = Vector3.zero;

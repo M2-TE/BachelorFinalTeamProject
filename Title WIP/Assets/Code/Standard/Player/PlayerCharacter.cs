@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Input;
 using Random = UnityEngine.Random;
 
-public abstract class InputSystemMonoBehaviour : MonoBehaviour, ITeleportable
+public abstract class InputSystemMonoBehaviour : MonoBehaviour
 {
 	private bool _canBeTeleported = true;
 	public bool CanBeTeleported { get => _canBeTeleported; set => _canBeTeleported = value; }

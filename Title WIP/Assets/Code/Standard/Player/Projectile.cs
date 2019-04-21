@@ -22,9 +22,8 @@ public class Projectile : MonoBehaviour, ITeleportable
 	public Rigidbody rgb;
 	public new Collider collider;
 
-	private bool _canBeTeleported = true;
-	public bool CanBeTeleported { get => _canBeTeleported; set => _canBeTeleported = value; }
-	
+	public bool CanBeTeleported { get; set; } = true;
+
 	private void OnCollisionEnter(Collision collision)
 	{
 		var go = collision.gameObject;
@@ -39,7 +38,6 @@ public class Projectile : MonoBehaviour, ITeleportable
 			{
 				rgb.angularVelocity = Vector3.zero;
 				rgb.velocity = rgb.velocity.normalized * velocityChangeOnWallHit;
-				if (go.CompareTag(wallTag)) Debug.Log(CanPickup + " " + rgb.velocity);
 				CanPickup = true;
 			}
 		}
