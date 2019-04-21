@@ -315,6 +315,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		projectile.rgb.AddForce(shotVec, ForceMode.Impulse);
 		projectile.actualVelocity = shotVec; // for portal/wall bounces
 
+		projectile.InitialShooter = this;
+
 		projectile = null;
 	}
 

@@ -8,6 +8,7 @@ public class Portal : MonoBehaviour
 	[SerializeField] private Portal opposingPortal;
 	[SerializeField] private Transform postTeleportPosition;
 	[SerializeField] private float postTeleportForce = 30f;
+	[SerializeField] private bool autoTargetOtherPlayer;
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -36,6 +37,11 @@ public class Portal : MonoBehaviour
 			case "Projectile":
 				var projectile = collider.GetComponent<Projectile>();
 				projectile.CanPickup = false;
+
+				if (autoTargetOtherPlayer)
+				{
+					projectile.ExplicitTarget = GameManager.Instance.RequestNearestPlayer(projectile.InitialShooter);
+				}
 
 				var rgb = projectile.rgb;
 				rgb.MovePosition(postTeleportPosition.position);

@@ -18,9 +18,12 @@ public class Projectile : MonoBehaviour, ITeleportable
 		}
 	}
 
-	public Vector3 actualVelocity;
+	public Vector3 actualVelocity; // TODO update this value properly to handle portal physics
 	public Rigidbody rgb;
 	public new Collider collider;
+
+	public PlayerCharacter InitialShooter;
+	public PlayerCharacter ExplicitTarget;
 
 	public bool CanBeTeleported { get; set; } = true;
 
@@ -39,7 +42,19 @@ public class Projectile : MonoBehaviour, ITeleportable
 				rgb.angularVelocity = Vector3.zero;
 				rgb.velocity = rgb.velocity.normalized * velocityChangeOnWallHit;
 				CanPickup = true;
+				ExplicitTarget = null;
 			}
+		}
+	}
+
+	private void Update()
+	{
+		if(ExplicitTarget != null && !CanPickup)
+		{
+			Vector3 targetVelocity = Vector3.RotateTowards(rgb.velocity, (ExplicitTarget.transform.position - transform.position).normalized, 20f * Time.deltaTime, 0f);
+			rgb.velocity = targetVelocity;
+			//Vector3
+			//transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, 10f * Time.deltaTime);
 		}
 	}
 }
