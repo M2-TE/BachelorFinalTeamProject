@@ -9,6 +9,7 @@ public class Portal : MonoBehaviour
 	[SerializeField] private Transform postTeleportPosition;
 	[SerializeField] private float postTeleportForce = 30f;
 	[SerializeField] private bool autoTargetOtherPlayer;
+	[SerializeField] private float autoTargetPostForce = 17f;
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -55,10 +56,14 @@ public class Portal : MonoBehaviour
 				Quaternion correctiveRotation = Quaternion.Euler(0f, rotationDiff, 0f);
 				newVelocity = correctiveRotation * newVelocity; 
 
+				// set actual velocity
+				projectile.actualVelocity = newVelocity;
+
 				// apply force
 				rgb.velocity = Vector3.zero;
-				rgb.AddForce(newVelocity.normalized * postTeleportForce, ForceMode.Impulse);
+				rgb.AddForce(newVelocity.normalized * (autoTargetOtherPlayer ? autoTargetPostForce : postTeleportForce), ForceMode.Impulse);
 				rgb.angularVelocity = Vector3.zero;
+
 
 				//Debug.DrawRay(transform.position, originalVelocity, Color.green, 5f);
 				//Debug.DrawRay(transform.position, newVelocity, Color.red, 5f);
