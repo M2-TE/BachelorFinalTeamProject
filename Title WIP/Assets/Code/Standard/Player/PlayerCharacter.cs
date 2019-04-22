@@ -25,12 +25,16 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
 	[SerializeField] private GameObject projectilePrefab;
+	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
 
 	[Header("Combat")]
 	[SerializeField] private float movespeedMod;
-	[SerializeField] private float gravityMod; 
-	[SerializeField] private float jumpForce; 
+	[SerializeField] private float gravityMod;
+	[SerializeField] private float dashCooldown;
+	[SerializeField] private float dashDuration;
+	[SerializeField] private float dashSpeed;
+	[SerializeField] private float dashAfterImagePaddingTime;
 
 	[Space]
 	[SerializeField] private float aimLineLengthMax;
@@ -64,9 +68,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
 
-	private float currentJumpForce = 0f;
 	private float currentShotCooldown = 0f;
 	private float currentParryCooldown = 0f;
+	private float currentDashCooldown = 0f;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
@@ -81,7 +85,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Movement.performed += UpdateMovementControlled;
 		input.Player.Aim.performed += UpdateLookRotationControlled;
 		input.Player.Shoot.performed += TriggerShotControlled;
-		input.Player.Jump.performed += TriggerJump;
+		input.Player.Jump.performed += TriggerDash;
 		input.Player.Parry.performed += TriggerParry;
 		input.Player.LockAim.performed += TriggerAimLock;
 
@@ -93,7 +97,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Movement.performed -= UpdateMovementControlled;
 		input.Player.Aim.performed -= UpdateLookRotationControlled;
 		input.Player.Shoot.performed -= TriggerShotControlled;
-		input.Player.Jump.performed -= TriggerJump;
+		input.Player.Jump.performed -= TriggerDash;
 		input.Player.Parry.performed -= TriggerParry;
 		input.Player.LockAim.performed -= TriggerAimLock;
 
@@ -157,9 +161,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
-	private void TriggerJump(InputAction.CallbackContext ctx)
+	private void TriggerDash(InputAction.CallbackContext ctx)
 	{
-		if (charController.isGrounded && IsMatchingDeviceID(ctx)) currentJumpForce = jumpForce;
+		if (IsMatchingDeviceID(ctx) 
+			&& currentDashCooldown == 0f 
+			&& charController.velocity.sqrMagnitude > .1f)
+		{
+			currentDashCooldown = dashCooldown;
+			StartCoroutine(DashSequence());
+		}
 	}
 
 	private void TriggerParry(InputAction.CallbackContext ctx)
@@ -206,7 +216,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			(camHorizontal * movementInput.x 
 			+ camVertical * movementInput.y, 1f) * mod; // move player relative to camera
 
-		movement.y = currentJumpForce += charController.isGrounded ? 0f : Physics.gravity.y * Time.deltaTime * gravityMod; // gravity and jumping
+		//movement.y = currentJumpForce += charController.isGrounded ? 0f : Physics.gravity.y * gravityMod * Time.deltaTime; // gravity and jumping
+		
 		charController.Move(movement);
 	}
 
@@ -289,6 +300,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		Utilities.CountDownVal(ref currentShotCooldown);
 		Utilities.CountDownVal(ref currentParryCooldown);
+		Utilities.CountDownVal(ref currentDashCooldown);
 	}
 
 	private void Shoot(Projectile projectile)
@@ -355,6 +367,19 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		projectile.rgb.useGravity = enableState;
 		projectile.collider.enabled = enableState;
+	}
+
+	private IEnumerator DashSequence()
+	{
+		var main = afterImageParticleSystem.main;
+		main.duration = dashDuration + dashAfterImagePaddingTime;
+		afterImageParticleSystem.Play();
+
+		float baseSpeed = movespeedMod;
+		movespeedMod = dashSpeed;
+
+		yield return new WaitForSeconds(dashDuration);
+		movespeedMod = baseSpeed;
 	}
 
 	private void OnControllerColliderHit(ControllerColliderHit hit) // pickup logic
