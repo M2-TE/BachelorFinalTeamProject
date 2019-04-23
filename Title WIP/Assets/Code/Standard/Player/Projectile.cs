@@ -2,15 +2,8 @@
 
 public class Projectile : MonoBehaviour, ITeleportable
 {
-	[SerializeField] private string playerTag = "Player";
-	[SerializeField] private string wallTag = "Wall";
-	[SerializeField] private float maxRadiansOnAuto;
-	[SerializeField] private float velocityChangeOnWallHit;
-
-	public int bounces;
-	public bool explosive;
-	public bool tripleShotEnabled;
-
+	[SerializeField] private ProjectileSettings settings;
+	
 	private bool _canPickUp;
 	public bool CanPickup
 	{
@@ -23,12 +16,45 @@ public class Projectile : MonoBehaviour, ITeleportable
 		}
 	}
 
+	private int _bounces;
+	public int Bounces
+	{
+		get => _bounces;
+		set
+		{
+			_bounces = value;
+			UpdateActiveMaterial();
+		}
+	}
+
+	private bool _explosive;
+	public bool Explosive
+	{
+		get => _explosive;
+		set
+		{
+			_explosive = value;
+			UpdateActiveMaterial();
+		}
+	}
+
+	private PlayerCharacter _explicitTarget = null;
+	public PlayerCharacter ExplicitTarget
+	{
+		get => _explicitTarget;
+		set
+		{
+			_explicitTarget = value;
+			UpdateActiveMaterial();
+		}
+	}
+
 	public Vector3 actualVelocity; // TODO update this value properly to handle portal physics
 	public Rigidbody rgb;
 	public new Collider collider;
+	public new Renderer renderer;
 
 	public PlayerCharacter InitialShooter;
-	public PlayerCharacter ExplicitTarget;
 
 	public bool CanBeTeleported { get; set; } = true;
 
@@ -37,22 +63,22 @@ public class Projectile : MonoBehaviour, ITeleportable
 		var go = collision.gameObject;
 		if (!CanPickup)
 		{
-			if (go.CompareTag(playerTag))
+			if (go.CompareTag(settings.PlayerTag))
 			{
 				go.GetComponent<PlayerCharacter>().TriggerDeath();
 				Destroy(gameObject);
 			}
-			else if (go.CompareTag(wallTag) && CanBeTeleported)
+			else if (go.CompareTag(settings.WallTag) && CanBeTeleported)
 			{
-				if(bounces > 0)
+				if(Bounces > 0)
 				{
-					bounces--;
+					Bounces--;
 					actualVelocity = Vector3.Reflect(actualVelocity, collision.GetContact(0).normal);
 				}
 				else
 				{
 					rgb.angularVelocity = Vector3.zero;
-					rgb.velocity = rgb.velocity.normalized * velocityChangeOnWallHit;
+					rgb.velocity = rgb.velocity.normalized * settings.VelocityChangeOnWallHit;
 					CanPickup = true;
 					ExplicitTarget = null;
 				}
@@ -60,14 +86,43 @@ public class Projectile : MonoBehaviour, ITeleportable
 		}
 	}
 
+	private void Awake()
+	{
+		renderer = GetComponent<Renderer>();
+	}
+
 	private void Update()
 	{
 		if(ExplicitTarget != null && !CanPickup)
 		{
-			Vector3 targetVelocity = Vector3.RotateTowards(rgb.velocity, (ExplicitTarget.transform.position - transform.position).normalized, maxRadiansOnAuto * Time.deltaTime, 0f);
+			Vector3 targetVelocity = Vector3.RotateTowards
+				(rgb.velocity, 
+				(ExplicitTarget.transform.position - transform.position).normalized, settings.MaxRadiansOnAutoTarget * Time.deltaTime, 
+				0f);
 			rgb.velocity = targetVelocity;
 			//Vector3
 			//transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.identity, 10f * Time.deltaTime);
+		}
+	}
+
+	private void UpdateActiveMaterial()
+	{
+		if (_explicitTarget == null && !_explosive && _bounces == 0f) renderer.material = settings.StandardProjectileMaterial;
+
+		else if (_explicitTarget != null && !_explosive && _bounces == 0f)
+		{
+			Debug.Log("auto aim");
+			renderer.material = settings.AutoAimCubeMaterial;
+		}
+		else if (_explicitTarget == null && _explosive && _bounces == 0f)
+		{
+			Debug.Log("bomb");
+			renderer.material = settings.ExplosionCubeMaterial;
+		}
+		else if (_explicitTarget == null && !_explosive && _bounces != 0f)
+		{
+			Debug.Log("bounce");
+			renderer.material = settings.BounceCubeMaterial;
 		}
 	}
 }

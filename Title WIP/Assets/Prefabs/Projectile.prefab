@@ -121,10 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955c8ffc8d152c441b002644b314e717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTag: Player
-  wallTag: Wall
-  maxRadiansOnAuto: 7
-  velocityChangeOnWallHit: 0.1
+  settings: {fileID: 11400000, guid: ab4feec513b84b7409846cb37af34b5f, type: 2}
   bounces: 0
   explosive: 0
   tripleShotEnabled: 0

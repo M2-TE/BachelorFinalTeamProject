@@ -26,8 +26,8 @@ MonoBehaviour:
   OrbitDelta: {x: 0, y: 100, z: 0}
   MaxOrbitDist: 10
   MovementOrbit: 2.5
+  MovementInterpolation: 0.7
   OrbitDist: 1
-  OrbitHeightMod: 1.25
   RotationMin: 10
   RotationMax: 100
   ShotShakeMagnitude: 0.35

@@ -286,7 +286,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		Utilities.CountDownVal(ref currentParryCooldown);
 		Utilities.CountDownVal(ref currentDashCooldown);
 
-		if(activePowerUps.Count > 1)
+		if(activePowerUps.Count > 0)
 		{
 			bufferedKeys.AddRange(activePowerUps.Keys);
 			PowerUpType key;
@@ -403,15 +403,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		switch (powerUp)
 		{
 			case PowerUpType.Bomb:
-				projectile.explosive = true;
+				projectile.Explosive = true;
 				break;
 
 			case PowerUpType.Bounce:
-				projectile.bounces = 2;
+				projectile.Bounces = 2;
 				break;
 
-			case PowerUpType.TripleShot:
-				projectile.tripleShotEnabled = true;
+			case PowerUpType.AutoAim:
+				projectile.ExplicitTarget = gameManager.RequestNearestPlayer(this);
 				break;
 		}
 	}
@@ -431,15 +431,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		switch (powerUp)
 		{
 			case PowerUpType.Bomb:
-				projectile.explosive = false;
+				projectile.Explosive = false;
 				break;
 
 			case PowerUpType.Bounce:
-				projectile.bounces = 0;
+				projectile.Bounces = 0;
 				break;
 
-			case PowerUpType.TripleShot:
-				projectile.tripleShotEnabled = false;
+			case PowerUpType.AutoAim:
+				projectile.ExplicitTarget = null;
 				break;
 		}
 	}
