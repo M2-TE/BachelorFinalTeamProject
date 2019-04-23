@@ -123,7 +123,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTag: Player
   wallTag: Wall
+  maxRadiansOnAuto: 7
   velocityChangeOnWallHit: 0.1
+  bounces: 0
+  explosive: 0
+  tripleShotEnabled: 0
   actualVelocity: {x: 0, y: 0, z: 0}
   rgb: {fileID: 8900639728585163242}
   collider: {fileID: 8900639728585163243}
+  InitialShooter: {fileID: 0}
+  ExplicitTarget: {fileID: 0}

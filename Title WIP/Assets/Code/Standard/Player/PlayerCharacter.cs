@@ -21,6 +21,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 {
 	#region Fields
 	[SerializeField] private int controlDeviceIndex;
+	[SerializeField] private PlayerCharacterSettings settings;
+
+	[Space]
 	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
@@ -28,54 +31,29 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
 
-	[Header("Combat")]
-	[SerializeField] private float movespeedMod;
-	[SerializeField] private float gravityMod;
-	[SerializeField] private float dashCooldown;
-	[SerializeField] private float dashDuration;
-	[SerializeField] private float dashSpeed;
-	[SerializeField] private float dashAfterImagePaddingTime;
-
-	[Space]
-	[SerializeField] private float aimLineLengthMax;
-	[SerializeField] private float parryCooldown;
-	[SerializeField] private float shotCooldown;
-	[SerializeField] private float shotStrength;
-
-	[Header("Projectile Orbit")]
-	[SerializeField] private Vector3 projectileOrbitDelta;
-	[SerializeField] private float projectileMaxOrbitDistPerFrame;
-	[SerializeField] private float projectileMovementOrbitDist;
-	[SerializeField] private float projectileMovementInterpolation;
-	[SerializeField] private float projectileOrbitDist;
-	[SerializeField] private float projectileOrbitHeightMod;
-	[SerializeField] private float projectileRotationMin;
-	[SerializeField] private float projectileRotationMax;
-
-	[Header("Shake Magnitudes")]
-	[SerializeField] private float shotShakeMagnitude;
-	[SerializeField] private float deathShakeMagnitude; 
 
 	private GameManager gameManager;
 	private CamShakeManager camShakeManager;
 	private CharacterController charController;
 	private InputMaster input;
 
+	[NonSerialized] public readonly Dictionary<PowerUpType, float> activePowerUps = new Dictionary<PowerUpType, float>();
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
+	private readonly List<PowerUpType> bufferedKeys = new List<PowerUpType>();
 
 	private Vector2 movementInput;
 	private Vector2 aimInput;
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
 
+	private float currentMovespeed;
 	private float currentShotCooldown = 0f;
 	private float currentParryCooldown = 0f;
 	private float currentDashCooldown = 0f;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
-
-
+	
 	private bool aimLockInputBlocked = false; //               \/
 	private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
 	#endregion
@@ -110,12 +88,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		gameManager = GameManager.Instance;
 		input = gameManager.InputMaster;
 		gameManager.RegisterPlayerCharacter(this);
-
-
+		
 		charController = GetComponent<CharacterController>();
 
-		// convert core rotation v3 to quaternion
-		coreRotationDelta = Quaternion.Euler(projectileOrbitDelta);
+		InitializeFields();
 	}
 
 	private void Start()
@@ -152,8 +128,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsMatchingDeviceID(ctx))
 		{
-			camShakeManager.ShakeMagnitude = shotShakeMagnitude;
-			currentShotCooldown = shotCooldown;
+			camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
+			currentShotCooldown = settings.ShotCooldown;
 
 			var projectile = loadedProjectiles[0];
 			loadedProjectiles.Remove(projectile);
@@ -167,7 +143,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			&& currentDashCooldown == 0f 
 			&& charController.velocity.sqrMagnitude > .1f)
 		{
-			currentDashCooldown = dashCooldown;
+			currentDashCooldown = settings.DashCooldown;
 			StartCoroutine(DashSequence());
 		}
 	}
@@ -177,7 +153,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (currentParryCooldown == 0f && IsMatchingDeviceID(ctx))
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
-			currentParryCooldown = parryCooldown;
+			currentParryCooldown = settings.ParryCooldown;
 		}
 	}
 
@@ -198,11 +174,19 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (IsMatchingDeviceID(ctx) && currentShotCooldown == 0f)
 		{
-			currentShotCooldown = shotCooldown;
+			currentShotCooldown = settings.ShotCooldown;
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 		}
 	}
 	#endregion
+
+	private void InitializeFields()
+	{
+		currentMovespeed = settings.MovespeedMod;
+
+		// convert core rotation v3 to quaternion
+		coreRotationDelta = Quaternion.Euler(settings.OrbitDelta);
+	}
 
 	private void UpdateMovement()
 	{
@@ -211,7 +195,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		var camHorizontal = new Vector3(mainCam.transform.right.x, 0f, mainCam.transform.right.z).normalized;
 		var camVertical = new Vector3(mainCam.transform.forward.x, 0f, mainCam.transform.forward.z).normalized;
 
-		float mod = Time.deltaTime * movespeedMod;
+		float mod = Time.deltaTime * currentMovespeed;
 		var movement = Vector3.ClampMagnitude
 			(camHorizontal * movementInput.x 
 			+ camVertical * movementInput.y, 1f) * mod; // move player relative to camera
@@ -234,7 +218,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 			lookDir = (aimLockTarget.transform.position - transform.position).normalized;
 			lookDir.y = 0f;
-			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, aimLineLengthMax));
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, settings.AimLineLengthMax));
 		}
 		else if (aimInput.sqrMagnitude < .1f)
 		{
@@ -244,7 +228,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		else
 		{
 			lookDir = new Vector3(aimInput.x, 0f, aimInput.y);
-			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, aimInput.magnitude * aimLineLengthMax));
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, aimInput.magnitude * settings.AimLineLengthMax));
 		}
 
 
@@ -265,20 +249,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			Quaternion selfRotation = 
 				Quaternion.Euler(new Vector3(0f, (360 / loadedProjectiles.Count) * i, 0f)) 
 				* currentCoreRotation; // combine partial rotation with core rotation for this particles rotation around the orbit center
-			Vector3 orbitVec = Vector3.forward * projectileOrbitDist; // identity vector for all projectiles
+			Vector3 orbitVec = Vector3.forward * settings.OrbitDist; // identity vector for all projectiles
 			orbitVec = selfRotation * orbitVec; // vector from orbit center to target position (local space)
 			targetPos = projectileOrbitCenter.position + orbitVec;
 
 			if (movementInput.sqrMagnitude > .5f)
 			{
-				Vector3 targetPosTwo = transform.position + transform.up * projectileMovementOrbitDist;
-				targetPos = Vector3.Lerp(targetPos, targetPosTwo, projectileMovementInterpolation);
+				Vector3 targetPosTwo = transform.position + transform.up * settings.MovementOrbit;
+				targetPos = Vector3.Lerp(targetPos, targetPosTwo, settings.MovementInterpolation);
 			}
 
 			projectile.transform.position = Vector3.MoveTowards
 				(projectile.transform.position, 
 				targetPos, 
-				Vector3.Distance(projectile.transform.position, targetPos) * projectileMaxOrbitDistPerFrame * Time.deltaTime);
+				Vector3.Distance(projectile.transform.position, targetPos) * settings.MaxOrbitDist * Time.deltaTime);
 
 			UpdateProjectileRotation(projectile);
 		}
@@ -288,9 +272,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		projectile.transform.rotation *= 
 			Quaternion.Euler
-			(Random.Range(projectileRotationMin, projectileRotationMax) * Time.deltaTime, 
-			Random.Range(projectileRotationMin, projectileRotationMax) * Time.deltaTime, 
-			Random.Range(projectileRotationMin, projectileRotationMax) * Time.deltaTime);
+			(Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime, 
+			Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime, 
+			Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime);
 	}
 	
 	private void UpdateMiscValues()
@@ -301,6 +285,26 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		Utilities.CountDownVal(ref currentShotCooldown);
 		Utilities.CountDownVal(ref currentParryCooldown);
 		Utilities.CountDownVal(ref currentDashCooldown);
+
+		if(activePowerUps.Count > 1)
+		{
+			bufferedKeys.AddRange(activePowerUps.Keys);
+			PowerUpType key;
+			float val;
+			for (int i = 0; i < bufferedKeys.Count; i++)
+			{
+				key = bufferedKeys[i];
+				val = Utilities.CountDownVal(activePowerUps[key]);
+
+				if (val == 0f)
+				{
+					RemovePowerUp(key, loadedProjectiles);
+					activePowerUps.Remove(key);
+				}
+				else activePowerUps[key] = val;
+			}
+			bufferedKeys.Clear();
+		}
 	}
 
 	private void Shoot(Projectile projectile)
@@ -323,7 +327,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		var forceVec = projectileLaunchPos.position - transform.position;
 		forceVec.y = 0f;
 
-		Vector3 shotVec = forceVec.normalized * shotStrength;
+		Vector3 shotVec = forceVec.normalized * settings.ShotStrength;
 		projectile.rgb.AddForce(shotVec, ForceMode.Impulse);
 		projectile.actualVelocity = shotVec; // for portal/wall bounces
 
@@ -342,7 +346,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			loadedProjectiles[i].CanPickup = true;
 		}
 
-		camShakeManager.ShakeMagnitude = deathShakeMagnitude;
+		camShakeManager.ShakeMagnitude = settings.DeathShakeMagnitude;
 
 		Destroy(gameObject);
 	}
@@ -352,6 +356,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		loadedProjectiles.Add(projectile);
 		SetProjectileEnabled(projectile, false);
 		projectile.CanPickup = false;
+		ApplyPowerUp(activePowerUps.Keys, projectile);
 	}
 
 	private bool IsMatchingDeviceID(InputAction.CallbackContext ctx)
@@ -372,15 +377,83 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private IEnumerator DashSequence()
 	{
 		var main = afterImageParticleSystem.main;
-		main.duration = dashDuration + dashAfterImagePaddingTime;
+		main.duration = settings.DashDuration + settings.DashAfterimagePadding;
 		afterImageParticleSystem.Play();
 
-		float baseSpeed = movespeedMod;
-		movespeedMod = dashSpeed;
+		float baseSpeed = currentMovespeed;
+		currentMovespeed = settings.DashSpeed;
 
-		yield return new WaitForSeconds(dashDuration);
-		movespeedMod = baseSpeed;
+		yield return new WaitForSeconds(settings.DashDuration);
+		currentMovespeed = baseSpeed;
 	}
+
+	private void OnPowerUpCollect(PowerUpType type)
+	{
+		if (activePowerUps.ContainsKey(type)) activePowerUps[type] += settings.PowerUpDuration;
+		else
+		{
+			activePowerUps.Add(type, settings.PowerUpDuration);
+			ApplyPowerUp(type, loadedProjectiles);
+		}
+	}
+
+	#region PowerUpHandling
+	private void ApplyPowerUp(PowerUpType powerUp, Projectile projectile)
+	{
+		switch (powerUp)
+		{
+			case PowerUpType.Bomb:
+				projectile.explosive = true;
+				break;
+
+			case PowerUpType.Bounce:
+				projectile.bounces = 2;
+				break;
+
+			case PowerUpType.TripleShot:
+				projectile.tripleShotEnabled = true;
+				break;
+		}
+	}
+
+	private void ApplyPowerUp(PowerUpType powerUp, List<Projectile> projectiles)
+	{
+		for (int i = 0; i < projectiles.Count; i++) ApplyPowerUp(powerUp, projectiles[i]);
+	}
+
+	private void ApplyPowerUp(Dictionary<PowerUpType, float>.KeyCollection powerUps, Projectile projectile)
+	{
+		foreach (var key in powerUps) ApplyPowerUp(key, projectile);
+	}
+
+	private void RemovePowerUp(PowerUpType powerUp, Projectile projectile)
+	{
+		switch (powerUp)
+		{
+			case PowerUpType.Bomb:
+				projectile.explosive = false;
+				break;
+
+			case PowerUpType.Bounce:
+				projectile.bounces = 0;
+				break;
+
+			case PowerUpType.TripleShot:
+				projectile.tripleShotEnabled = false;
+				break;
+		}
+	}
+	
+	private void RemovePowerUp(PowerUpType powerUp, List<Projectile> projectiles)
+	{
+		for (int i = 0; i < projectiles.Count; i++) RemovePowerUp(powerUp, projectiles[i]);
+	}
+
+	private void RemovePowerUp(Dictionary<PowerUpType, float>.KeyCollection powerUps, Projectile projectile)
+	{
+		foreach (var key in powerUps) RemovePowerUp(key, projectile);
+	}
+	#endregion
 
 	private void OnControllerColliderHit(ControllerColliderHit hit) // pickup logic
 	{
@@ -391,7 +464,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 		else if (hit.collider.CompareTag("PowerUp"))
 		{
-			Debug.Log("power up collected");
+			OnPowerUpCollect(hit.gameObject.GetComponent<PowerUp>().type);
 			Destroy(hit.gameObject);
 		}
 	}

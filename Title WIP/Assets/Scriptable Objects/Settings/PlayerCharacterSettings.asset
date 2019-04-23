@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0ab0392f52bfe94388e7e0825f6a38f, type: 3}
+  m_Name: PlayerCharacterSettings
+  m_EditorClassIdentifier: 
+  ProjectilePrefab: {fileID: 8900639728585163244, guid: dc2e0ed5918ca324d953b4a4257d119c,
+    type: 3}
+  MovespeedMod: 8
+  DashCooldown: 5
+  DashDuration: 0.2
+  DashSpeed: 30
+  DashAfterimagePadding: 0.05
+  ParryCooldown: 5
+  ShotCooldown: 0.2
+  ShotStrength: 30
+  PowerUpDuration: 10
+  OrbitDelta: {x: 0, y: 100, z: 0}
+  MaxOrbitDist: 10
+  MovementOrbit: 2.5
+  OrbitDist: 1
+  OrbitHeightMod: 1.25
+  RotationMin: 10
+  RotationMax: 100
+  ShotShakeMagnitude: 0.35
+  DeathShakeMagnitude: 1
+  AimLineLengthMax: 3

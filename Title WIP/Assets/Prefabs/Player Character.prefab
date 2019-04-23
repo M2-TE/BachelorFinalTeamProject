@@ -125,7 +125,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 0
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -192,7 +192,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -942,7 +942,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 40
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5479,6 +5479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controlDeviceIndex: 0
+  settings: {fileID: 11400000, guid: 683932f6b9670d64dab3c0d16676d7a1, type: 2}
   parryAnimator: {fileID: 1758753373}
   projectileOrbitCenter: {fileID: 4422398640899422975}
   projectileLaunchPos: {fileID: 4422398640779122109}
@@ -5486,18 +5487,6 @@ MonoBehaviour:
     type: 3}
   afterImageParticleSystem: {fileID: 152710554}
   aimLineRenderer: {fileID: 159009995}
-  movespeedMod: 8
-  gravityMod: 0.05
-  jumpForce: 0.15
-  aimLineLengthMax: 3
-  parryCooldown: 5
-  shotCooldown: 0.2
-  shotStrength: 30
-  projectileOrbitDelta: {x: 0, y: 100, z: 0}
-  projectileMaxOrbitDistPerFrame: 10
-  projectileMovementOrbitDist: 2.5
-  projectileMovementInterpolation: 0.7
-  projectileOrbitDist: 1
   projectileOrbitHeightMod: 1.25
   projectileRotationMin: 10
   projectileRotationMax: 100
