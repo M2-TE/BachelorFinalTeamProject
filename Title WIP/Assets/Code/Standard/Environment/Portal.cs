@@ -5,11 +5,18 @@ using UnityEngine;
 
 public class Portal : MonoBehaviour
 {
+	[SerializeField] private PortalSettings portalSettings;
+
+	[Space]
+	public Transform postTeleportPosition;
 	[SerializeField] private Portal opposingPortal;
-	[SerializeField] private Transform postTeleportPosition;
-	[SerializeField] private float postTeleportForce = 30f;
-	[SerializeField] private bool autoTargetOtherPlayer;
-	[SerializeField] private float autoTargetPostForce = 17f;
+
+	[NonSerialized] public LineRenderer lineRenderer;
+
+	private void Awake()
+	{
+		if(opposingPortal != null && lineRenderer == null) ConnectPortals(opposingPortal);
+	}
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -30,7 +37,7 @@ public class Portal : MonoBehaviour
 		teleportable.CanBeTeleported = true;
 	}
 
-	internal void OnPortalEnter(Portal senderPortal, Collider collider)
+	private void OnPortalEnter(Portal senderPortal, Collider collider)
 	{
 		Vector3 offset = senderPortal.transform.position - collider.transform.position;
 		switch (collider.tag)
@@ -38,11 +45,6 @@ public class Portal : MonoBehaviour
 			case "Projectile":
 				var projectile = collider.GetComponent<Projectile>();
 				projectile.CanPickup = false;
-
-				if (autoTargetOtherPlayer)
-				{
-					projectile.ExplicitTarget = GameManager.Instance.RequestNearestPlayer(projectile.InitialShooter);
-				}
 
 				var rgb = projectile.rgb;
 				rgb.MovePosition(postTeleportPosition.position);
@@ -61,7 +63,7 @@ public class Portal : MonoBehaviour
 
 				// apply force
 				rgb.velocity = Vector3.zero;
-				rgb.AddForce(newVelocity.normalized * (autoTargetOtherPlayer ? autoTargetPostForce : postTeleportForce), ForceMode.Impulse);
+				rgb.AddForce(newVelocity.normalized * portalSettings.PostTeleportForce, ForceMode.Impulse);
 				rgb.angularVelocity = Vector3.zero;
 
 
@@ -73,5 +75,18 @@ public class Portal : MonoBehaviour
 				Debug.Log("Player Teleported");
 				break;
 		}
+	}
+	
+	public void ConnectPortals(Portal otherPortal)
+	{
+		opposingPortal = otherPortal;
+		otherPortal.opposingPortal = this;
+
+		// create line renderer connection
+		lineRenderer = Instantiate(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
+		opposingPortal.lineRenderer = lineRenderer;
+
+		lineRenderer.SetPosition(0, postTeleportPosition.position);
+		lineRenderer.SetPosition(1, otherPortal.postTeleportPosition.position);
 	}
 }
