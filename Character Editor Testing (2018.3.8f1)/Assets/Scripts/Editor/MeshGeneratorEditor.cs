@@ -36,5 +36,14 @@ public class MeshGeneratorEditor : Editor
         {
             myScript.RemoveShape();
         }
+
+        if (myScript.Generated)
+        {
+            if(GUILayout.Button("Optimize Mesh"))
+                myScript.OptimizeMesh();
+            GUILayout.Space(10);
+            if (GUILayout.Button("Save Mesh"))
+                myScript.SaveMesh(myScript.Character.name);
+        }
     }
 }

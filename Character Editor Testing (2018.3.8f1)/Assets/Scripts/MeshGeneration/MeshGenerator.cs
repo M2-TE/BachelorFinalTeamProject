@@ -17,6 +17,12 @@ public class MeshGenerator : MonoBehaviour
 
     private Vector3[] allPossibleVertices;
 
+    public bool Generated
+    {
+        get;
+        set;
+    }
+
     public void OnEditorStart()
     {
         if (Character == null)
@@ -49,6 +55,7 @@ public class MeshGenerator : MonoBehaviour
 
         CreateShape();
         UpdateMesh();
+        Generated = true;
     }
 
     //private void CreateShape()
@@ -92,14 +99,16 @@ public class MeshGenerator : MonoBehaviour
         {
             vertices = ExtractVerticesFromCubes(); // Always extract the vertices first!
             triangles = ExtractTrianglesFromCube();
-            OptimizeMesh();
         }
     }
 
     public void RemoveShape()
     {
         if(mesh != null)
+        {
             mesh.Clear();
+            Generated = false;
+        }
     }
 
     private void UpdateMesh()
@@ -142,8 +151,39 @@ public class MeshGenerator : MonoBehaviour
         return tris;
     }
 
-    private void OptimizeMesh()
+    public void OptimizeMesh()
     {
+
+    }
+
+    public void SaveMesh(string name)
+    {
+        AssetDatabase.SaveAssets();
+        if (mesh == null)
+        {
+            EditorUtility.DisplayDialog("No Mesh", "You must generate a Mesh to save it!", "Ok");
+            return;
+        }
+
+        var path = EditorUtility.SaveFilePanel("Save Mesh as Asset", Application.dataPath, name, "asset");
+        if (path.Length != 0)
+        {
+            try
+            {
+                path = "Assets" + path.Substring(Application.dataPath.Length);
+                if (AssetDatabase.Contains(mesh))
+                {
+                    CreateMeshInEditor();
+                }
+                AssetDatabase.CreateAsset(mesh, path);
+                return;
+            }
+            catch
+            {
+                Debug.Log("Failed to create Asset");
+            }
+        }
+        EditorUtility.DisplayDialog("No Path found", "The selected Path is invalid or could not be found!\nTipp: The Mesh has to be saved in the Asset folder of the project!", "Ok");
     }
 
     private void OnDrawGizmos()

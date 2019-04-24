@@ -132,6 +132,8 @@ public class CharacterCreatorEW : EditorWindow
 
         if (!AssetDatabase.Contains(character))
             AssetDatabase.CreateAsset(character, "Assets/" +characterName+ ".asset");
+        else
+            AssetDatabase.SaveAssets();
     }
 
     private void AddCube(Vector3 position)
