@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ProjectilePrefab: {fileID: 8900639728585163244, guid: dc2e0ed5918ca324d953b4a4257d119c,
     type: 3}
+  PortalPrefab: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
+    type: 3}
   MovespeedMod: 8
   DashCooldown: 5
   DashDuration: 0.2
@@ -32,4 +34,7 @@ MonoBehaviour:
   RotationMax: 100
   ShotShakeMagnitude: 0.35
   DeathShakeMagnitude: 1
+  TeleportCompatibleLayers:
+    serializedVersion: 2
+    m_Bits: 512
   AimLineLengthMax: 3

@@ -1882,6 +1882,21 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: controlDeviceIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: projectileRotationMin
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: projectileRotationMax
+      value: 100
+      objectReference: {fileID: 0}
     - target: {fileID: 4422398640955214209, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1941,21 +1956,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Radius
       value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
-        type: 3}
-      propertyPath: controlDeviceIndex
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
-        type: 3}
-      propertyPath: projectileRotationMin
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
-        type: 3}
-      propertyPath: projectileRotationMax
-      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4422398641901648830, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}
@@ -2813,7 +2813,6 @@ MonoBehaviour:
   playerOne: {fileID: 1904500802}
   playerTwo: {fileID: 758007747}
   centerOffset: {x: 0, y: -0.05}
-  updateTimeStep: 0.1
   targetMod: 10
   smoothTime: 0.2
   maxSpeed: 100
@@ -3033,7 +3032,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1900239292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3450,7 +3449,7 @@ PrefabInstance:
     - target: {fileID: 4510281192056092052, guid: 75371f8f3c1c2d9448af6747bd9be059,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.2
+      value: 1.112
       objectReference: {fileID: 0}
     - target: {fileID: 4510281192056092052, guid: 75371f8f3c1c2d9448af6747bd9be059,
         type: 3}
@@ -3491,6 +3490,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510281192056092052, guid: 75371f8f3c1c2d9448af6747bd9be059,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
         type: 3}

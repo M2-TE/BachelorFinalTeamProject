@@ -22,8 +22,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region Fields
 	[SerializeField] private int controlDeviceIndex;
 	[SerializeField] private PlayerCharacterSettings settings;
-	[SerializeField] private Material portalOneMat;
-	[SerializeField] private Material portalTwoMat;
 
 	[Space]
 	[SerializeField] private Animator parryAnimator;
@@ -32,13 +30,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
-
-
+	
 
 	private GameManager gameManager;
 	private CamShakeManager camShakeManager;
 	private CharacterController charController;
 	private InputMaster input;
+
+	private Portal portalOne;
+	private Portal portalTwo;
 
 	[NonSerialized] public readonly Dictionary<PowerUpType, float> activePowerUps = new Dictionary<PowerUpType, float>();
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
@@ -114,6 +114,48 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateProjectileOrbit();
 
 		UpdateMiscValues();
+
+		if (Input.GetKeyDown(KeyCode.Q) && controlDeviceIndex == 0)
+		{
+			if(Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers))
+			{
+				if (portalOne != null)
+				{
+					if (portalOne.lineRenderer != null) Destroy(portalOne.lineRenderer.gameObject);
+					Destroy(portalOne.gameObject);
+				}
+
+				float yRot = Vector3.Angle(Vector3.right, hit.normal);
+				var rotation = Quaternion.Euler(0f, yRot, 90f);
+				portalOne = Instantiate(settings.PortalPrefab, hit.point, rotation);
+
+				if(portalTwo != null)
+				{
+					portalTwo.ConnectPortals(portalOne);
+				}
+			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.R) && controlDeviceIndex == 0)
+		{
+			if (Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers))
+			{
+				if (portalTwo != null)
+				{
+					if (portalTwo.lineRenderer != null) Destroy(portalTwo.lineRenderer.gameObject);
+					Destroy(portalTwo.gameObject);
+				}
+
+				float yRot = Vector3.Angle(Vector3.right, hit.normal);
+				var rotation = Quaternion.Euler(0f, yRot, 90f);
+				portalTwo = Instantiate(settings.PortalPrefab, hit.point, rotation);
+
+				if (portalOne != null)
+				{
+					portalOne.ConnectPortals(portalOne);
+				}
+			}
+		}
 	}
 
 	#region InputSystem event calls

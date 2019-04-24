@@ -4,9 +4,9 @@
 public class PlayerCharacterSettings : ReadonlySettings
 {
 	public Projectile ProjectilePrefab;
+	public Portal PortalPrefab;
 
 	[Header("Movement")]
-	//public float gravityMod DEPRECATED
 	public float MovespeedMod = 8f;
 	public float DashCooldown = 5f;
 	public float DashDuration = .2f;
@@ -33,5 +33,6 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public float DeathShakeMagnitude = 1f;
 
 	[Header("Misc")]
+	public LayerMask TeleportCompatibleLayers;
 	public float AimLineLengthMax = 3f;
 }

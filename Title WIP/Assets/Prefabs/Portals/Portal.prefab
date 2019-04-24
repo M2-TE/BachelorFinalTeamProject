@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4510281192056092049}
   - component: {fileID: 7797214980430141086}
   m_Layer: 14
-  m_Name: Portal 1
+  m_Name: Portal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4510281192056092048}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -3.95, y: 1.061, z: -0.025}
-  m_LocalScale: {x: 1, y: 0.1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 0.01, z: 1}
   m_Children:
   - {fileID: 4510281193668096586}
   m_Father: {fileID: 0}
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ffe0192ee5f55a34699cb9d49773b9c4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -92,10 +92,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93e624b1ab263a44840d99479815afc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  opposingPortal: {fileID: 0}
+  portalSettings: {fileID: 11400000, guid: be032dd4f0c844442b85829fd6279970, type: 2}
   postTeleportPosition: {fileID: 4510281193668096586}
-  teleportCooldown: 1
-  postTeleportForce: 30
+  opposingPortal: {fileID: 0}
 --- !u!65 &7797214980430141086
 BoxCollider:
   m_ObjectHideFlags: 0
