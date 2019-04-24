@@ -69,6 +69,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Jump.performed += TriggerDash;
 		input.Player.Parry.performed += TriggerParry;
 		input.Player.LockAim.performed += TriggerAimLock;
+		input.Player.PortalOne.performed += TriggerPortalOne;
+		input.Player.PortalTwo.performed += TriggerPortalTwo;
 
 		input.Player.Debug.performed += TriggerDebugAction;
 	}
@@ -81,6 +83,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input.Player.Jump.performed -= TriggerDash;
 		input.Player.Parry.performed -= TriggerParry;
 		input.Player.LockAim.performed -= TriggerAimLock;
+		input.Player.PortalOne.performed -= TriggerPortalOne;
+		input.Player.PortalTwo.performed -= TriggerPortalTwo;
 
 		input.Player.Debug.performed -= TriggerDebugAction;
 	}
@@ -114,48 +118,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateProjectileOrbit();
 
 		UpdateMiscValues();
-
-		if (Input.GetKeyDown(KeyCode.Q) && controlDeviceIndex == 0)
-		{
-			if(Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers))
-			{
-				if (portalOne != null)
-				{
-					if (portalOne.lineRenderer != null) Destroy(portalOne.lineRenderer.gameObject);
-					Destroy(portalOne.gameObject);
-				}
-
-				float yRot = Vector3.Angle(Vector3.right, hit.normal);
-				var rotation = Quaternion.Euler(0f, yRot, 90f);
-				portalOne = Instantiate(settings.PortalPrefab, hit.point, rotation);
-
-				if(portalTwo != null)
-				{
-					portalTwo.ConnectPortals(portalOne);
-				}
-			}
-		}
-
-		if (Input.GetKeyDown(KeyCode.R) && controlDeviceIndex == 0)
-		{
-			if (Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers))
-			{
-				if (portalTwo != null)
-				{
-					if (portalTwo.lineRenderer != null) Destroy(portalTwo.lineRenderer.gameObject);
-					Destroy(portalTwo.gameObject);
-				}
-
-				float yRot = Vector3.Angle(Vector3.right, hit.normal);
-				var rotation = Quaternion.Euler(0f, yRot, 90f);
-				portalTwo = Instantiate(settings.PortalPrefab, hit.point, rotation);
-
-				if (portalOne != null)
-				{
-					portalOne.ConnectPortals(portalOne);
-				}
-			}
-		}
 	}
 
 	#region InputSystem event calls
@@ -213,6 +175,16 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 				aimLockInputBlocked = true;
 			}
 		}
+	}
+
+	private void TriggerPortalOne(InputAction.CallbackContext ctx)
+	{
+		if (IsMatchingDeviceID(ctx)) CreatePortal(0);
+	}
+
+	private void TriggerPortalTwo(InputAction.CallbackContext ctx)
+	{
+		if (IsMatchingDeviceID(ctx)) CreatePortal(1);
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
@@ -430,6 +402,44 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		yield return new WaitForSeconds(settings.DashDuration);
 		currentMovespeed = baseSpeed;
+	}
+
+	private void CreatePortal(int portalID)
+	{
+		if (!Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers)) return;
+		float yRot;
+		Quaternion rotation;
+
+		switch (portalID)
+		{
+			case 0:
+				if (portalOne != null)
+				{
+					if (portalOne.lineRenderer != null) Destroy(portalOne.lineRenderer.gameObject);
+					Destroy(portalOne.gameObject);
+				}
+
+				yRot = Vector3.Angle(Vector3.right, hit.normal);
+				rotation = Quaternion.Euler(0f, yRot, 90f);
+				portalOne = Instantiate(settings.PortalPrefab, hit.point, rotation);
+
+				if (portalTwo != null) portalTwo.ConnectPortals(portalOne);
+				break;
+
+			case 1:
+				if (portalTwo != null)
+				{
+					if (portalTwo.lineRenderer != null) Destroy(portalTwo.lineRenderer.gameObject);
+					Destroy(portalTwo.gameObject);
+				}
+
+				yRot = Vector3.Angle(Vector3.right, hit.normal);
+				rotation = Quaternion.Euler(0f, yRot, 90f);
+				portalTwo = Instantiate(settings.PortalPrefab, hit.point, rotation);
+
+				if (portalOne != null) portalOne.ConnectPortals(portalTwo);
+				break;
+		}
 	}
 
 	private void OnPowerUpCollect(PowerUpType type)

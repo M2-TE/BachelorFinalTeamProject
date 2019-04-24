@@ -22,8 +22,8 @@ MonoBehaviour:
   DashSpeed: 30
   DashAfterimagePadding: 0.05
   ParryCooldown: 5
-  ShotCooldown: 0.2
-  ShotStrength: 30
+  ShotCooldown: 0.15
+  ShotStrength: 25
   PowerUpDuration: 10
   OrbitDelta: {x: 0, y: 100, z: 0}
   MaxOrbitDist: 10

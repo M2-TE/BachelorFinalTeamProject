@@ -74,6 +74,26 @@
                     "processors": "",
                     "interactions": "Press",
                     "bindings": []
+                },
+                {
+                    "name": "PortalOne",
+                    "id": "bc00c7c3-0cad-40d6-906a-2ea88a5eea69",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "PortalTwo",
+                    "id": "6169c624-d227-4892-9cc3-73cdc09b809b",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
                 }
             ],
             "bindings": [
@@ -163,6 +183,32 @@
                     "processors": "",
                     "groups": ";MainGamepadScheme",
                     "action": "LockAim",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "ebf8b1cb-2387-4b11-866b-b433ac036c06",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "Press(pressPoint=1)",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "PortalOne",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "31076c64-faf2-4870-a4be-2b0e9bd666f2",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "Press(pressPoint=1)",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "PortalTwo",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,
