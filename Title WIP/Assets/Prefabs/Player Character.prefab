@@ -942,7 +942,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 40
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5480,6 +5480,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controlDeviceIndex: 0
   settings: {fileID: 11400000, guid: 683932f6b9670d64dab3c0d16676d7a1, type: 2}
+  portalOneMat: {fileID: 0}
+  portalTwoMat: {fileID: 0}
   parryAnimator: {fileID: 1758753373}
   projectileOrbitCenter: {fileID: 4422398640899422975}
   projectileLaunchPos: {fileID: 4422398640779122109}
@@ -5487,11 +5489,6 @@ MonoBehaviour:
     type: 3}
   afterImageParticleSystem: {fileID: 152710554}
   aimLineRenderer: {fileID: 159009995}
-  projectileOrbitHeightMod: 1.25
-  projectileRotationMin: 10
-  projectileRotationMax: 100
-  shotShakeMagnitude: 0.35
-  deathShakeMagnitude: 1
 --- !u!1 &4422398641255969907
 GameObject:
   m_ObjectHideFlags: 0

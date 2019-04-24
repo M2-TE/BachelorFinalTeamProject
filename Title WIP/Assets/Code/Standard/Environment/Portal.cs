@@ -70,7 +70,7 @@ public class Portal : MonoBehaviour
 				break;
 
 			case "Player":
-
+				Debug.Log("Player Teleported");
 				break;
 		}
 	}

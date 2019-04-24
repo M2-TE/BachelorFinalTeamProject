@@ -22,3 +22,9 @@ MonoBehaviour:
   ExplosionCubeMaterial: {fileID: 2100000, guid: 944e79c048b5bf2479b2257a2cf820a8,
     type: 2}
   AutoAimCubeMaterial: {fileID: 2100000, guid: 8b9e58953805fec42b8899432e14f4a4, type: 2}
+  BounceAndExplosionCombinedMaterial: {fileID: 2100000, guid: df7ab149af6295f4ab3c57753a949908,
+    type: 2}
+  AutoAimAndBounceCombinedMaterial: {fileID: 2100000, guid: 47dca24efc8d38447b15cc23f4a6077e,
+    type: 2}
+  AutoAimAndExplosionCombinedMaterial: {fileID: 2100000, guid: 92fa47b2067831b4296bb918b5bf4af6,
+    type: 2}

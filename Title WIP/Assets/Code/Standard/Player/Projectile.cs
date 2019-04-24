@@ -109,20 +109,20 @@ public class Projectile : MonoBehaviour, ITeleportable
 	{
 		if (_explicitTarget == null && !_explosive && _bounces == 0f) renderer.material = settings.StandardProjectileMaterial;
 
-		else if (_explicitTarget != null && !_explosive && _bounces == 0f)
+		else if (_explicitTarget != null)
 		{
-			Debug.Log("auto aim");
-			renderer.material = settings.AutoAimCubeMaterial;
+			if (_explosive && _bounces != 0f) renderer.material = settings.StandardProjectileMaterial; // COMBINED MAT HERE
+			else if (_explosive) renderer.material = settings.AutoAimAndExplosionCombinedMaterial;
+			else if (_bounces != 0f) renderer.material = settings.AutoAimAndBounceCombinedMaterial;
+			else renderer.material = settings.AutoAimCubeMaterial;
 		}
-		else if (_explicitTarget == null && _explosive && _bounces == 0f)
+
+		else if (_explosive)
 		{
-			Debug.Log("bomb");
-			renderer.material = settings.ExplosionCubeMaterial;
+			if (_bounces != 0f) renderer.material = settings.BounceAndExplosionCombinedMaterial;
+			else renderer.material = settings.ExplosionCubeMaterial;
 		}
-		else if (_explicitTarget == null && !_explosive && _bounces != 0f)
-		{
-			Debug.Log("bounce");
-			renderer.material = settings.BounceCubeMaterial;
-		}
+
+		else if (_bounces != 0f) renderer.material = settings.BounceCubeMaterial;
 	}
 }

@@ -22,6 +22,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region Fields
 	[SerializeField] private int controlDeviceIndex;
 	[SerializeField] private PlayerCharacterSettings settings;
+	[SerializeField] private Material portalOneMat;
+	[SerializeField] private Material portalTwoMat;
 
 	[Space]
 	[SerializeField] private Animator parryAnimator;
@@ -30,6 +32,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
+
 
 
 	private GameManager gameManager;
@@ -200,8 +203,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			(camHorizontal * movementInput.x 
 			+ camVertical * movementInput.y, 1f) * mod; // move player relative to camera
 
-		//movement.y = currentJumpForce += charController.isGrounded ? 0f : Physics.gravity.y * gravityMod * Time.deltaTime; // gravity and jumping
-		
+		movement.y = charController.isGrounded ? 0f : Physics.gravity.y * Time.deltaTime;
+
 		charController.Move(movement);
 	}
 

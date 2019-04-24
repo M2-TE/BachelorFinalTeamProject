@@ -10,7 +10,12 @@ public class ProjectileSettings : ReadonlySettings
 	public float VelocityChangeOnWallHit = .1f;
 
 	public Material StandardProjectileMaterial;
+
 	public Material BounceCubeMaterial;
 	public Material ExplosionCubeMaterial;
 	public Material AutoAimCubeMaterial;
+
+	public Material BounceAndExplosionCombinedMaterial;
+	public Material AutoAimAndBounceCombinedMaterial;
+	public Material AutoAimAndExplosionCombinedMaterial;
 }
