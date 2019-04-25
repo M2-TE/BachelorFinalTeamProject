@@ -3,6 +3,8 @@
 [CreateAssetMenu(fileName = "ProjectileSettings", menuName = "Settings/Projectile", order = 1)]
 public class ProjectileSettings : ReadonlySettings
 {
+	public GameObject ExplosionPrefab;
+
 	public string PlayerTag = "Player";
 	public string WallTag = "Wall";
 

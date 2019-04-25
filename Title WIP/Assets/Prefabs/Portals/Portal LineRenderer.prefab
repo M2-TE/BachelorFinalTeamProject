@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8519512186411254195}
   - component: {fileID: 8519512186411254194}
-  m_Layer: 31
+  m_Layer: 14
   m_Name: Portal LineRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}

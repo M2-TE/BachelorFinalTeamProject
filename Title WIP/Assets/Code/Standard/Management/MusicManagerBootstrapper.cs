@@ -3,6 +3,9 @@
 public class MusicManagerBootstrapper : Bootstrapper
 {
 	[SerializeField] internal AudioSource[] audioSources;
+	[SerializeField] internal float[] debugBPMs;
+
+	[Space]
 	[SerializeField] internal AnimationCurve fadeInCurve;
 	[SerializeField] internal AnimationCurve fadeOutCurve;
 	[SerializeField] internal float maxVolume = .2f;

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
+using UnityEngine.Experimental.Input.Haptics;
 
 public sealed class GameManager
 {
@@ -33,14 +34,19 @@ public sealed class GameManager
 
 	public delegate void ExtendedUpdate();
 
-	public readonly List<int> registeredControlDeviceIDs = new List<int>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>();
 
 	private void RegisterControlDevice(InputAction.CallbackContext ctx)
 	{
-		if(!registeredControlDeviceIDs.Contains(ctx.control.device.id))
-			registeredControlDeviceIDs.Add(ctx.control.device.id); // register new device ID
+		for (int i = 0; i < registeredPlayerCharacters.Count; i++)
+		{
+			if (registeredPlayerCharacters[i].InputDevice == null)
+			{
+				registeredPlayerCharacters[i].InputDevice = ctx.control.device;
+				break;
+			}
+		}
 	}
 
 	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper) => this.bootstrapper = bootstrapper;

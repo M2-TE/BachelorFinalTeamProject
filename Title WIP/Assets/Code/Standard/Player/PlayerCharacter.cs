@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
+using UnityEngine.Experimental.Input.Haptics;
+using UnityEngine.Experimental.Input.Plugins.Users;
 using Random = UnityEngine.Random;
 
 public abstract class InputSystemMonoBehaviour : MonoBehaviour
@@ -20,7 +22,6 @@ public abstract class InputSystemMonoBehaviour : MonoBehaviour
 public class PlayerCharacter : InputSystemMonoBehaviour
 {
 	#region Fields
-	[SerializeField] private int controlDeviceIndex;
 	[SerializeField] private PlayerCharacterSettings settings;
 
 	[Space]
@@ -30,7 +31,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
-	
+
+	private DualMotorRumble rumble;
+	private InputUser inputUser;
+	private InputDevice _inputDevice;
+	public InputDevice InputDevice
+	{
+		get => _inputDevice;
+		set
+		{
+			_inputDevice = value;
+
+			inputUser = InputUser.PerformPairingWithDevice(value, options: InputUserPairingOptions.UnpairCurrentDevicesFromUser);
+		}
+	}
 
 	private GameManager gameManager;
 	private CamShakeManager camShakeManager;
@@ -123,17 +137,17 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region InputSystem event calls
 	private void UpdateMovementControlled(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx)) movementInput = ctx.ReadValue<Vector2>();
+		if (_inputDevice == ctx.control.device) movementInput = ctx.ReadValue<Vector2>();
 	}
 
 	private void UpdateLookRotationControlled(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx)) aimInput = ctx.ReadValue<Vector2>();
+		if (_inputDevice == ctx.control.device) aimInput = ctx.ReadValue<Vector2>();
 	}
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
 	{
-		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsMatchingDeviceID(ctx))
+		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && _inputDevice == ctx.control.device)
 		{
 			camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
 			currentShotCooldown = settings.ShotCooldown;
@@ -146,7 +160,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerDash(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx) 
+		if (_inputDevice == ctx.control.device
 			&& currentDashCooldown == 0f 
 			&& charController.velocity.sqrMagnitude > .1f)
 		{
@@ -157,7 +171,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerParry(InputAction.CallbackContext ctx)
 	{
-		if (currentParryCooldown == 0f && IsMatchingDeviceID(ctx))
+		if (currentParryCooldown == 0f && _inputDevice == ctx.control.device)
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
 			currentParryCooldown = settings.ParryCooldown;
@@ -166,7 +180,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerAimLock(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx))
+		if (_inputDevice == ctx.control.device)
 		{
 			providingAimLockInputThisFrame = true;
 			if (!aimLockInputBlocked)
@@ -179,17 +193,17 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerPortalOne(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx)) CreatePortal(0);
+		if (_inputDevice == ctx.control.device) CreatePortal(0);
 	}
 
 	private void TriggerPortalTwo(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx)) CreatePortal(1);
+		if (_inputDevice == ctx.control.device) CreatePortal(1);
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
-		if (IsMatchingDeviceID(ctx) && currentShotCooldown == 0f)
+		if (_inputDevice == ctx.control.device && currentShotCooldown == 0f)
 		{
 			currentShotCooldown = settings.ShotCooldown;
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
@@ -374,12 +388,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		SetProjectileEnabled(projectile, false);
 		projectile.CanPickup = false;
 		ApplyPowerUp(activePowerUps.Keys, projectile);
-	}
-
-	private bool IsMatchingDeviceID(InputAction.CallbackContext ctx)
-	{
-		return gameManager.registeredControlDeviceIDs.Count > controlDeviceIndex
-			&& ctx.control.device.id == gameManager.registeredControlDeviceIDs[controlDeviceIndex];
 	}
 
 	private void SetProjectileEnabled(Projectile projectile, bool enableState)

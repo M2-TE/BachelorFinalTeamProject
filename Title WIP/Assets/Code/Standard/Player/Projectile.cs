@@ -70,13 +70,17 @@ public class Projectile : MonoBehaviour, ITeleportable
 			}
 			else if (go.CompareTag(settings.WallTag) && CanBeTeleported)
 			{
-				if(Bounces > 0)
+				if (_explosive) Instantiate(settings.ExplosionPrefab, collision.contacts[0].point, Quaternion.identity);
+
+				if (Bounces > 0)
 				{
 					Bounces--;
 					actualVelocity = Vector3.Reflect(actualVelocity, collision.GetContact(0).normal);
 				}
 				else
 				{
+					if (_explosive) Explosive = false;
+
 					rgb.angularVelocity = Vector3.zero;
 					rgb.velocity = rgb.velocity.normalized * settings.VelocityChangeOnWallHit;
 					CanPickup = true;

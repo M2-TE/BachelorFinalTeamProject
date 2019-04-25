@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cc9f6efebba5e74fb58fc4bbc36ee8a, type: 3}
   m_Name: ProjectileSettings
   m_EditorClassIdentifier: 
+  ExplosionPrefab: {fileID: 5205195383275880991, guid: d34b149c596d4594eb48456c3e47f629,
+    type: 3}
   PlayerTag: Player
   WallTag: Wall
   MaxRadiansOnAutoTarget: 3
