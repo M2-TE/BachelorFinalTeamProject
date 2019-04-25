@@ -39,8 +39,8 @@ public class MeshGeneratorEditor : Editor
 
         if (myScript.Generated)
         {
-            if(GUILayout.Button("Optimize Mesh"))
-                myScript.OptimizeMesh();
+            if(GUILayout.Button("Reset UVs"))
+                myScript.ConfigureUVCoords();
             GUILayout.Space(10);
             if (GUILayout.Button("Save Mesh"))
                 myScript.SaveMesh(myScript.Character.name);

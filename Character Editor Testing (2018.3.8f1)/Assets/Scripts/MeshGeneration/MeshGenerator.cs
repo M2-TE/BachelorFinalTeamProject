@@ -98,7 +98,8 @@ public class MeshGenerator : MonoBehaviour
         if(cubes != null)
         {
             vertices = ExtractVerticesFromCubes(); // Always extract the vertices first!
-            triangles = ExtractTrianglesFromCube();
+            //triangles = ExtractTrianglesFromCube();
+            triangles = ExtractOptimizedTrianglesFromCubes();
         }
     }
 
@@ -118,7 +119,9 @@ public class MeshGenerator : MonoBehaviour
         mesh.vertices = vertices;
         mesh.triangles = triangles;
 
+        mesh.RecalculateBounds();
         mesh.RecalculateNormals();
+        mesh.RecalculateTangents();
         //MeshUtility.Optimize(mesh);
     }
 
@@ -151,9 +154,74 @@ public class MeshGenerator : MonoBehaviour
         return tris;
     }
 
-    public void OptimizeMesh()
+    private int[] ExtractOptimizedTrianglesFromCubes()
     {
+        List<int> tris = new List<int>();
+        for (int amount = 0; amount < cubes.Length; amount++)
+        {
+            for (int direction = 0,position = 0; direction < 6; direction++)
+            {
+                for (int pos = 0; pos < 6; pos++, position++)
+                {
+                    if (!HasNeighbor(direction, Character.CubePositions[amount]))
+                        tris.Add(PositionOfItemInArray(vertices, ScaleVector3(cubes[amount].Vertices[cubes[amount].Triangles[position]])));
+                }
+            }
+        }
+        return tris.ToArray();
+    }
 
+    private void OptimizeVertices()
+    {
+        // Fehlend
+    }
+
+    private bool HasNeighbor(int side, Vector3Int position) // 0Front, 1Back, 2Left, 3Right, 4Up, 5Down
+    {
+        switch (side)
+        {
+            case 0:
+                return HasCubeAt(position + new Vector3Int(0, 0, 1));
+            case 1:
+                return HasCubeAt(position + new Vector3Int(0, 0, -1));
+            case 2:
+                return HasCubeAt(position + new Vector3Int(1, 0, 0));
+            case 3:
+                return HasCubeAt(position + new Vector3Int(-1, 0, 0));
+            case 4:
+                return HasCubeAt(position + new Vector3Int(0, 1, 0));
+            case 5:
+                return HasCubeAt(position + new Vector3Int(0, -1, 0));
+            default:
+                Debug.Log("Error");
+                break;
+        }
+        return false;
+    }
+
+    private bool HasCubeAt(Vector3Int pos)
+    {
+        for (int i = 0; i < Character.CubePositions.Length; i++)
+        {
+            if (Character.CubePositions[i].Equals(pos))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void ConfigureUVCoords()
+    {
+        if (mesh == null)
+            return;
+        Vector2[] uvs = new Vector2[mesh.vertices.Length];
+
+        for (int i = 0; i < uvs.Length; i++)
+        {
+            uvs[i] = new Vector2(vertices[i].x+ 0.25f, vertices[i].z+0.25f);
+        }
+        mesh.uv = uvs;
     }
 
     public void SaveMesh(string name)
