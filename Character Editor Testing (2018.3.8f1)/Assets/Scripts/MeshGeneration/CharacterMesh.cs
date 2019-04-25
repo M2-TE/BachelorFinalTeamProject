@@ -9,4 +9,10 @@ public class CharacterMesh : ScriptableObject
     public Vector3Int Dimesion;
     public Vector3Int[] CubePositions; // should be changed to internal when done debugging
 
+    public CharacterMesh()
+    {
+        Dimesion = new Vector3Int(1, 2, 1);
+        CubePositions = new Vector3Int[0];
+    }
+    
 }

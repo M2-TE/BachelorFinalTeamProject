@@ -19,20 +19,24 @@ public class CharacterCreatorEW : EditorWindow
     private bool characterTypeChosen = false;
     private Tool currentTool = Tool.Additive;
 
+    private string characterName = "New Character";
+    private CharacterMesh character;
+    private List<Vector3Int> currentCubes = new List<Vector3Int>();
+
     private void OnGUI()
     {
         GUILayout.Space(20);
         if (!characterTypeChosen)
         {
-            GUILayout.Label("What kind of character do you want to create?");
-            if (GUILayout.Button("Humanoid"))
+            GUILayout.Label("Do you wish to create a new character\nor work on an already exsisting one?");
+            if (GUILayout.Button("Already exsisting character"))
             {
                 OpenEditScene();
                 characterTypeChosen = true;
 
                 Debug.Log("Not implemented yet");
             }
-            if (GUILayout.Button("Alien"))
+            if (GUILayout.Button("New character"))
             {
                 OpenEditScene();
                 characterTypeChosen = true;
@@ -41,6 +45,18 @@ public class CharacterCreatorEW : EditorWindow
         }
         else
         {
+            GUILayout.Label("Give your character a unique name:");
+            characterName = GUILayout.TextField(characterName, 20);
+
+            GUILayout.Space(10);
+
+            if (GUILayout.Button("Save"))
+            {
+                SaveCharacter();
+            }
+
+            GUILayout.Space(20);
+
             if (GUILayout.Button("Back"))
             {
                 CloseEditScene();
@@ -49,7 +65,10 @@ public class CharacterCreatorEW : EditorWindow
         }
         
         GUILayout.Space(60);
-
+        if (GUILayout.Button("RemoveMistakes"))
+        {
+            DestroyImmediate(GameObject.Find("New Character"));
+        }
         if (GUILayout.Button("Close Editor"))
         {
             Close();
@@ -76,15 +95,17 @@ public class CharacterCreatorEW : EditorWindow
             Ray ray = HandleUtility.GUIPointToWorldRay(Event.current.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 100) && hit.transform.gameObject.GetComponent<CharacterCubeModule>())
             {
-                Debug.Log(Event.current.mousePosition);
                 if (currentTool.Equals(Tool.Additive))
                 {
                     Handles.DrawWireCube(hit.transform.position + hit.normal, Vector3.one);
-
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        AddCube((hit.transform.position + hit.normal));
                 }
                 else if (currentTool.Equals(Tool.Subtractive))
                 {
                     Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        RemoveCube(hit.collider.gameObject);
                 }
             }
         }
@@ -97,6 +118,40 @@ public class CharacterCreatorEW : EditorWindow
         var primCube = new PrimitiveCube();
         primCube.transform.parent = newCharacter.transform;
         primCube.gameObject.GetComponent<CharacterCubeModule>().editable = false;
+
+        character = new CharacterMesh();
+        currentCubes.Add(Vector3Int.zero);
+    }
+
+    private void SaveCharacter()
+    {
+        if (character == null)
+            return;
+        character.CubePositions = currentCubes.ToArray();
+        character.Dimesion = CalcDimensions(currentCubes.ToArray());
+
+        if (!AssetDatabase.Contains(character))
+            AssetDatabase.CreateAsset(character, "Assets/" +characterName+ ".asset");
+        else
+            AssetDatabase.SaveAssets();
+    }
+
+    private void AddCube(Vector3 position)
+    {
+        var primCube = new PrimitiveCube();
+        primCube.transform.parent = newCharacter.transform;
+        primCube.transform.position = position;
+
+        currentCubes.Add(ConvertVec(position));
+    }
+
+    private void RemoveCube(GameObject Cube)
+    {
+        if(Cube.GetComponent<CharacterCubeModule>() && Cube.GetComponent<CharacterCubeModule>().editable)
+        {
+            currentCubes.Remove(ConvertVec(Cube.transform.position));
+            DestroyImmediate(Cube);
+        }
     }
 
     private void OnDestroy()
@@ -140,10 +195,34 @@ public class CharacterCreatorEW : EditorWindow
         SceneView.onSceneGUIDelegate -= Instance.OnScene;
         if (EditorUtility.DisplayDialog("Save Character Before Closing?", "Do you wish to save the current character in a file before exiting the editor?\nWARNING: Unsaved changes will disappear!", "Save", "Discard Changes"))
         {
-            Debug.Log("Character Saved In A File");
+            Instance.SaveCharacter();
         }
         EditorSceneManager.CloseScene(Instance.currentWorkingScene, true);
     }
 
+    private static Vector3Int CalcDimensions(Vector3Int[] cubes)
+    {
+        int highestDimension = 1;
+
+        for (int x = 0; x < cubes.Length; x++)
+        {
+            highestDimension = cubes[x].x > highestDimension+1 ? cubes[x].x : highestDimension;
+        }
+        for (int z = 0; z < cubes.Length; z++)
+        {
+            highestDimension = cubes[z].z > highestDimension+1 ? cubes[z].z : highestDimension;
+        }
+        for (int y = 0; y < cubes.Length; y++)
+        {
+            highestDimension = (int)cubes[y].y/2 > highestDimension+1 ? (int)(cubes[y].y / 2) : highestDimension;
+        }
+
+        return new Vector3Int(highestDimension, highestDimension * 2, highestDimension);
+    }
+
+    private static Vector3Int ConvertVec(Vector3 vector)
+    {
+        return new Vector3Int((int)vector.x, (int)vector.y, (int)vector.z);
+    }
     #endregion
 }
