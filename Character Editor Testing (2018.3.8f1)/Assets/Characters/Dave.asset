@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19560a802c3062b4ca940096836a46c4, type: 3}
   m_Name: Dave
   m_EditorClassIdentifier: 
-  Dimesion: {x: 1, y: 2, z: 1}
+  Dimesion: {x: 3, y: 6, z: 3}
   CubePositions:
   - {x: 0, y: 0, z: 0}
   - {x: 1, y: 0, z: 0}
