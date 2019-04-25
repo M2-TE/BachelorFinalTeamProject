@@ -9,6 +9,11 @@ using UnityEngine.SceneManagement;
 [InitializeOnLoad]
 public class CharacterCreatorEW : EditorWindow
 {
+    [SerializeField] private Material standart;
+    [SerializeField] private Material red;
+    [SerializeField] private Material green;
+    [SerializeField] private Material blue;
+
     public static CharacterCreatorEW Instance { get; private set; }
     public static bool Open => Instance != null;
 
@@ -88,6 +93,22 @@ public class CharacterCreatorEW : EditorWindow
         {
             currentTool = Tool.Subtractive;
         }
+        if (GUI.Button(new Rect(20, 130, 100, 20), "Color White"))
+        {
+            currentTool = Tool.White;
+        }
+        if (GUI.Button(new Rect(20, 160, 100, 20), "Color Red"))
+        {
+            currentTool = Tool.Red;
+        }
+        if (GUI.Button(new Rect(20, 190, 100, 20), "Color Green"))
+        {
+            currentTool = Tool.Green;
+        }
+        if (GUI.Button(new Rect(20, 220, 100, 20), "Color Blue"))
+        {
+            currentTool = Tool.Blue;
+        }
         GUI.Label(new Rect(sceneview.position.size.x/2 - 100, 10, 200, 40), "Edit Mode: "+currentTool.ToString(), new GUIStyle() { alignment = TextAnchor.MiddleCenter });
         Handles.EndGUI();
         if (Event.current != null)
@@ -106,6 +127,30 @@ public class CharacterCreatorEW : EditorWindow
                     Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
                     if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
                         RemoveCube(hit.collider.gameObject);
+                }
+                else if (currentTool.Equals(Tool.White))
+                {
+                    Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        hit.collider.GetComponent<MeshRenderer>().material = standart;
+                }
+                else if (currentTool.Equals(Tool.Red))
+                {
+                    Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        hit.collider.GetComponent<MeshRenderer>().material = red;
+                }
+                else if (currentTool.Equals(Tool.Green))
+                {
+                    Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        hit.collider.GetComponent<MeshRenderer>().material = green;
+                }
+                else if (currentTool.Equals(Tool.Blue))
+                {
+                    Handles.DrawWireCube(hit.transform.position, new Vector3(1, 1, 1));
+                    if (Event.current.type == EventType.MouseDown && Event.current.button == 0)
+                        hit.collider.GetComponent<MeshRenderer>().material = blue;
                 }
             }
         }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Tool { Additive, Subtractive, Save }
+public enum Tool { Additive, Subtractive, White, Red, Green, Blue }
 
 public class CAction
 {

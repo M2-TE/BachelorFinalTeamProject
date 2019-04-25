@@ -217,9 +217,12 @@ public class MeshGenerator : MonoBehaviour
             return;
         Vector2[] uvs = new Vector2[mesh.vertices.Length];
 
-        for (int i = 0; i < uvs.Length; i++)
+        for (int i = 0; i < uvs.Length; )
         {
-            uvs[i] = new Vector2(vertices[i].x+ 0.25f, vertices[i].z+0.25f);
+            for (int tVerts = 0; tVerts < 3; tVerts++,i++)
+            {
+                uvs[i] = new Vector2(.125f,.125f);
+            }
         }
         mesh.uv = uvs;
     }

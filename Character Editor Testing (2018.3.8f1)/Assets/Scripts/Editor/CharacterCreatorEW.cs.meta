@@ -4,9 +4,11 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - m_PersistentViewDataDictionary: {instanceID: 0}
-  - NewCharacterPrefab: {fileID: 49354527042518087, guid: b1d59b96fa0666440933d70bcded3e16,
-      type: 3}
+  - m_ViewDataDictionary: {instanceID: 0}
+  - standart: {fileID: 2100000, guid: a318ad1ca4435474c8d3e8aab60082cb, type: 2}
+  - red: {fileID: 2100000, guid: 88e8d5a32d5cdb44589771e91f314fbf, type: 2}
+  - green: {fileID: 2100000, guid: ebb3b54e4e7220f49bc739f73aae63ed, type: 2}
+  - blue: {fileID: 2100000, guid: 8b42748ca6e234b459060b422c6e6240, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
