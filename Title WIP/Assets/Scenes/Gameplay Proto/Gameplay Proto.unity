@@ -730,7 +730,7 @@ ReflectionProbe:
   m_Mode: 1
   m_RefreshMode: 1
   m_TimeSlicingMode: 2
-  m_Resolution: 1024
+  m_Resolution: 512
   m_UpdateFrequency: 0
   m_BoxSize: {x: 500, y: 70, z: 500}
   m_BoxOffset: {x: 0, y: 0, z: 0}
@@ -741,7 +741,7 @@ ReflectionProbe:
   m_BackGroundColor: {r: 0.15, g: 0.15, b: 0.15, a: 0}
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1073774391
+    m_Bits: 1073774080
   m_IntensityMultiplier: 1
   m_BlendDistance: 1
   m_HDR: 1
@@ -1420,7 +1420,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967061172}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

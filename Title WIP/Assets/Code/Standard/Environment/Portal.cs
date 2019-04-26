@@ -20,6 +20,7 @@ public class Portal : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
+		if (opposingPortal == null) return;
 		var teleportable = other.GetComponent<ITeleportable>();
 		if (teleportable != null && teleportable.CanBeTeleported)
 		{

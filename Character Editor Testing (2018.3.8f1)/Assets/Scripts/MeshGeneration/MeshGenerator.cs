@@ -122,6 +122,7 @@ public class MeshGenerator : MonoBehaviour
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
         mesh.RecalculateTangents();
+		
         //MeshUtility.Optimize(mesh);
     }
 
