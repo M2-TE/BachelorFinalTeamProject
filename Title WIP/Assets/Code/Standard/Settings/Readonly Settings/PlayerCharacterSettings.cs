@@ -6,6 +6,9 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public Projectile ProjectilePrefab;
 	public Portal PortalPrefab;
 
+	[Header("Audio")]
+	public AudioClip[] ProjectileShotSounds;
+
 	[Header("Movement")]
 	public float MovespeedMod = 8f;
 	public float DashCooldown = 5f;

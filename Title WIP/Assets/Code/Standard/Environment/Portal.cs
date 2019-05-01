@@ -67,6 +67,7 @@ public class Portal : MonoBehaviour
 				rgb.AddForce(newVelocity.normalized * portalSettings.PostTeleportForce, ForceMode.Impulse);
 				rgb.angularVelocity = Vector3.zero;
 
+				OneShotAudioManager.PlayOneShotAudio(portalSettings.teleportationSounds, transform.position, 1f);
 
 				//Debug.DrawRay(transform.position, originalVelocity, Color.green, 5f);
 				//Debug.DrawRay(transform.position, newVelocity, Color.red, 5f);

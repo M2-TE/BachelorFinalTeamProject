@@ -4,6 +4,7 @@
 public class PortalSettings : ReadonlySettings
 {
 	public GameObject portalConnectorPrefab;
+	public AudioClip[] teleportationSounds;
 
 	[Space]
 	public float PostTeleportForce = 30f;

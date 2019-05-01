@@ -16,6 +16,10 @@ MonoBehaviour:
     type: 3}
   PortalPrefab: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
     type: 3}
+  ProjectileShotSounds:
+  - {fileID: 8300000, guid: 7d8a95ac94df5b64fa7aef13a9836dc4, type: 3}
+  - {fileID: 8300000, guid: 7b2b9d37cf6bcd944afd88344c2a278e, type: 3}
+  - {fileID: 8300000, guid: 56535d4100b61fa4ebdfefa69afd60a8, type: 3}
   MovespeedMod: 8
   DashCooldown: 5
   DashDuration: 0.2

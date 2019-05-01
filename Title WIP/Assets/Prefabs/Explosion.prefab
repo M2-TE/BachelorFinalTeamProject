@@ -38,11 +38,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5205195383275880990}
     m_Modifications:
-    - target: {fileID: 1844833887834637911, guid: 70cdedd28d734464c8bfe7533012a3f2,
-        type: 3}
-      propertyPath: m_Name
-      value: Icosphere
-      objectReference: {fileID: 0}
     - target: {fileID: 2054033367612346495, guid: 70cdedd28d734464c8bfe7533012a3f2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -98,6 +93,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1844833887834637911, guid: 70cdedd28d734464c8bfe7533012a3f2,
+        type: 3}
+      propertyPath: m_Name
+      value: Icosphere
+      objectReference: {fileID: 0}
     - target: {fileID: 2690028849579069901, guid: 70cdedd28d734464c8bfe7533012a3f2,
         type: 3}
       propertyPath: m_Center.x
@@ -112,6 +112,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Center.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3170315216137568011, guid: 70cdedd28d734464c8bfe7533012a3f2,
+        type: 3}
+      propertyPath: DespawnTimer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 70cdedd28d734464c8bfe7533012a3f2, type: 3}

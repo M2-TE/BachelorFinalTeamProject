@@ -365,6 +365,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		projectile.InitialShooter = this;
 
 		projectile = null;
+
+		OneShotAudioManager.PlayOneShotAudio(settings.ProjectileShotSounds, projectileLaunchPos.position);
 	}
 
 	public void TriggerDeath()

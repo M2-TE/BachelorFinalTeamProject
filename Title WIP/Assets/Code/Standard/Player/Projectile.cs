@@ -70,16 +70,22 @@ public class Projectile : MonoBehaviour, ITeleportable
 			}
 			else if (go.CompareTag(settings.WallTag) && CanBeTeleported)
 			{
-				if (_explosive) Instantiate(settings.ExplosionPrefab, collision.contacts[0].point, Quaternion.identity);
+				if (_explosive)
+				{
+					Instantiate(settings.ExplosionPrefab, collision.contacts[0].point, Quaternion.identity);
+					OneShotAudioManager.PlayOneShotAudio(settings.explosionSounds, transform.position, 1f);
+				}
 
 				if (Bounces > 0)
 				{
 					Bounces--;
 					actualVelocity = Vector3.Reflect(actualVelocity, collision.GetContact(0).normal);
+					OneShotAudioManager.PlayOneShotAudio(settings.wallBounceSounds, transform.position, 1f);
 				}
 				else
 				{
 					if (_explosive) Explosive = false;
+					else OneShotAudioManager.PlayOneShotAudio(settings.wallHitSounds, transform.position, 1f);
 
 					rgb.angularVelocity = Vector3.zero;
 					rgb.velocity = rgb.velocity.normalized * settings.VelocityChangeOnWallHit;

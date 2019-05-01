@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   portalConnectorPrefab: {fileID: 8519512186411254193, guid: 5aa11c4b66056b6478c8d9c42be9e83e,
     type: 3}
+  teleportationSounds:
+  - {fileID: 8300000, guid: 7b3c966d47ff4de428927469a07d7ba5, type: 3}
   PostTeleportForce: 30
   AutoTargetPostForce: 17

@@ -2681,6 +2681,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2004806958}
     m_Modifications:
+    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
+        type: 3}
+      propertyPath: opposingPortal
+      value: 
+      objectReference: {fileID: 1116461494}
+    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
+        type: 3}
+      propertyPath: autoTargetOtherPlayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
+        type: 3}
+      propertyPath: portalSettings
+      value: 
+      objectReference: {fileID: 11400000, guid: be032dd4f0c844442b85829fd6279970,
+        type: 2}
     - target: {fileID: 4510281192056092048, guid: 75371f8f3c1c2d9448af6747bd9be059,
         type: 3}
       propertyPath: m_Name
@@ -2746,22 +2762,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
-    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
-        type: 3}
-      propertyPath: opposingPortal
-      value: 
-      objectReference: {fileID: 1116461494}
-    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
-        type: 3}
-      propertyPath: autoTargetOtherPlayer
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
-        type: 3}
-      propertyPath: portalSettings
-      value: 
-      objectReference: {fileID: 11400000, guid: be032dd4f0c844442b85829fd6279970,
-        type: 2}
     - target: {fileID: 4510281192056092050, guid: 75371f8f3c1c2d9448af6747bd9be059,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -3436,6 +3436,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2004806958}
     m_Modifications:
+    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
+        type: 3}
+      propertyPath: opposingPortal
+      value: 
+      objectReference: {fileID: 1005907821}
     - target: {fileID: 4510281192056092048, guid: 75371f8f3c1c2d9448af6747bd9be059,
         type: 3}
       propertyPath: m_Name
@@ -3501,10 +3506,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
-    - target: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
-        type: 3}
-      propertyPath: opposingPortal
-      value: 
-      objectReference: {fileID: 1005907821}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75371f8f3c1c2d9448af6747bd9be059, type: 3}
