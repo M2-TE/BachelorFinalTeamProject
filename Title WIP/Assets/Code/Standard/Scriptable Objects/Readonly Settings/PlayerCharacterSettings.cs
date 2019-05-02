@@ -8,6 +8,7 @@ public class PlayerCharacterSettings : ReadonlySettings
 
 	[Header("Audio")]
 	public AudioClip[] ProjectileShotSounds;
+	public AudioClip[] PlayerDeathSounds;
 
 	[Header("Movement")]
 	public float MovespeedMod = 8f;

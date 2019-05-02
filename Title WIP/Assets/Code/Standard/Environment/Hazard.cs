@@ -8,7 +8,7 @@ public class Hazard : MonoBehaviour
 	private IEnumerator Start()
 	{
 		yield return new WaitForSeconds(DespawnTimer);
-		Destroy(transform.parent.gameObject);
+		Destroy(gameObject);
 	}
 
 	private void OnTriggerEnter(Collider other)

@@ -25,6 +25,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private PlayerCharacterSettings settings;
 
 	[Space]
+	[SerializeField] private bool DebugKBControlsActive = false;
+
 	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
@@ -50,6 +52,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private CamShakeManager camShakeManager;
 	private CharacterController charController;
 	private InputMaster input;
+
 
 	private Portal portalOne;
 	private Portal portalTwo;
@@ -126,6 +129,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void Update()
 	{
+		if (DebugKBControlsActive) DebugKeyboardInput();
 		UpdateMovement();
 		UpdateLookRotation();
 
@@ -135,6 +139,51 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	}
 
 	#region InputSystem event calls
+	private void DebugKeyboardInput()
+	{
+		movementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+
+		if (Input.GetKeyDown(KeyCode.E) && loadedProjectiles.Count > 0)
+		{
+			camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
+			currentShotCooldown = settings.ShotCooldown;
+
+			var projectile = loadedProjectiles[0];
+			loadedProjectiles.Remove(projectile);
+			Shoot(projectile);
+		}
+
+		if(Input.GetKeyDown(KeyCode.Q))
+		{
+			parryAnimator.SetTrigger("ConstructParryShield");
+			currentParryCooldown = settings.ParryCooldown;
+		}
+
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			currentShotCooldown = settings.ShotCooldown;
+			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+		}
+
+		if(Input.GetKeyDown(KeyCode.F))
+		{
+			aimLocked = !aimLocked;
+			aimLockInputBlocked = true;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Y)) CreatePortal(0);
+		else if (Input.GetKeyDown(KeyCode.X)) CreatePortal(1);
+
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			if (currentDashCooldown == 0f && charController.velocity.sqrMagnitude > .1f)
+			{
+				currentDashCooldown = settings.DashCooldown;
+				StartCoroutine(DashSequence());
+			}
+		}
+	}
+
 	private void UpdateMovementControlled(InputAction.CallbackContext ctx)
 	{
 		if (_inputDevice == ctx.control.device) movementInput = ctx.ReadValue<Vector2>();
@@ -381,6 +430,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		camShakeManager.ShakeMagnitude = settings.DeathShakeMagnitude;
 
+
+		OneShotAudioManager.PlayOneShotAudio(settings.PlayerDeathSounds, transform.position);
 		Destroy(gameObject);
 	}
 
