@@ -8,7 +8,7 @@ public sealed class EssentialsLoader
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 	static void AfterSceneLoad()
 	{
-		Debug.Log("After Scene Load");
+
 	}
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -24,12 +24,12 @@ public sealed class EssentialsLoader
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
 	static void AfterAssembliesLoaded()
 	{
-		Debug.Log("After Assemblies Loaded");
+
 	}
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
 	static void BeforeSplashScreen()
 	{
-		Debug.Log("Before Splash Screen");
+
 	}
 }
