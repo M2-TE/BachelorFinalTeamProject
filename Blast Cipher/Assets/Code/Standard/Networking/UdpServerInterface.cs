@@ -1,18 +1,17 @@
 ﻿using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Networking
 {
-	class UdpServer
+	class UdpServerInterface
 	{
 		private UdpClient Client;
 		private IPEndPoint _listenOn;
 
-		public UdpServer() : this(new IPEndPoint(IPAddress.Any, 32123)) { }
+		public UdpServerInterface() : this(new IPEndPoint(IPAddress.Any, 32123)) { }
 
-		public UdpServer(IPEndPoint endpoint)
+		public UdpServerInterface(IPEndPoint endpoint)
 		{
 			_listenOn = endpoint;
 			Client = new UdpClient(_listenOn);
@@ -23,11 +22,11 @@ namespace Networking
 			Client.Send(messageBytes, messageBytes.Length, endpoint);
 		}
 
-		public async Task<Received> Receive()
+		public async Task<NetworkMessage> Receive()
 		{
 			var result = await Client.ReceiveAsync();
 
-			return new Received()
+			return new NetworkMessage()
 			{
 				MessageBytes = result.Buffer,
 				Sender = result.RemoteEndPoint

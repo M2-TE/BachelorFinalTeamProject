@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Networking
@@ -25,11 +24,11 @@ namespace Networking
 			Client.Send(bytes, bytes.Length);
 		}
 
-		public async Task<Received> Receive()
+		public async Task<NetworkMessage> Receive()
 		{
 			var result = await Client.ReceiveAsync();
 
-			return new Received()
+			return new NetworkMessage()
 			{
 				MessageBytes = result.Buffer,
 				Sender = result.RemoteEndPoint
