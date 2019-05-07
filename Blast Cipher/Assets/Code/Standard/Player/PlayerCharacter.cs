@@ -26,7 +26,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	[Space]
 	[SerializeField] private bool DebugKBControlsActive = false;
-
+	[SerializeField] private bool NetworkControlled = false;
+	
+	[Space]
 	[SerializeField] private Animator parryAnimator;
 	[SerializeField] private Transform projectileOrbitCenter;
 	[SerializeField] private Transform projectileLaunchPos;
@@ -80,6 +82,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	protected override void RegisterActions()
 	{
+		if (NetworkControlled) return;
+
 		input.Player.Movement.performed += UpdateMovementControlled;
 		input.Player.Aim.performed += UpdateLookRotationControlled;
 		input.Player.Shoot.performed += TriggerShotControlled;
@@ -94,6 +98,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	protected override void UnregisterActions()
 	{
+		if (NetworkControlled) return;
+
 		input.Player.Movement.performed -= UpdateMovementControlled;
 		input.Player.Aim.performed -= UpdateLookRotationControlled;
 		input.Player.Shoot.performed -= TriggerShotControlled;

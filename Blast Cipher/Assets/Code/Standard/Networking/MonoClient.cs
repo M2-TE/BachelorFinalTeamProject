@@ -9,80 +9,14 @@ using UnityEngine;
 
 namespace Networking
 {
-	public enum MessageType
-	{
-		ConnectionSetup = 0b_1, // [string] Player Name + [Custom Mesh] player mesh (+ SERVER ONLY assignment of playerID)
-		ClientID = 0b_10, // [byte] player ID
-		ReadyCheck = 0b_100, // [bool] player ready
-		//PlayerMovement = 0b_10_000 // [float2] vertical and horizontal input requests CLIENT: own pos only, SERVER: both positions
-		PlayerMovement = 0b_10_000, // [float3] player pos CLIENT: own pos only, SERVER: both positions
-		ErrorCode = 0b_100_000 // [byte] error num
-	}
-
-	// 1. message byte form: [int] = bitmask e.g. (0b_0100_1010)
-	//
-	// 2. lengths of data segments in bytes: [char]  corresponding to bitmask segments e.g. (23 => 23 bytes of data for segment X)
-	//
-	// 3. message contents: [TYPE] actual messages
-	//
-	// 4. ParamString TODO
-
-	public struct NetworkMessage
-	{
-		public IPEndPoint Sender;
-		public byte[] MessageBytes;
-	}
-
-	public static class NetworkUtilities
-	{
-		private readonly static Array arr = Enum.GetValues(typeof(MessageType));
-
-		public static List<MessageType> DecipherBitmask(byte[] message)
-		{
-			List<MessageType> bitmaskList = new List<MessageType>();
-			MessageType messageBitmask = (MessageType)BitConverter.ToInt32(message, 0);
-
-			//var arr = Enum.GetValues(typeof(MessageType));
-			MessageType buffer;
-			for (int i = 0; i < arr.Length; i++)
-			{
-				buffer = (MessageType)arr.GetValue(i);
-
-				if ((messageBitmask & buffer) != 0) // check if enum is included in bitmask
-				{
-					bitmaskList.Add(buffer);
-				}
-			}
-
-			return bitmaskList;
-		}
-		public static List<MessageType> DecipherBitmask(MessageType messageBitmask)
-		{
-			List<MessageType> bitmaskList = new List<MessageType>();
-
-			//var arr = Enum.GetValues(typeof(MessageType));
-			MessageType buffer;
-			for (int i = 0; i < arr.Length; i++)
-			{
-				buffer = (MessageType)arr.GetValue(i);
-
-				if ((messageBitmask & buffer) != 0) // check if enum is included in bitmask
-				{
-					bitmaskList.Add(buffer);
-				}
-			}
-
-			return bitmaskList;
-		}
-	}
-}
-
-namespace Networking
-{
 	public class MonoClient : MonoBehaviour
 	{
 		[SerializeField] private TMPro.TextMeshProUGUI RTT_Text;
+		[SerializeField] private TMPro.TextMeshProUGUI ClientIdDebugDisplay;
 		[SerializeField] private string playerName;
+
+		[SerializeField] private CharacterController[] players;
+		private readonly Tuple<Vector3, Vector3>[] bufferedTransforms = new Tuple<Vector3, Vector3>[2];
 
 		private UdpClientInterface client;
 		private UdpServerInterface server;
@@ -97,7 +31,6 @@ namespace Networking
 
 		private void Start()
 		{
-
 			client = UdpClientInterface.ConnectTo("127.0.0.1", 32123);
 
 			//wait for reply messages from server and send them to console
@@ -116,31 +49,62 @@ namespace Networking
 					}
 					catch (Exception ex)
 					{
-						Debug.LogException(ex);
+						Debug.Log(ex);
 					}
 				}
 			});
 
 			StartCoroutine(HandleNetworkOps());
-		}
+		} // fire-and-forget task factory to receive server messages
 
 		private void Update()
 		{
-			RTT_Text.text = RTT.ToString();
+			RTT_Text.text = RTT.ToString() + " ms";
+			ClientIdDebugDisplay.text = "ID: " + clientID;
+
+			Transform cachedTransform;
+			for(int i = 0; i < bufferedTransforms.Length; i++)
+			{
+				if(bufferedTransforms[i] != null)
+				{
+					cachedTransform = players[i].transform;
+					cachedTransform.position = bufferedTransforms[i].Item1;
+					cachedTransform.rotation = Quaternion.Euler(bufferedTransforms[i].Item2);
+				}
+			}
 		}
 
 		private IEnumerator HandleNetworkOps()
 		{
-			bitmask = MessageType.ConnectionSetup | MessageType.ReadyCheck;
-			while(clientID == 255)
+			// connecting to server and setting up own client ID
+			bitmask = MessageType.ConnectionSetup;
+			while(clientID == 255) // 255 is the client id for "unassigned"
 			{
-				stopwatch_RTT.Start();
-
-				client.Send(ConstructMessage(bitmask));
-
-				yield return null;
+				yield return SetupMessageSending(bitmask);
 			}
-			yield return null;
+
+			// ready check across all connected clients TODO
+			//bitmask = MessageType.ReadyCheck;
+			//while (true)
+			//{
+			//	yield return SetupMessageSending(bitmask);
+			//}
+
+			// main game loop
+			bitmask = MessageType.PlayerPosition;
+			while (true)
+			{
+				yield return SetupMessageSending(bitmask);
+			}
+		}
+
+		private WaitForSeconds SetupMessageSending(MessageType bitmask)
+		{
+			stopwatch_RTT.Start(); // stopwatch to measure full round trip time (RTT/latency)
+
+			client.Send(ConstructMessage(bitmask));
+
+			return null;
 		}
 
 		private byte[] ConstructMessage(MessageType bitmask)
@@ -153,11 +117,9 @@ namespace Networking
 			messageBytes.AddRange(BitConverter.GetBytes((int)bitmask));
 
 			// fill message with content
-			MessageType cachedType;
 			for(int i = 0; i < plannedMessageTypes.Count; i++)
 			{
-				cachedType = plannedMessageTypes[i];
-				switch (cachedType)
+				switch (plannedMessageTypes[i])
 				{
 					case MessageType.ConnectionSetup:
 						byte[] nameBytes = Encoding.ASCII.GetBytes(playerName);
@@ -165,17 +127,25 @@ namespace Networking
 						messageSegmentLengths.Add((short)nameBytes.Length);
 						break;
 
-					case MessageType.ClientID:
-
-						break;
-
 					case MessageType.ReadyCheck:
 						messageBytes.Add(BitConverter.GetBytes(true)[0]);
 						messageSegmentLengths.Add(1);
 						break;
 
-					case MessageType.PlayerMovement:
+					case MessageType.PlayerPosition:
+						messageBytes.Add(clientID);
 
+						Vector3 playerPos = players[clientID].transform.position;
+						messageBytes.AddRange(BitConverter.GetBytes(playerPos.x));
+						messageBytes.AddRange(BitConverter.GetBytes(playerPos.y));
+						messageBytes.AddRange(BitConverter.GetBytes(playerPos.z));
+
+						Vector3 eulerRot = players[clientID].transform.rotation.eulerAngles;
+						messageBytes.AddRange(BitConverter.GetBytes(eulerRot.x));
+						messageBytes.AddRange(BitConverter.GetBytes(eulerRot.y));
+						messageBytes.AddRange(BitConverter.GetBytes(eulerRot.z));
+
+						messageSegmentLengths.Add(4 * 6 + 1); // sizeof(float) * amt of floats + clientID byte
 						break;
 
 					default: throw new Exception("Bitmask Error");
@@ -205,26 +175,30 @@ namespace Networking
 
 			// iterate through message segments
 			int currentIndex = 4 + matchingTypes.Count * 2;
-			MessageType cachedType;
 			for (int i = 0; i < matchingTypes.Count; i++)
 			{
-				cachedType = matchingTypes[i];
-				switch (cachedType)
+				switch (matchingTypes[i])
 				{
 					case MessageType.ConnectionSetup:
-						string recoveredString = Encoding.ASCII.GetString(message, currentIndex, segmentLengths[i]);
-						break;
-
-					case MessageType.ClientID:
-
+						clientID = message[currentIndex];
 						break;
 
 					case MessageType.ReadyCheck:
 						bool recoveredReadyCheck = BitConverter.ToBoolean(message, currentIndex);
 						break;
 
-					case MessageType.PlayerMovement:
+					case MessageType.PlayerPosition:
+						// buffer position and rotation into the trans buffer, which will be applied on update
+						bufferedTransforms[message[currentIndex]] = new Tuple<Vector3, Vector3>
+							(new Vector3
+								(BitConverter.ToSingle(message, currentIndex + 1),
+								BitConverter.ToSingle(message, currentIndex + 5),
+								BitConverter.ToSingle(message, currentIndex + 9)),
 
+							new Vector3
+								(BitConverter.ToSingle(message, currentIndex + 13),
+								BitConverter.ToSingle(message, currentIndex + 17),
+								BitConverter.ToSingle(message, currentIndex + 21)));
 						break;
 
 					default: throw new Exception("Bitmask Error");

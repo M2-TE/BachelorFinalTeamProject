@@ -208,14 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e0d1025061e6084eafe3d5b0a402cd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSources:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  debugBPMs:
-  - 128
-  - 138
-  - 150
+  cont: {fileID: 0}
   fadeInCurve:
     serializedVersion: 2
     m_Curve:
