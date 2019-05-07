@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2323552729560157902}
   - component: {fileID: 2323552729560157901}
   - component: {fileID: 2323552729560157900}
-  - component: {fileID: 2323552729560157899}
   m_Layer: 0
   m_Name: Ap2
   m_TagString: Untagged
@@ -59,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -291,23 +290,17 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_IsSelectable: 1
-  m_SelectedFaces: 
-  m_SelectedEdges: []
-  m_SelectedVertices: 
---- !u!64 &2323552729560157899
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2323552729560157898}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
+  m_SelectedFaces: 00000000
+  m_SelectedEdges:
+  - a: 0
+    b: 1
+  - a: 0
+    b: 0
+  - a: 0
+    b: 0
+  - a: 0
+    b: 0
+  m_SelectedVertices: 00000000010000000000000000000000
 --- !u!1 &2323552730027317482
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +313,6 @@ GameObject:
   - component: {fileID: 2323552730027317486}
   - component: {fileID: 2323552730027317485}
   - component: {fileID: 2323552730027317484}
-  - component: {fileID: 2323552730027317483}
   m_Layer: 0
   m_Name: Ap3
   m_TagString: Untagged
@@ -367,7 +359,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -604,20 +596,6 @@ MonoBehaviour:
   - a: 12
     b: 13
   m_SelectedVertices: 0c0000000d000000
---- !u!64 &2323552730027317483
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2323552730027317482}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &2323552730916474934
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,7 +608,6 @@ GameObject:
   - component: {fileID: 2323552730916474938}
   - component: {fileID: 2323552730916474937}
   - component: {fileID: 2323552730916474936}
-  - component: {fileID: 2323552730916474935}
   m_Layer: 0
   m_Name: Ap1
   m_TagString: Untagged
@@ -677,7 +654,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -910,24 +887,8 @@ MonoBehaviour:
   assetGuid: 
   m_IsSelectable: 1
   m_SelectedFaces: 
-  m_SelectedEdges:
-  - a: 5
-    b: 7
-  m_SelectedVertices: 0500000007000000
---- !u!64 &2323552730916474935
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2323552730916474934}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!1 &2855188894830391621
 GameObject:
   m_ObjectHideFlags: 0
@@ -940,7 +901,6 @@ GameObject:
   - component: {fileID: 1360441685238256321}
   - component: {fileID: 3840248480872729451}
   - component: {fileID: 1101875941265701350}
-  - component: {fileID: 5690770989540579575}
   m_Layer: 0
   m_Name: Ap4
   m_TagString: Untagged
@@ -987,7 +947,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1224,20 +1184,6 @@ MonoBehaviour:
   - a: 4
     b: 5
   m_SelectedVertices: 0400000005000000
---- !u!64 &5690770989540579575
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2855188894830391621}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &4131167870173881422
 GameObject:
   m_ObjectHideFlags: 0

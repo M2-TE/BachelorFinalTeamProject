@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 877788549682865614}
   - component: {fileID: 877788549682865615}
   - component: {fileID: 877788549682865608}
-  - component: {fileID: 877788549682865609}
   m_Layer: 0
   m_Name: Ep3
   m_TagString: Untagged
@@ -59,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -294,20 +293,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!64 &877788549682865609
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 877788549682865610}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &877788550345902947
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +305,6 @@ GameObject:
   - component: {fileID: 877788550345902951}
   - component: {fileID: 877788550345902944}
   - component: {fileID: 877788550345902945}
-  - component: {fileID: 877788550345902946}
   m_Layer: 0
   m_Name: Ep1
   m_TagString: Untagged
@@ -367,7 +351,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -604,20 +588,6 @@ MonoBehaviour:
   - a: 17
     b: 19
   m_SelectedVertices: 1100000013000000
---- !u!64 &877788550345902946
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 877788550345902947}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &877788551714678138
 GameObject:
   m_ObjectHideFlags: 0
@@ -630,7 +600,6 @@ GameObject:
   - component: {fileID: 877788551714678142}
   - component: {fileID: 877788551714678143}
   - component: {fileID: 877788551714678136}
-  - component: {fileID: 877788551714678137}
   m_Layer: 0
   m_Name: Ep2
   m_TagString: Untagged
@@ -677,7 +646,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -914,20 +883,6 @@ MonoBehaviour:
   - a: 4
     b: 5
   m_SelectedVertices: 0400000005000000
---- !u!64 &877788551714678137
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 877788551714678138}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &1104544488265259758
 GameObject:
   m_ObjectHideFlags: 0

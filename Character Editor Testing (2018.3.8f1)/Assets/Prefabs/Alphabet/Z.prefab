@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4230317500849952637}
   - component: {fileID: 4230317500849952636}
   - component: {fileID: 4230317500849952639}
-  - component: {fileID: 4230317500849952638}
   m_Layer: 0
   m_Name: Zp1
   m_TagString: Untagged
@@ -59,7 +58,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -296,20 +295,6 @@ MonoBehaviour:
   - a: 4
     b: 5
   m_SelectedVertices: 0400000005000000
---- !u!64 &4230317500849952638
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4230317500849952625}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &4230317502056568009
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,7 +307,6 @@ GameObject:
   - component: {fileID: 4230317502056568021}
   - component: {fileID: 4230317502056568020}
   - component: {fileID: 4230317502056568023}
-  - component: {fileID: 4230317502056568022}
   m_Layer: 0
   m_Name: Zp2
   m_TagString: Untagged
@@ -369,7 +353,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -612,20 +596,6 @@ MonoBehaviour:
   - a: 23
     b: 22
   m_SelectedVertices: 14000000150000001600000017000000
---- !u!64 &4230317502056568022
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4230317502056568009}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &4230317502338426753
 GameObject:
   m_ObjectHideFlags: 0
@@ -638,7 +608,6 @@ GameObject:
   - component: {fileID: 4230317502338426765}
   - component: {fileID: 4230317502338426764}
   - component: {fileID: 4230317502338426767}
-  - component: {fileID: 4230317502338426766}
   m_Layer: 0
   m_Name: Zp3
   m_TagString: Untagged
@@ -685,7 +654,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -922,20 +891,6 @@ MonoBehaviour:
   - a: 15
     b: 14
   m_SelectedVertices: 0f0000000e000000
---- !u!64 &4230317502338426766
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4230317502338426753}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &7151200774478126934
 GameObject:
   m_ObjectHideFlags: 0

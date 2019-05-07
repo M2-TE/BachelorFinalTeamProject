@@ -44,7 +44,6 @@ GameObject:
   - component: {fileID: 8385363726831063831}
   - component: {fileID: 8385363726831063830}
   - component: {fileID: 8385363726831063829}
-  - component: {fileID: 8385363726831063828}
   m_Layer: 0
   m_Name: Vp2
   m_TagString: Untagged
@@ -91,7 +90,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -334,20 +333,6 @@ MonoBehaviour:
   - a: 19
     b: 18
   m_SelectedVertices: 10000000110000001200000013000000
---- !u!64 &8385363726831063828
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8385363726831063827}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
 --- !u!1 &8385363727427965638
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +345,6 @@ GameObject:
   - component: {fileID: 8385363727427965642}
   - component: {fileID: 8385363727427965641}
   - component: {fileID: 8385363727427965640}
-  - component: {fileID: 8385363727427965639}
   m_Layer: 0
   m_Name: Vp1
   m_TagString: Untagged
@@ -407,7 +391,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -650,17 +634,3 @@ MonoBehaviour:
   - a: 23
     b: 22
   m_SelectedVertices: 14000000150000001600000017000000
---- !u!64 &8385363727427965639
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8385363727427965638}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 0}
