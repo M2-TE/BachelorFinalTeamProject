@@ -22,12 +22,6 @@ namespace Networking
 			Client.Send(messageBytes, messageBytes.Length, endpoint);
 		}
 
-		public void ShutDown()
-		{
-			Client.Close();
-			Client.Dispose();
-		}
-
 		public async Task<NetworkMessage> Receive()
 		{
 			var result = await Client.ReceiveAsync();

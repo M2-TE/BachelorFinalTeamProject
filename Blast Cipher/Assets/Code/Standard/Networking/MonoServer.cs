@@ -1,142 +1,60 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Networking
 {
-	public class MonoServer : MonoBehaviour
+	public sealed class MonoServer : MonoNetwork
 	{
-		private UdpServerInterface server;
-		private readonly Dictionary<IPEndPoint, Tuple<byte, string>> clients = new Dictionary<IPEndPoint, Tuple<byte, string>>(2); // max 2 players
-
-		readonly byte[] emptyMessage = new byte[0];
-		readonly byte[][] clientMessages = new byte[2][];
-
-		void Start()
+		private class TcpConnection
 		{
-			server = new UdpServerInterface();
-
-			//start listening for messages and copy the messages back to the client
-			Task.Factory.StartNew(async () => {
-				while (true)
-				{
-					try
-					{
-						var received = await server.Receive();
-
-						var outgoingBitmask = DecipherNetworkMessage(received.MessageBytes, received.Sender);
-						var newMessage = ConstructMessage(outgoingBitmask, received.Sender);
-						server.Reply(newMessage, received.Sender);
-					}
-					catch (Exception e)
-					{
-						Debug.LogException(e);
-					}
-				}
-			});
+			public NetworkStream Stream;
+			public byte[] Message;
 		}
 
-		private MessageType DecipherNetworkMessage(byte[] message, IPEndPoint clientEP)
+		private void Start()
 		{
-			// get message content types
-			var matchingTypes = NetworkUtilities.DecipherBitmask(message);
+			udpClient = new UdpClient(port);
 
-			// get length of each segment
-			short[] segmentLengths = new short[matchingTypes.Count];
-			for (int i = 0; i < segmentLengths.Length; i++)
-			{
-				segmentLengths[i] = BitConverter.ToInt16(message, 4 + i * 2);
-			}
+			tcpClient = new TcpClient();
+			tcpListener = TcpListener.Create(port);
+			tcpListener.Start();
+			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null);
 
-			// iterate through message segments
-			int currentIndex = 4 + matchingTypes.Count * 2;
-			MessageType outgoingBitmask = 0b_0;
-			for (int i = 0; i < matchingTypes.Count; i++)
-			{
-				switch (matchingTypes[i])
-				{
-					case MessageType.ConnectionSetup:
-						string clientName = Encoding.ASCII.GetString(message, currentIndex, segmentLengths[i]);
-						if (!clients.ContainsKey(clientEP))
-						{
-							//Debug.Log(clients.Count);
-							clients.Add(clientEP, new Tuple<byte, string>((byte)clients.Count, clientName));
-						}
 
-						// assign client ID
-						outgoingBitmask |= MessageType.ConnectionSetup;
-						break;
-
-					case MessageType.ReadyCheck:
-
-						break;
-
-					case MessageType.PlayerPosition:
-						outgoingBitmask |= MessageType.PlayerPosition;
-
-						clientMessages[clients[clientEP].Item1] = message; // save message with entity positions for other clients
-						break;
-
-					default: throw new Exception("Bitmask Error");
-				}
-				currentIndex += segmentLengths[i];
-			}
-
-			return outgoingBitmask;
+			udpClient.BeginReceive(OnUdpMessageReceive, null);
 		}
 
-		private byte[] ConstructMessage(MessageType bitmask, IPEndPoint clientEP)
+		private void OnTcpClientAccept(IAsyncResult ar)
 		{
-			if (!clients.ContainsKey(clientEP)) return emptyMessage;
-			
-			// if the entity position exchange loop is active, relay other client messages
-			if ((bitmask & MessageType.PlayerPosition) != 0)
-			{
-				var newMessage = clientMessages[clients[clientEP].Item1 == 0 ? 1 : 0];
-				if (newMessage == null) return new byte[] { 0, 0, 0, 0 }; // return empty bitmask
-				else return newMessage; // relay other client's message
-			}
-			
-			var messageBytes = new List<byte>();
-			var messageSegmentLengths = new List<short>();
-			var plannedMessageTypes = NetworkUtilities.DecipherBitmask(bitmask);
+			var newClient = tcpListener.EndAcceptTcpClient(ar);
+			var stream = newClient.GetStream();
+			byte[] bytes = new byte[1024];
+			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new TcpConnection() { Stream = stream, Message = bytes });
 
-			// add bitmask to message
-			messageBytes.AddRange(BitConverter.GetBytes((int)bitmask));
+			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null); // listen for more clients
+		}
 
-			// fill message with content
-			for (int i = 0; i < plannedMessageTypes.Count; i++)
-			{
-				switch (plannedMessageTypes[i])
-				{
-					case MessageType.ConnectionSetup:
-						messageBytes.Add(clients[clientEP].Item1);
-						messageSegmentLengths.Add(1);
-						break;
+		private void OnTcpMessageReceive(IAsyncResult ar)
+		{
+			TcpConnection tcpStuff = (TcpConnection)ar.AsyncState;
+			tcpStuff.Stream.EndRead(ar);
 
-					case MessageType.ReadyCheck:
+			//Debug.Log(Encoding.ASCII.GetString(tcpStuff.Message));
 
-						break;
+			tcpStuff.Stream.BeginRead(tcpStuff.Message, 0, tcpStuff.Message.Length, OnTcpMessageReceive, tcpStuff); // wait for more messages
+		}
 
-					case MessageType.PlayerPosition:
+		private void OnUdpMessageReceive(IAsyncResult ar)
+		{
+			IPEndPoint sender = new IPEndPoint(IPAddress.Any, port);
+			byte[] messageBytes = udpClient.EndReceive(ar, ref sender);
 
-						break;
+			//Debug.Log(Encoding.ASCII.GetString(messageBytes));
 
-					default: throw new Exception("Bitmask Error");
-				}
-			}
-
-			// specify message segment lengths
-			for (int i = 0; i < messageSegmentLengths.Count; i++)
-			{
-				messageBytes.InsertRange(4 + i * 2, BitConverter.GetBytes(messageSegmentLengths[i]));
-			}
-
-			return messageBytes.ToArray();
+			udpClient.BeginReceive(OnUdpMessageReceive, null);
 		}
 	}
 }

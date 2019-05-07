@@ -14,7 +14,7 @@ public sealed class EssentialsLoader
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 	static void BeforeSceneLoad()
 	{
-		if(!sceneLoaded)
+		if (!sceneLoaded)
 		{
 			SceneManager.LoadScene("AsyncEssentials", LoadSceneMode.Additive);
 			sceneLoaded = true;
