@@ -14,6 +14,7 @@ namespace Networking
 		[SerializeField] private TMPro.TextMeshProUGUI RTT_Text;
 		[SerializeField] private TMPro.TextMeshProUGUI ClientIdDebugDisplay;
 		[SerializeField] private string playerName;
+		[SerializeField] private float posUpdateTime;
 
 		[SerializeField] private CharacterController[] players;
 		private readonly Tuple<Vector3, Vector3>[] bufferedTransforms = new Tuple<Vector3, Vector3>[2];
@@ -98,13 +99,13 @@ namespace Networking
 			}
 		}
 
-		private WaitForSeconds SetupMessageSending(MessageType bitmask)
+		private WaitForSecondsRealtime SetupMessageSending(MessageType bitmask)
 		{
 			stopwatch_RTT.Start(); // stopwatch to measure full round trip time (RTT/latency)
 
 			client.Send(ConstructMessage(bitmask));
 
-			return null;
+			return new WaitForSecondsRealtime(posUpdateTime);
 		}
 
 		private byte[] ConstructMessage(MessageType bitmask)
