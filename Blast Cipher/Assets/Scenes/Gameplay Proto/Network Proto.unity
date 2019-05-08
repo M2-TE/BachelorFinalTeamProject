@@ -2581,7 +2581,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6946461188da4de4a98472ff4a4b321f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 20000
+  PORT: 18001
+  TCP_DATAGRAM_SIZE_MAX: 1024
 --- !u!1 &1534370961
 GameObject:
   m_ObjectHideFlags: 0
@@ -3691,7 +3692,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63d41504a6e36f4bb8bbb04daaf57f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  port: 20000
+  PORT: 18000
+  TCP_DATAGRAM_SIZE_MAX: 1024
   targetIP: 127.0.0.1
 --- !u!1 &2050668922
 GameObject:

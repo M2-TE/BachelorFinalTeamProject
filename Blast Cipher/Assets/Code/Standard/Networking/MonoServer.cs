@@ -17,14 +17,16 @@ namespace Networking
 			Debug.Log("Server Connection Established");
 		}
 
-		protected override void TcpMessageReceived(byte[] message)
+		protected override void TcpMessageReceived(NetworkStream sender, byte[] message)
 		{
 			Debug.Log("Server TCP received.");
+			SendTcpMessage(sender, message); // reply
 		}
 
 		protected override void UdpMessageReceived(IPEndPoint sender, byte[] message)
 		{
 			Debug.Log("Server UDP received.");
+			SendUdpMessage(sender, message); // reply
 		}
 	}
 }

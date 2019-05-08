@@ -9,38 +9,28 @@ namespace Networking
 
 	public abstract class MonoNetwork : MonoBehaviour
 	{
-		private class TcpConnection
+		private class TcpConnectionThingy
 		{
 			public NetworkStream Stream;
 			public byte[] Message;
 		}
 
-		protected const int PORT = 18_000;
-		protected const int TCP_DATAGRAM_SIZE_MAX = 1024;
+		[SerializeField] private int PORT = 18_000;
+		[SerializeField] private int TCP_DATAGRAM_SIZE_MAX = 1024;
 
 		private UdpClient udpClient;
 
 		private TcpClient tcpClient;
 		private TcpListener tcpListener;
 
-		private void OnDestroy()
-		{
-			tcpListener.Stop();
-
-			tcpClient.Dispose();
-			udpClient.Dispose();
-		}
-
 		protected void SetupAsServer()
 		{
 			udpClient = new UdpClient(PORT);
-			
+			udpClient.BeginReceive(OnUdpMessageReceive, null);
+
 			tcpClient = new TcpClient();
 			tcpListener = TcpListener.Create(PORT);
 			tcpListener.Start();
-
-
-			udpClient.BeginReceive(OnUdpMessageReceive, null);
 			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null);
 		}
 
@@ -48,11 +38,12 @@ namespace Networking
 		{
 			udpClient = new UdpClient();
 			udpClient.Connect(ipAdress, PORT);
+			udpClient.BeginReceive(OnUdpMessageReceive, null);
 
 			tcpClient = new TcpClient();
-			tcpClient.BeginConnect(ipAdress, PORT, OnTcpConnect, null);
+			tcpClient.BeginConnect(ipAdress, PORT, OnTcpConnect, ipAdress);
 		}
-		
+
 		#region TCP
 		private void OnTcpClientAccept(IAsyncResult ar)
 		{
@@ -62,7 +53,7 @@ namespace Networking
 			TcpConnectionEstablished(stream);
 
 			// wait for messages on stream
-			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new TcpConnection() { Stream = stream, Message = bytes });
+			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new TcpConnectionThingy() { Stream = stream, Message = bytes });
 			
 			// listen for more clients
 			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null); 
@@ -71,23 +62,32 @@ namespace Networking
 		private void OnTcpConnect(IAsyncResult ar)
 		{
 			tcpClient.EndConnect(ar);
+			var stream = tcpClient.GetStream();
 
-			TcpConnectionEstablished(tcpClient.GetStream());
+			// callback
+			TcpConnectionEstablished(stream);
+
+			// begin reading from now established stream
+			byte[] bytes = new byte[TCP_DATAGRAM_SIZE_MAX];
+			var connection = new TcpConnectionThingy() { Message = bytes, Stream = stream };
+			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, connection);
 		}
 
 		private void OnTcpMessageReceive(IAsyncResult ar)
 		{
-			TcpConnection tcpStuff = (TcpConnection)ar.AsyncState;
-			tcpStuff.Stream.EndRead(ar);
+			TcpConnectionThingy connection = (TcpConnectionThingy)ar.AsyncState;
+			connection.Stream.EndRead(ar);
 
-			TcpMessageReceived(tcpStuff.Message);
+			// callback
+			TcpMessageReceived(connection.Stream, connection.Message);
 
-			tcpStuff.Stream.BeginRead(tcpStuff.Message, 0, tcpStuff.Message.Length, OnTcpMessageReceive, tcpStuff); // wait for more messages
+			// wait for more messages
+			connection.Stream.BeginRead(connection.Message, 0, connection.Message.Length, OnTcpMessageReceive, connection);
 		}
 
 		private void OnTcpMessageSend(IAsyncResult ar)
 		{
-			((NetworkStream)ar).EndWrite(ar);
+			((NetworkStream)ar.AsyncState).EndWrite(ar);
 		}
 
 		protected void SendTcpMessage(NetworkStream stream, byte[] message)
@@ -95,15 +95,9 @@ namespace Networking
 			stream.BeginWrite(message, 0, message.Length, OnTcpMessageSend, stream);
 		}
 
-		protected virtual void TcpConnectionEstablished(NetworkStream stream)
-		{
+		protected virtual void TcpConnectionEstablished(NetworkStream stream) { }
 
-		}
-
-		protected virtual void TcpMessageReceived(byte[] message)
-		{
-
-		}
+		protected virtual void TcpMessageReceived(NetworkStream sender, byte[] message) { }
 		#endregion
 
 		#region UDP
@@ -122,16 +116,17 @@ namespace Networking
 			udpClient.EndSend(ar);
 		}
 
-		protected void SendUdpMessage(byte[] message, IPEndPoint target = null)
+		protected void SendUdpMessage(byte[] message)
 		{
-			if(target == null) udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
-			else udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
+			udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
 		}
 
-		protected virtual void UdpMessageReceived(IPEndPoint sender, byte[] message)
+		protected void SendUdpMessage(IPEndPoint target, byte[] message)
 		{
-		
+			udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
 		}
+
+		protected virtual void UdpMessageReceived(IPEndPoint sender, byte[] message) { }
 		#endregion
 	}
 }

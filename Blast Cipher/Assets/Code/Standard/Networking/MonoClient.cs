@@ -31,11 +31,11 @@ namespace Networking
 
 		protected override void TcpConnectionEstablished(NetworkStream stream)
 		{
-			this.stream = stream;
 			Debug.Log("Client Connection Established");
+			this.stream = stream;
 		}
 
-		protected override void TcpMessageReceived(byte[] message)
+		protected override void TcpMessageReceived(NetworkStream sender, byte[] message)
 		{
 			Debug.Log("Client TCP received.");
 		}
