@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
@@ -12,10 +12,7 @@ namespace Networking
 
 		private void Start()
 		{
-			udpClient = new UdpClient(targetIP, port);
-
-			tcpClient = new TcpClient();
-			tcpClient.BeginConnect(targetIP, port, OnTcpConnect, null);
+			SetupAsClient(IPAddress.Parse(targetIP));
 		}
 
 		private void Update()
@@ -23,32 +20,29 @@ namespace Networking
 			if (Input.GetKeyDown(KeyCode.F))
 			{
 				byte[] bytes = Encoding.ASCII.GetBytes("urmomgay lol");
+				
+				// send message over tcp
+				if (stream != null) SendTcpMessage(stream, bytes);
 
-				//// send message over udp
-				//udpClient.BeginSend(bytes, bytes.Length, OnUdpMessageSend, null);
-
-				//// send message over tcp
-				//if (stream != null)
-				//{
-				//	stream.BeginWrite(bytes, 0, bytes.Length, OnTcpMessageSend, null);
-				//}
+				// send message over udp
+				SendUdpMessage(bytes);
 			}
 		}
 
-		private void OnTcpConnect(IAsyncResult ar)
+		protected override void TcpConnectionEstablished(NetworkStream stream)
 		{
-			tcpClient.EndConnect(ar);
-			stream = tcpClient.GetStream();
-			Debug.Log("CLIENT: TCP connection established");
+			this.stream = stream;
+			Debug.Log("Client Connection Established");
 		}
 
-		private void OnTcpMessageSend(IAsyncResult ar)
+		protected override void TcpMessageReceived(byte[] message)
 		{
-			stream.EndWrite(ar);
+			Debug.Log("Client TCP received.");
 		}
-		private void OnUdpMessageSend(IAsyncResult ar)
+
+		protected override void UdpMessageReceived(IPEndPoint sender, byte[] message)
 		{
-			int i = udpClient.EndSend(ar);
+			Debug.Log("Client UDP received.");
 		}
 	}
 }
