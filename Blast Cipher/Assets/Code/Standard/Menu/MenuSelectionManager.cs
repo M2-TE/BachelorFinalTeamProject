@@ -16,6 +16,7 @@ public class MenuSelectionManager : MonoBehaviour
     [SerializeField] private Transform mainCamera;
     [SerializeField] [Range(10f, 50f)] private float cameraSpeed = 1f;
     [SerializeField] private LocalLobbyManager localLobbyManager;
+    [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
     private bool isFocused = false;
     private bool inSubmenu = false;
@@ -120,6 +121,8 @@ public class MenuSelectionManager : MonoBehaviour
             case MenuState.CharacterEditor:
                 break;
             case MenuState.Profile:
+                StartCoroutine(CameraSubmenuMovement());
+                profileSelectionManager.Activated = open;
                 break;
             case MenuState.Exit:
                 Application.Quit();
