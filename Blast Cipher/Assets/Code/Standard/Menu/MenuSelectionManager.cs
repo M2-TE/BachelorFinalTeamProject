@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MenuState { Local, Online, CharacterEditor, Settings, Exit }
+public enum MenuState { Local, Online, CharacterEditor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
 public class MenuSelectionManager : MonoBehaviour
 {
-    [SerializeField] private MaterialsHolder localGame, onlineGame, characterEditor, settings, exit;
+    [SerializeField] private MaterialsHolder localGame, onlineGame, characterEditor, profile, exit;
     [SerializeField] private MenuState standartState = 0;
     [SerializeField] private Material defaultMat, highlightedMat;
     [SerializeField] private Transform[] selectorPoints;
@@ -96,8 +96,8 @@ public class MenuSelectionManager : MonoBehaviour
             case MenuState.CharacterEditor:
                 characterEditor.SetMaterials(mat);
                 break;
-            case MenuState.Settings:
-                settings.SetMaterials(mat);
+            case MenuState.Profile:
+                profile.SetMaterials(mat);
                 break;
             case MenuState.Exit:
                 exit.SetMaterials(mat);
@@ -119,7 +119,7 @@ public class MenuSelectionManager : MonoBehaviour
                 break;
             case MenuState.CharacterEditor:
                 break;
-            case MenuState.Settings:
+            case MenuState.Profile:
                 break;
             case MenuState.Exit:
                 Application.Quit();
