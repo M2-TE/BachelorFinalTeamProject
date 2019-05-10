@@ -22,10 +22,8 @@ namespace Networking
 			internal byte ClientID;
 			internal int MillisecondTimestamp;
 
-			internal byte[] EntityType;
-			internal float[] xPositions;
-			internal float[] yPositions;
-			internal float[] zPositions;
+			internal float[] playerPosition;
+			internal float[] playerRotation;
 
 			internal byte[] ToArray()
 			{
@@ -35,6 +33,8 @@ namespace Networking
 					{
 						var binaryFormatter = new BinaryFormatter();
 						binaryFormatter.Serialize(memoryStream, this);
+						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+						
 
 						return memoryStream.ToArray();
 					}
@@ -53,6 +53,8 @@ namespace Networking
 					using (var memoryStream = new MemoryStream())
 					{
 						var binaryFormatter = new BinaryFormatter();
+						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+
 						memoryStream.Write(bytes, 0, bytes.Length);
 						memoryStream.Seek(0, SeekOrigin.Begin);
 
@@ -66,6 +68,12 @@ namespace Networking
 					return null;
 				}
 			}
+		}
+
+		protected class BufferTuple
+		{
+			public Transform transform;
+			public Vector3 bufferedPos;
 		}
 
 		private class ConnectionState
@@ -84,6 +92,14 @@ namespace Networking
 
 		private TcpClient tcpClient;
 		private TcpListener tcpListener;
+
+		private void OnDestroy()
+		{
+			tcpListener?.Stop();
+			tcpClient.Close();
+
+			udpClient.Close();
+		}
 
 		private void Awake()
 		{

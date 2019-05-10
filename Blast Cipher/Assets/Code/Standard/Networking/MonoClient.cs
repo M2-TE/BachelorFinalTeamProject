@@ -28,9 +28,11 @@ namespace Networking
 		private int tcpLatency = 0;
 		private int udpLatency = 0;
 
-		private List<Transform>[] transformsPerClient;
+		private bool roundStarted = false;
+		private PlayerCharacter networkPlayer;
 		private PlayerCharacter localPlayer;
-		private Vector3 bufferedPosition;
+		private Vector3 bufferedPosition = default;
+		private Vector3 bufferedRotation = default;
 
 		private NetworkStream stream;
 		[SerializeField] private byte clientID = byte.MaxValue;
@@ -71,22 +73,28 @@ namespace Networking
 			NetworkMessage message = new NetworkMessage()
 			{
 				Type = (byte)MessageType.EntityPositions,
-				ClientID = clientID,
-				EntityType = new byte[] { (byte)MessageType.EntityPositions },
-				xPositions = new float[] { localPlayer.transform.position.x },
-				yPositions = new float[] { localPlayer.transform.position.y },
-				zPositions = new float[] { localPlayer.transform.position.z }
+				ClientID = clientID
 			};
 
 			var waiter = new WaitForSecondsRealtime(positionUpdateInternal);
-			while (true)
+			while (localPlayer != null)
 			{
 				message.MillisecondTimestamp = GetTime;
 
-				message.EntityType = new byte[] { (byte)MessageType.EntityPositions };
-				message.xPositions = new float[] { localPlayer.transform.position.x };
-				message.yPositions = new float[] { localPlayer.transform.position.y };
-				message.zPositions = new float[] { localPlayer.transform.position.z };
+				message.playerPosition = new float[] 
+				{
+					localPlayer.transform.position.x,
+					localPlayer.transform.position.y,
+					localPlayer.transform.position.z
+				};
+
+				var eulerRot = localPlayer.transform.rotation.eulerAngles;
+				message.playerRotation = new float[] 
+				{
+					eulerRot.x,
+					eulerRot.y,
+					eulerRot.z
+				};
 
 				SendTcpMessage(stream, message.ToArray());
 				yield return waiter;
@@ -95,52 +103,37 @@ namespace Networking
 
 		private void UpateEntityTransforms()
 		{
-			if (transformsPerClient == null)
+			if (!roundStarted)
 			{
 				if (clientID == byte.MaxValue) return;
 				else SpawnPlayers();
 			}
-			else
+			else if(networkPlayer != null && localPlayer != null)
 			{
-				for (int i = 0; i < transformsPerClient.Length; i++)
-				{
-					if (i == clientID) continue;
-					for (int k = 0; k < transformsPerClient[i].Count; k++)
-					{
-						//Debug.Log(i + " " + bufferedPosition);
-						transformsPerClient[i][k].position = bufferedPosition;
-					}
-				}
+				networkPlayer.transform.position = bufferedPosition;
+				networkPlayer.transform.rotation = Quaternion.Euler(bufferedRotation);
 			}
 		}
 
 		private void SpawnPlayers()
 		{
-			transformsPerClient = new List<Transform>[] { new List<Transform>(), new List<Transform>() };
-			
-			for(int i = 0; i < transformsPerClient.Length; i++)
+			for(int i = 0; i < playerSpawnPos.Length; i++)
 			{
-				PlayerCharacter player = null;
-				if(i == clientID) // own player
+				if(i == clientID)
 				{
-					player = Instantiate(playerPrefab).GetComponent<PlayerCharacter>();
-					player.transform.position = playerSpawnPos[i];
-					player.RegisterNetworkHook(PlayerActionCallback);
-					player.DebugKBControlsActive = true;
-					localPlayer = player;
+					localPlayer = Instantiate(playerPrefab).GetComponent<PlayerCharacter>();
+					localPlayer.transform.position = playerSpawnPos[i];
+					localPlayer.RegisterNetworkHook(PlayerActionCallback);
+					localPlayer.DebugKBControlsActive = true;
 				}
-				else // network controlled player
+				else
 				{
-					player = Instantiate(networkPlayerPrefab).GetComponent<PlayerCharacter>();
-					player.transform.position = playerSpawnPos[i];
-					player.DebugKBControlsActive = false;
-
-					// DEBUG
-					bufferedPosition = player.transform.position;
+					networkPlayer = Instantiate(networkPlayerPrefab).GetComponent<PlayerCharacter>();
+					networkPlayer.transform.position = playerSpawnPos[i];
+					networkPlayer.DebugKBControlsActive = false;
 				}
-
-				transformsPerClient[i].Add(player.transform);
 			}
+			roundStarted = true;
 		}
 
 		private void PlayerActionCallback(PlayerCharacter.ActionType action)
@@ -180,9 +173,15 @@ namespace Networking
 					break;
 
 				case MessageType.EntityPositions:
+					bufferedPosition = new Vector3
+						(message.playerPosition[0], 
+						message.playerPosition[1], 
+						message.playerPosition[2]);
 
-					bufferedPosition = new Vector3(message.xPositions[0], message.yPositions[0], message.zPositions[0]);
-					//Debug.Log(clientID + " " + bufferedPosition);
+					bufferedRotation = new Vector3
+						(message.playerRotation[0],
+						message.playerRotation[1],
+						message.playerRotation[2]);
 					break;
 			}
 		}

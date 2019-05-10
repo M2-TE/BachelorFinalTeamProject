@@ -60,6 +60,8 @@ public sealed class GameManager
 	public void RegisterPlayerCharacter(PlayerCharacter playerCharacter) => registeredPlayerCharacters.Add(playerCharacter);
 	public bool UnregisterPlayerCharacter(PlayerCharacter playerCharacter) => registeredPlayerCharacters.Remove(playerCharacter);
 
-	public PlayerCharacter RequestNearestPlayer(PlayerCharacter requestSender) // TODO improve this or dad will get the belt
-		=> registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
+	public PlayerCharacter RequestNearestPlayer(PlayerCharacter requestSender)
+	{
+		return registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
+	}
 }

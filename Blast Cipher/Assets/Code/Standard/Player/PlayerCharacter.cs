@@ -182,6 +182,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		if(Input.GetKeyDown(KeyCode.F))
 		{
+			aimLockTarget = gameManager.RequestNearestPlayer(this);
 			aimLocked = !aimLocked;
 			aimLockInputBlocked = true;
 		}
@@ -244,6 +245,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			providingAimLockInputThisFrame = true;
 			if (!aimLockInputBlocked)
 			{
+				aimLockTarget = gameManager.RequestNearestPlayer(this);
 				aimLocked = !aimLocked;
 				aimLockInputBlocked = true;
 			}
@@ -443,6 +445,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 
 		OneShotAudioManager.PlayOneShotAudio(settings.PlayerDeathSounds, transform.position);
+		
 		Destroy(gameObject);
 	}
 
