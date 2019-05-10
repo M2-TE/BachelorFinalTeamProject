@@ -5478,10 +5478,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d67a98b893351824181899fd43ee8dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controlDeviceIndex: 0
   settings: {fileID: 11400000, guid: 683932f6b9670d64dab3c0d16676d7a1, type: 2}
-  portalOneMat: {fileID: 0}
-  portalTwoMat: {fileID: 0}
+  DebugKBControlsActive: 1
+  NetworkControlled: 0
   parryAnimator: {fileID: 1758753373}
   projectileOrbitCenter: {fileID: 4422398640899422975}
   projectileLaunchPos: {fileID: 4422398640779122109}

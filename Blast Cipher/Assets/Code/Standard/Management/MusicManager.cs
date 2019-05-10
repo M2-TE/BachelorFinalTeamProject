@@ -6,8 +6,8 @@ public sealed class MusicManager : Manager<MusicManager>
 	private MusicManagerBootstrapper bootstrapper;
 	private int currentActiveMusicPlayer;
 
-	private int currentActiveTrack = 0;
-	private bool trackSwitchBuffered = false;
+	//private int currentActiveTrack = 0;
+	//private bool trackSwitchBuffered = false;
 
 	//private float trackSwitchSmoothingVal = .15f;
 	//private float trackSwitchTime { get => trackSwitchSmoothingVal * (60f / bootstrapper.debugBPMs[currentActiveTrack] * 4f); }

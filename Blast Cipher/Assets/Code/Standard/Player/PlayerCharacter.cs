@@ -25,8 +25,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private PlayerCharacterSettings settings;
 
 	[Space]
-	[SerializeField] private bool DebugKBControlsActive = false;
-	[SerializeField] private bool NetworkControlled = false;
+	public bool DebugKBControlsActive = false;
+	public bool NetworkControlled = false;
 	
 	[Space]
 	[SerializeField] private Animator parryAnimator;
@@ -35,6 +35,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
+
+	public enum ActionType { Undefined, Shoot, Dodge }
+	public delegate void Hook(ActionType action);
+	private Hook networkHook;
 
 	private DualMotorRumble rumble;
 	private InputUser inputUser;
@@ -54,8 +58,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private CamShakeManager camShakeManager;
 	private CharacterController charController;
 	private InputMaster input;
-
-
+	
 	private Portal portalOne;
 	private Portal portalTwo;
 
@@ -126,15 +129,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void Start()
 	{
-		// since its only 1o1, this only needs to be called once
-		aimLockTarget = gameManager.RequestNearestPlayer(this);
-
-		// spawn initial projectile
-		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+		//Initialize();
 	}
 
 	private void Update()
 	{
+		if (NetworkControlled) return;
 		if (DebugKBControlsActive) DebugKeyboardInput();
 		UpdateMovement();
 		UpdateLookRotation();
@@ -144,6 +144,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateMiscValues();
 	}
 
+	public void Initialize()
+	{
+		// since its only 1o1, this only needs to be called once
+		aimLockTarget = gameManager.RequestNearestPlayer(this);
+
+		// spawn initial projectile
+		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+	}
+
+	public void RegisterNetworkHook(Hook hook)
+	{
+		networkHook = hook;
+	}
+
 	#region InputSystem event calls
 	private void DebugKeyboardInput()
 	{
@@ -151,12 +165,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.E) && loadedProjectiles.Count > 0)
 		{
-			camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
-			currentShotCooldown = settings.ShotCooldown;
-
-			var projectile = loadedProjectiles[0];
-			loadedProjectiles.Remove(projectile);
-			Shoot(projectile);
+			Shoot();
 		}
 
 		if(Input.GetKeyDown(KeyCode.Q))
@@ -204,12 +213,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && _inputDevice == ctx.control.device)
 		{
-			camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
-			currentShotCooldown = settings.ShotCooldown;
-
-			var projectile = loadedProjectiles[0];
-			loadedProjectiles.Remove(projectile);
-			Shoot(projectile);
+			Shoot();
 		}
 	}
 
@@ -393,19 +397,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
+	public void Shoot()
+	{
+		camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
+		currentShotCooldown = settings.ShotCooldown;
+
+		var projectile = loadedProjectiles[0];
+		loadedProjectiles.Remove(projectile);
+		Shoot(projectile);
+
+		networkHook(ActionType.Shoot);
+	}
+
 	private void Shoot(Projectile projectile)
 	{
-		// move projectile to launch position
-		//SetProjectileEnabled(projectile, false);
-		//for(int iteration = 0; projectile != null && Vector3.Distance(projectile.transform.position, projectileLaunchPos.position) > .2f; iteration++)
-		//{
-		//	projectile.transform.position = Vector3.MoveTowards(projectile.transform.position,
-		//		projectileLaunchPos.position,
-		//		(shotPrepSpeed + iteration * chargeupIterationSpeedMod * Time.deltaTime) * Time.deltaTime);
-
-		//	yield return null;
-		//}
-
 		projectile.transform.position = projectileLaunchPos.transform.position;
 		SetProjectileEnabled(projectile, true);
 
@@ -458,7 +463,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		projectile.collider.enabled = enableState;
 	}
 
-	private IEnumerator DashSequence()
+	public IEnumerator DashSequence()
 	{
 		var main = afterImageParticleSystem.main;
 		main.duration = settings.DashDuration + settings.DashAfterimagePadding;
@@ -471,7 +476,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		currentMovespeed = baseSpeed;
 	}
 
-	private void CreatePortal(int portalID)
+	public void CreatePortal(int portalID)
 	{
 		if (!Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers)) return;
 		float yRot;
@@ -509,7 +514,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
-	private void OnPowerUpCollect(PowerUpType type)
+	public void OnPowerUpCollect(PowerUpType type)
 	{
 		if (activePowerUps.ContainsKey(type)) activePowerUps[type] += settings.PowerUpDuration;
 		else

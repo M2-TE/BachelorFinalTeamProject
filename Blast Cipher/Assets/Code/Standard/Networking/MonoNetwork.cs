@@ -1,27 +1,95 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+
+using Debug = UnityEngine.Debug;
 
 namespace Networking
 {
-
 	public abstract class MonoNetwork : MonoBehaviour
 	{
-		private class TcpConnectionThingy
+		protected enum MessageType : byte { Undefined, Initialization, EntityPositions }
+		protected enum EntityType : byte { Undefined, Player, Projectile }
+
+		[Serializable]
+		protected class NetworkMessage
+		{
+			internal byte Type;
+			internal byte ClientID;
+			internal int MillisecondTimestamp;
+
+			internal byte[] EntityType;
+			internal float[] xPositions;
+			internal float[] yPositions;
+			internal float[] zPositions;
+
+			internal byte[] ToArray()
+			{
+				try
+				{
+					using (var memoryStream = new MemoryStream())
+					{
+						var binaryFormatter = new BinaryFormatter();
+						binaryFormatter.Serialize(memoryStream, this);
+
+						return memoryStream.ToArray();
+					}
+				}
+				catch(Exception e)
+				{
+					Debug.LogException(e);
+					return null;
+				}
+			}
+
+			internal static NetworkMessage Parse(byte[] bytes)
+			{
+				try
+				{
+					using (var memoryStream = new MemoryStream())
+					{
+						var binaryFormatter = new BinaryFormatter();
+						memoryStream.Write(bytes, 0, bytes.Length);
+						memoryStream.Seek(0, SeekOrigin.Begin);
+
+						var message = binaryFormatter.Deserialize(memoryStream) as NetworkMessage;
+						return message;
+					}
+				}
+				catch(Exception e)
+				{
+					Debug.LogException(e);
+					return null;
+				}
+			}
+		}
+
+		private class ConnectionState
 		{
 			public NetworkStream Stream;
 			public byte[] Message;
 		}
 
 		[SerializeField] private int PORT = 18_000;
-		[SerializeField] private int TCP_DATAGRAM_SIZE_MAX = 1024;
+		private const int TCP_DATAGRAM_SIZE_MAX = 2048;
+
+		private Stopwatch stopwatch;
+		protected int GetTime { get => stopwatch.Elapsed.Milliseconds; }
 
 		private UdpClient udpClient;
 
 		private TcpClient tcpClient;
 		private TcpListener tcpListener;
+
+		private void Awake()
+		{
+			stopwatch = new Stopwatch();
+			stopwatch.Start();
+		}
 
 		protected void SetupAsServer()
 		{
@@ -53,7 +121,7 @@ namespace Networking
 			TcpConnectionEstablished(stream);
 
 			// wait for messages on stream
-			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new TcpConnectionThingy() { Stream = stream, Message = bytes });
+			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new ConnectionState() { Stream = stream, Message = bytes });
 			
 			// listen for more clients
 			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null); 
@@ -69,13 +137,13 @@ namespace Networking
 
 			// begin reading from now established stream
 			byte[] bytes = new byte[TCP_DATAGRAM_SIZE_MAX];
-			var connection = new TcpConnectionThingy() { Message = bytes, Stream = stream };
+			var connection = new ConnectionState() { Message = bytes, Stream = stream };
 			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, connection);
 		}
 
 		private void OnTcpMessageReceive(IAsyncResult ar)
 		{
-			TcpConnectionThingy connection = (TcpConnectionThingy)ar.AsyncState;
+			ConnectionState connection = (ConnectionState)ar.AsyncState;
 			connection.Stream.EndRead(ar);
 
 			// callback
