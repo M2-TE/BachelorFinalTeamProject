@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 877788549682865614}
   - component: {fileID: 877788549682865615}
   - component: {fileID: 877788549682865608}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ep3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 877788550345902951}
   - component: {fileID: 877788550345902944}
   - component: {fileID: 877788550345902945}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ep1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -600,7 +600,7 @@ GameObject:
   - component: {fileID: 877788551714678142}
   - component: {fileID: 877788551714678143}
   - component: {fileID: 877788551714678136}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ep2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -892,7 +892,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5412105186038197577}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: E
   m_TagString: Untagged
   m_Icon: {fileID: 0}

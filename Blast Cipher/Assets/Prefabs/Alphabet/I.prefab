@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2485640305723786849}
   - component: {fileID: 2485640305723786848}
   - component: {fileID: 2485640305723786851}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ip1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9055872916313008726}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: I
   m_TagString: Untagged
   m_Icon: {fileID: 0}

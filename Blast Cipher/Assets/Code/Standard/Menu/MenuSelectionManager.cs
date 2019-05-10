@@ -1,15 +1,14 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum MenuState { Local, Online, CharacterEditor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
-public class MenuSelectionManager : MonoBehaviour
+public class MenuSelectionManager : MenuManager
 {
+
     [SerializeField] private MaterialsHolder localGame, onlineGame, characterEditor, profile, exit;
     [SerializeField] private MenuState standartState = 0;
-    [SerializeField] private Material defaultMat, highlightedMat;
     [SerializeField] private Transform[] selectorPoints;
     [SerializeField] private Transform selector;
     [SerializeField][Range(10f,20f)] private float selectorSpeed = 10f;
@@ -26,7 +25,9 @@ public class MenuSelectionManager : MonoBehaviour
 
     public bool Focus { get => isFocused; set => isFocused = value; }
 
-    public void ChangeState(bool increment)
+    public override bool Activated { get => true; set => throw new System.NotImplementedException(); }
+
+    public override void ChangeState(bool increment)
     {
         if (increment)
             CurrentState = ((int)CurrentState) + 1 >= System.Enum.GetValues(typeof(MenuState)).Length ? CurrentState : CurrentState + 1;
@@ -78,13 +79,13 @@ public class MenuSelectionManager : MonoBehaviour
         }
     }
 
-    private void SetMaterials(MenuState defaultMatState, MenuState highlightedMatState)
+    protected override void SetMaterials<MenuState>(MenuState defaultMatState, MenuState highlightedMatState)
     {
         SetMaterial(defaultMatState, defaultMat);
         SetMaterial(highlightedMatState, highlightedMat);
     }
 
-    private void SetMaterial(MenuState state, Material mat)
+    protected override void SetMaterial<MenuState>(MenuState state, Material mat)
     {
         switch (state)
         {
