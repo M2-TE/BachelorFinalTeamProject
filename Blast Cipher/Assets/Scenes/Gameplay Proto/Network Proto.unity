@@ -2029,7 +2029,7 @@ PrefabInstance:
     - target: {fileID: 4297692973797305964, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4297692973797305967, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
         type: 3}
@@ -2099,6 +2099,11 @@ PrefabInstance:
     - target: {fileID: 4297692973797305966, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
         type: 3}
       propertyPath: positionUpdateInternal
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4297692973797305966, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
+        type: 3}
+      propertyPath: positionUpdateInterval
       value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -3568,7 +3573,7 @@ PrefabInstance:
     - target: {fileID: 4297692973797305964, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4297692973797305967, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
         type: 3}
@@ -3635,6 +3640,16 @@ PrefabInstance:
       propertyPath: udpLatencyText
       value: 
       objectReference: {fileID: 2013821866}
+    - target: {fileID: 4297692973797305966, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
+        type: 3}
+      propertyPath: positionUpdateInternal
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4297692973797305966, guid: 08eb9eaf1b7bfc54ea3bcce7713618db,
+        type: 3}
+      propertyPath: positionUpdateInterval
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08eb9eaf1b7bfc54ea3bcce7713618db, type: 3}
 --- !u!1001 &4422398641582501794

@@ -25,13 +25,16 @@ namespace Networking
 
 		protected override void TcpConnectionEstablished(NetworkStream stream)
 		{
-			connectedClients.Add(stream);
-			NetworkMessage message = new NetworkMessage()
+			NetworkMessage message = null;
+			lock (connectedClients)
 			{
-				Type = (byte)MessageType.Initialization,
-				ClientID = (byte)connectedClients.IndexOf(stream)
-			};
-
+				connectedClients.Add(stream);
+				message = new NetworkMessage()
+				{
+					Type = (byte)MessageType.Initialization,
+					ClientID = (byte)connectedClients.IndexOf(stream)
+				};
+			}
 			SendTcpMessage(stream, message.ToArray());
 		}
 
@@ -39,11 +42,15 @@ namespace Networking
 		{
 			var netMessage = NetworkMessage.Parse(message);
 			HandleClientMessage(netMessage, sender);
-			for (int i = 0; i < storedMessages.Length; i++)
+			lock (storedMessages)
 			{
-				if (storedMessages[i].ClientID == netMessage.ClientID) continue;
-				storedMessages[i].MillisecondTimestamp = netMessage.MillisecondTimestamp;
-				SendTcpMessage(sender, storedMessages[i].ToArray());
+				for (int i = 0; i < storedMessages.Length; i++)
+				{
+					if (storedMessages[i].ClientID == netMessage.ClientID) continue;
+					storedMessages[i].MillisecondTimestamp = netMessage.MillisecondTimestamp;
+
+					SendTcpMessage(sender, storedMessages[i].ToArray());
+				}
 			}
 			//try
 			//{
@@ -68,7 +75,10 @@ namespace Networking
 				case MessageType.Undefined: return;
 
 				case MessageType.EntityPositions:
-					storedMessages[message.ClientID] = message;
+					lock (storedMessages)
+					{
+						storedMessages[message.ClientID] = message;
+					}
 					break;
 			}
 		}

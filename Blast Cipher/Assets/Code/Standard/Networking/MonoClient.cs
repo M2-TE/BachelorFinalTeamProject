@@ -15,15 +15,16 @@ namespace Networking
 	{
 		[SerializeField] private string targetIP = "127.0.0.1";
 		[SerializeField] private float latencyUpdateInterval = .1f;
-		[SerializeField] private float positionUpdateInternal = .1f;
-		[SerializeField] private float velocityUpdateInternal = .1f;
+		[SerializeField] private float positionUpdateInterval = .1f;
+		[SerializeField] private float velocityUpdateInterval = .1f;
 		[SerializeField] private TextMeshProUGUI tcpLatencyText;
 		[SerializeField] private TextMeshProUGUI udpLatencyText;
 		[SerializeField] private Vector3[] playerSpawnPos;
 		[SerializeField] private GameObject playerPrefab;
 		[SerializeField] private GameObject networkPlayerPrefab;
 
-		private readonly Queue<PlayerCharacter.ActionType> queuedActions = new Queue<PlayerCharacter.ActionType>();
+		private readonly Queue<PlayerCharacter.ActionType> outgoingQueuedActions = new Queue<PlayerCharacter.ActionType>();
+		private readonly Queue<PlayerCharacter.ActionType> incomingQueuedActions = new Queue<PlayerCharacter.ActionType>();
 		private StringBuilder stringBuilder = new StringBuilder();
 		private int tcpLatency = 0;
 		private int udpLatency = 0;
@@ -76,7 +77,7 @@ namespace Networking
 				ClientID = clientID
 			};
 
-			var waiter = new WaitForSecondsRealtime(positionUpdateInternal);
+			var waiter = new WaitForSecondsRealtime(positionUpdateInterval);
 			while (localPlayer != null)
 			{
 				message.MillisecondTimestamp = GetTime;
@@ -112,6 +113,10 @@ namespace Networking
 			{
 				networkPlayer.transform.position = bufferedPosition;
 				networkPlayer.transform.rotation = Quaternion.Euler(bufferedRotation);
+				while (incomingQueuedActions.Count > 0)
+				{
+					networkPlayer.PerformAction(incomingQueuedActions.Dequeue());
+				}
 			}
 		}
 
@@ -138,7 +143,7 @@ namespace Networking
 
 		private void PlayerActionCallback(PlayerCharacter.ActionType action)
 		{
-			queuedActions.Enqueue(action);
+			outgoingQueuedActions.Enqueue(action);
 		}
 
 		protected override void TcpConnectionEstablished(NetworkStream stream)

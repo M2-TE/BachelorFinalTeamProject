@@ -158,6 +158,16 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		networkHook = hook;
 	}
 
+	public void PerformAction(ActionType action)
+	{
+		switch (action)
+		{
+			case ActionType.Shoot:
+				if(loadedProjectiles.Count > 0) Shoot();
+				break;
+		}
+	}
+
 	#region InputSystem event calls
 	private void DebugKeyboardInput()
 	{
@@ -399,7 +409,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
-	public void Shoot()
+	private void Shoot()
 	{
 		camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
 		currentShotCooldown = settings.ShotCooldown;

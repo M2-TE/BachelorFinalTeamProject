@@ -33,7 +33,7 @@ namespace Networking
 					{
 						var binaryFormatter = new BinaryFormatter();
 						binaryFormatter.Serialize(memoryStream, this);
-						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
 						
 
 						return memoryStream.ToArray();
@@ -53,7 +53,7 @@ namespace Networking
 					using (var memoryStream = new MemoryStream())
 					{
 						var binaryFormatter = new BinaryFormatter();
-						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
 
 						memoryStream.Write(bytes, 0, bytes.Length);
 						memoryStream.Seek(0, SeekOrigin.Begin);
