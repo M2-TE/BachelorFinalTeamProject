@@ -26,7 +26,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	[Space]
 	public bool DebugKBControlsActive = false;
-	public bool NetworkControlled = false;
 	
 	[Space]
 	[SerializeField] private Animator parryAnimator;
@@ -54,7 +53,11 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
-	public CharacterController charController;
+	[NonSerialized] public CharacterController CharController;
+	[NonSerialized] public Vector2 MovementInput;
+	[NonSerialized] public Vector2 AimInput;
+	[NonSerialized] public bool NetworkControlled = false;
+
 	private GameManager gameManager;
 	private CamShakeManager camShakeManager;
 	private InputMaster input;
@@ -66,8 +69,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
 	private readonly List<PowerUpType> bufferedKeys = new List<PowerUpType>();
 
-	public Vector2 movementInput;
-	public Vector2 aimInput;
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
 
@@ -122,7 +123,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		input = gameManager.InputMaster;
 		gameManager.RegisterPlayerCharacter(this);
 		
-		charController = GetComponent<CharacterController>();
+		CharController = GetComponent<CharacterController>();
 
 		InitializeFields();
 	}
@@ -171,7 +172,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region InputSystem event calls
 	private void DebugKeyboardInput()
 	{
-		movementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+		MovementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
 		if (Input.GetKeyDown(KeyCode.E) && loadedProjectiles.Count > 0)
 		{
@@ -202,7 +203,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
-			if (currentDashCooldown == 0f && charController.velocity.sqrMagnitude > .1f)
+			if (currentDashCooldown == 0f && CharController.velocity.sqrMagnitude > .1f)
 			{
 				currentDashCooldown = settings.DashCooldown;
 				StartCoroutine(DashSequence());
@@ -212,12 +213,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void UpdateMovementControlled(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device) movementInput = ctx.ReadValue<Vector2>();
+		if (_inputDevice == ctx.control.device) MovementInput = ctx.ReadValue<Vector2>();
 	}
 
 	private void UpdateLookRotationControlled(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device) aimInput = ctx.ReadValue<Vector2>();
+		if (_inputDevice == ctx.control.device) AimInput = ctx.ReadValue<Vector2>();
 	}
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
@@ -232,7 +233,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (_inputDevice == ctx.control.device
 			&& currentDashCooldown == 0f 
-			&& charController.velocity.sqrMagnitude > .1f)
+			&& CharController.velocity.sqrMagnitude > .1f)
 		{
 			currentDashCooldown = settings.DashCooldown;
 			StartCoroutine(DashSequence());
@@ -299,12 +300,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		float mod = Time.deltaTime * currentMovespeed;
 		var movement = Vector3.ClampMagnitude
-			(camHorizontal * movementInput.x
-			+ camVertical * movementInput.y, 1f) * mod; // move player relative to camera
+			(camHorizontal * MovementInput.x
+			+ camVertical * MovementInput.y, 1f) * mod; // move player relative to camera
 
-		movement.y = charController.isGrounded ? 0f : Physics.gravity.y * Time.deltaTime;
+		movement.y = CharController.isGrounded ? 0f : Physics.gravity.y * Time.deltaTime;
 
-		charController.Move(movement);
+		CharController.Move(movement);
 	}
 
 	private void UpdateLookRotation()
@@ -322,15 +323,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			lookDir.y = 0f;
 			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, settings.AimLineLengthMax));
 		}
-		else if (aimInput.sqrMagnitude < .1f)
+		else if (AimInput.sqrMagnitude < .1f)
 		{
 			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, 1f));
 			return;
 		}
 		else
 		{
-			lookDir = new Vector3(aimInput.x, 0f, aimInput.y);
-			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, aimInput.magnitude * settings.AimLineLengthMax));
+			lookDir = new Vector3(AimInput.x, 0f, AimInput.y);
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, AimInput.magnitude * settings.AimLineLengthMax));
 		}
 
 
@@ -355,7 +356,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			orbitVec = selfRotation * orbitVec; // vector from orbit center to target position (local space)
 			targetPos = projectileOrbitCenter.position + orbitVec;
 
-			if (movementInput.sqrMagnitude > .5f)
+			if (MovementInput.sqrMagnitude > .5f)
 			{
 				Vector3 targetPosTwo = transform.position + transform.up * settings.MovementOrbit;
 				targetPos = Vector3.Lerp(targetPos, targetPosTwo, settings.MovementInterpolation);

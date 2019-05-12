@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -10,53 +9,43 @@ namespace Networking
 	{
 		[SerializeField] private int maxClients;
 
-		private List<NetworkStream> connectedClients;
-		private NetworkMessage[] storedMessages;
-		private FrequentMessage[] storedFrequentMessages;
+		private List<NetworkStream> tcpConnections;
+		private TcpMessage[] storedTcpMessages;
+		private UdpMessage[] storedUdpMessages;
 
 		private void Start()
 		{
-			connectedClients = new List<NetworkStream>(maxClients);
-			storedMessages = new NetworkMessage[maxClients];
-			storedMessages[0] = new NetworkMessage() { ClientID = 0 };
-			storedMessages[1] = new NetworkMessage() { ClientID = 1 };
-
-			storedFrequentMessages = new FrequentMessage[maxClients];
-			storedFrequentMessages[0] = new FrequentMessage() { ClientID = 0 };
-			storedFrequentMessages[1] = new FrequentMessage() { ClientID = 1 };
-
 			SetupAsServer();
-		}
+
+			tcpConnections = new List<NetworkStream>(maxClients);
+			storedTcpMessages = new TcpMessage[maxClients];
+			storedUdpMessages = new UdpMessage[maxClients];
+			for (int i = 0; i < maxClients; i++)
+			{
+				storedTcpMessages[i] = new TcpMessage();
+				storedUdpMessages[i] = new UdpMessage();
+			}
+	}
 
 		protected override void TcpConnectionEstablished(NetworkStream stream)
 		{
-			NetworkMessage message = null;
-			lock (connectedClients)
+			var message = new TcpMessage()
 			{
-				connectedClients.Add(stream);
-				message = new NetworkMessage()
-				{
-					Type = (byte)MessageType.Initialization,
-					ClientID = (byte)connectedClients.IndexOf(stream)
-				};
-			}
+				MessageType = (byte)MessageType.Initialization,
+				ClientID = (byte)tcpConnections.Count
+			};
+			tcpConnections.Add(stream);
 			SendTcpMessage(stream, message.ToArray());
 		}
 
-		protected override void TcpMessageReceived(NetworkStream sender, byte[] message)
+		protected override void TcpMessageReceived(NetworkStream sender, byte[] messageBytes)
 		{
-			var netMessage = NetworkMessage.Parse(message);
-			HandleClientMessage(netMessage, sender);
-			lock (storedMessages)
-			{
-				for (int i = 0; i < storedMessages.Length; i++)
-				{
-					if (storedMessages[i].ClientID == netMessage.ClientID) continue;
-					storedMessages[i].MillisecondTimestamp = netMessage.MillisecondTimestamp;
+			TcpMessage message = NetworkMessage.Parse<TcpMessage>(messageBytes);
+			storedTcpMessages[message.ClientID] = message;
 
-					SendTcpMessage(sender, storedMessages[i].ToArray());
-				}
-			}
+			var messageToSend = storedTcpMessages[message.ClientID == 0 ? 1 : 0];
+			messageToSend.MillisecondTimestamp = message.MillisecondTimestamp;
+			SendTcpMessage(sender, messageToSend.ToArray());
 			//try
 			//{
 			//}
@@ -66,34 +55,14 @@ namespace Networking
 			//}
 		}
 
-		protected override void UdpMessageReceived(IPEndPoint sender, byte[] message)
+		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
 		{
-			var netMessage = FrequentMessage.Parse(message);
-			storedFrequentMessages[netMessage.ClientID] = netMessage;
-			for(int i = 0; i < storedFrequentMessages.Length; i++)
-			{
-				if (storedFrequentMessages[i].ClientID == netMessage.ClientID) continue;
-				storedFrequentMessages[i].MillisecondTimestamp = netMessage.MillisecondTimestamp;
+			UdpMessage message = NetworkMessage.Parse<UdpMessage>(messageBytes);
+			storedUdpMessages[message.ClientID] = message;
 
-				SendUdpMessage(sender, storedFrequentMessages[i].ToArray());
-			}
-		}
-
-		private void HandleClientMessage(NetworkMessage message, NetworkStream stream)
-		{
-			switch ((MessageType)message.Type)
-			{
-				default:
-				case MessageType.Initialization:
-				case MessageType.Undefined: return;
-
-				case MessageType.EntityPositions:
-					lock (storedMessages)
-					{
-						storedMessages[message.ClientID] = message;
-					}
-					break;
-			}
+			var messageToSend = storedUdpMessages[message.ClientID == 0 ? 1 : 0];
+			messageToSend.MillisecondTimestamp = message.MillisecondTimestamp;
+			SendUdpMessage(sender, messageToSend.ToArray());
 		}
 	}
 }

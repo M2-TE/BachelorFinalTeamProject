@@ -12,18 +12,13 @@ namespace Networking
 {
 	public abstract class MonoNetwork : MonoBehaviour
 	{
-		protected enum MessageType : byte { Undefined, Initialization, EntityPositions }
-		protected enum EntityType : byte { Undefined, Player, Projectile }
+		protected enum MessageType : byte { Undefined, Initialization, Gameplay }
 
 		[Serializable]
-		protected class NetworkMessage
+		protected abstract class NetworkMessage
 		{
-			internal byte Type;
 			internal byte ClientID;
 			internal int MillisecondTimestamp;
-
-			internal float[] playerPosition;
-			internal float[] playerRotation;
 
 			internal byte[] ToArray()
 			{
@@ -45,7 +40,7 @@ namespace Networking
 				}
 			}
 
-			internal static NetworkMessage Parse(byte[] bytes)
+			internal static T Parse<T>(byte[] bytes) where T : NetworkMessage
 			{
 				try
 				{
@@ -56,7 +51,7 @@ namespace Networking
 						memoryStream.Write(bytes, 0, bytes.Length);
 						memoryStream.Seek(0, SeekOrigin.Begin);
 
-						var message = binaryFormatter.Deserialize(memoryStream) as NetworkMessage;
+						var message = binaryFormatter.Deserialize(memoryStream) as T;
 						return message;
 					}
 				}
@@ -69,67 +64,58 @@ namespace Networking
 		}
 
 		[Serializable]
-		protected class FrequentMessage
+		protected class TcpMessage : NetworkMessage
 		{
-			internal FrequentMessage()
+			internal TcpMessage()
 			{
-				movementInput = new float[] { 0f, 0f };
-				rotationInput = new float[] { 0f, 0f };
+				playerPosition = new float[3];
 			}
 
-			internal byte ClientID;
-			internal int MillisecondTimestamp;
+			internal byte MessageType;
 
-			internal float[] movementInput;
-			internal float[] rotationInput;
-
-			internal byte[] ToArray()
+			private readonly float[] playerPosition;
+			internal Vector3 PlayerPosition
 			{
-				try
+				get => new Vector3(playerPosition[0], playerPosition[1], playerPosition[2]);
+				set
 				{
-					using (var memoryStream = new MemoryStream())
-					{
-						var binaryFormatter = new BinaryFormatter();
-						binaryFormatter.Serialize(memoryStream, this);
-
-
-						return memoryStream.ToArray();
-					}
-				}
-				catch (Exception e)
-				{
-					Debug.LogException(e);
-					return null;
-				}
-			}
-
-			internal static FrequentMessage Parse(byte[] bytes)
-			{
-				try
-				{
-					using (var memoryStream = new MemoryStream())
-					{
-						var binaryFormatter = new BinaryFormatter();
-
-						memoryStream.Write(bytes, 0, bytes.Length);
-						memoryStream.Seek(0, SeekOrigin.Begin);
-
-						var message = binaryFormatter.Deserialize(memoryStream) as FrequentMessage;
-						return message;
-					}
-				}
-				catch (Exception e)
-				{
-					Debug.LogException(e);
-					return null;
+					playerPosition[0] = value.x;
+					playerPosition[1] = value.y;
+					playerPosition[2] = value.z;
 				}
 			}
 		}
 
-		protected class BufferTuple
+		[Serializable]
+		protected class UdpMessage : NetworkMessage
 		{
-			public Transform transform;
-			public Vector3 bufferedPos;
+			internal UdpMessage()
+			{
+				movementInput = new float[2];
+				aimInput = new float[2];
+			}
+
+			private float[] movementInput;
+			internal Vector2 MovementInput
+			{
+				get => new Vector2(movementInput[0], movementInput[1]);
+				set
+				{
+					movementInput[0] = value.x;
+					movementInput[1] = value.y;
+				}
+			}
+
+			private float[] aimInput;
+			internal Vector2 AimInput
+			{
+				get => new Vector2(aimInput[0], aimInput[1]);
+				set
+				{
+					aimInput[0] = value.x;
+					aimInput[1] = value.y;
+				}
+			}
 		}
 
 		private class ConnectionState
@@ -187,52 +173,97 @@ namespace Networking
 		#region TCP
 		private void OnTcpClientAccept(IAsyncResult ar)
 		{
-			var senderClient = tcpListener.EndAcceptTcpClient(ar);
-			var stream = senderClient.GetStream();
-			byte[] bytes = new byte[TCP_DATAGRAM_SIZE_MAX];
-			TcpConnectionEstablished(stream);
+			try
+			{
+				var senderClient = tcpListener.EndAcceptTcpClient(ar);
+				var stream = senderClient.GetStream();
+				byte[] bytes = new byte[TCP_DATAGRAM_SIZE_MAX];
+				TcpConnectionEstablished(stream);
 
-			// wait for messages on stream
-			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new ConnectionState() { Stream = stream, Message = bytes });
-			
-			// listen for more clients
-			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null); 
+				// wait for messages on stream
+				stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, new ConnectionState() { Stream = stream, Message = bytes });
+
+				// listen for more clients
+				tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null);
+			}
+			catch (ObjectDisposedException e)
+			{
+				Debug.Log(e);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		private void OnTcpConnect(IAsyncResult ar)
 		{
-			tcpClient.EndConnect(ar);
-			var stream = tcpClient.GetStream();
+			try
+			{
+				tcpClient.EndConnect(ar);
+				var stream = tcpClient.GetStream();
 
-			// callback
-			TcpConnectionEstablished(stream);
+				// callback
+				TcpConnectionEstablished(stream);
 
-			// begin reading from now established stream
-			byte[] bytes = new byte[TCP_DATAGRAM_SIZE_MAX];
-			var connection = new ConnectionState() { Message = bytes, Stream = stream };
-			stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, connection);
+				// begin reading from now established stream
+				byte[] bytes = new byte[TCP_DATAGRAM_SIZE_MAX];
+				var connection = new ConnectionState() { Message = bytes, Stream = stream };
+				stream.BeginRead(bytes, 0, bytes.Length, OnTcpMessageReceive, connection);
+			}
+			catch (Exception e)
+			{
+				var ip = (IPAddress)ar.AsyncState;
+				tcpClient.BeginConnect(ip, PORT, OnTcpConnect, ip);
+				Debug.Log(e);
+			}
 		}
 
 		private void OnTcpMessageReceive(IAsyncResult ar)
 		{
-			ConnectionState connection = (ConnectionState)ar.AsyncState;
-			connection.Stream.EndRead(ar);
+			try
+			{
+				ConnectionState connection = (ConnectionState)ar.AsyncState;
+				connection.Stream.EndRead(ar);
 
-			// callback
-			TcpMessageReceived(connection.Stream, connection.Message);
+				// callback
+				TcpMessageReceived(connection.Stream, connection.Message);
 
-			// wait for more messages
-			connection.Stream.BeginRead(connection.Message, 0, connection.Message.Length, OnTcpMessageReceive, connection);
+				// wait for more messages
+				connection.Stream.BeginRead(connection.Message, 0, connection.Message.Length, OnTcpMessageReceive, connection);
+			}
+			catch(ObjectDisposedException e)
+			{
+				Debug.Log(e);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		private void OnTcpMessageSend(IAsyncResult ar)
 		{
-			((NetworkStream)ar.AsyncState).EndWrite(ar);
+			try
+			{
+				((NetworkStream)ar.AsyncState).EndWrite(ar);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		protected void SendTcpMessage(NetworkStream stream, byte[] message)
 		{
-			stream.BeginWrite(message, 0, message.Length, OnTcpMessageSend, stream);
+			try
+			{
+				stream.BeginWrite(message, 0, message.Length, OnTcpMessageSend, stream);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		protected virtual void TcpConnectionEstablished(NetworkStream stream) { }
@@ -243,27 +274,59 @@ namespace Networking
 		#region UDP
 		private void OnUdpMessageReceive(IAsyncResult ar)
 		{
-			IPEndPoint sender = new IPEndPoint(IPAddress.Any, PORT);
-			byte[] messageBytes = udpClient.EndReceive(ar, ref sender);
+			try
+			{
+				IPEndPoint sender = new IPEndPoint(IPAddress.Any, PORT);
+				byte[] messageBytes = udpClient.EndReceive(ar, ref sender);
 
-			UdpMessageReceived(sender, messageBytes);
+				UdpMessageReceived(sender, messageBytes);
 
-			udpClient.BeginReceive(OnUdpMessageReceive, null);
+				udpClient.BeginReceive(OnUdpMessageReceive, null);
+			}
+			catch (ObjectDisposedException e)
+			{
+				Debug.Log(e);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		private void OnUdpMessageSend(IAsyncResult ar)
 		{
-			udpClient.EndSend(ar);
+			try
+			{
+				udpClient.EndSend(ar);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		protected void SendUdpMessage(byte[] message)
 		{
-			udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
+			try
+			{
+				udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		protected void SendUdpMessage(IPEndPoint target, byte[] message)
 		{
-			udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
+			try
+			{
+				udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
+			}
+			catch (Exception e)
+			{
+				Debug.LogException(e);
+			}
 		}
 
 		protected virtual void UdpMessageReceived(IPEndPoint sender, byte[] message) { }

@@ -45,15 +45,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PORT: 18000
   targetIP: 127.0.0.1
-  latencyUpdateInterval: 0.1
-  positionUpdateInternal: 0.1
-  velocityUpdateInternal: 0.1
-  tcpLatencyText: {fileID: 0}
-  udpLatencyText: {fileID: 0}
+  positionUpdateInterval: 0.1
   playerSpawnPos:
   - {x: -1, y: 0, z: -2}
   - {x: 6, y: 0, z: 0}
   playerPrefab: {fileID: 4422398640955214208, guid: 28b748acebf998c44a1cd0aff10207e7,
     type: 3}
-  networkPlayerPrefab: {fileID: 1564240093426130470, guid: e20be35c3c0655f41ac14f0d45d72419,
-    type: 3}
+  latencyUpdateInterval: 0.1
+  tcpLatencyText: {fileID: 0}
+  udpLatencyText: {fileID: 0}
