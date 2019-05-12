@@ -79,13 +79,13 @@ public class MenuSelectionManager : MenuManager
         }
     }
 
-    protected override void SetMaterials<MenuState>(MenuState defaultMatState, MenuState highlightedMatState)
+    protected void SetMaterials(MenuState defaultMatState, MenuState highlightedMatState)
     {
         SetMaterial(defaultMatState, defaultMat);
         SetMaterial(highlightedMatState, highlightedMat);
     }
 
-    protected override void SetMaterial<MenuState>(MenuState state, Material mat)
+    protected void SetMaterial(MenuState state, Material mat)
     {
         switch (state)
         {
