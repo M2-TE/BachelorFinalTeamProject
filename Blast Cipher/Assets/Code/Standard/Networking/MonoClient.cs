@@ -44,9 +44,10 @@ namespace Networking
 
 			StartCoroutine(UpdateLatencyDisplays());
 			StartCoroutine(ShareEntityPositions());
+			StartCoroutine(SharePlayerInputs());
 		}
 
-		private void Update()
+		private void LateUpdate()
 		{
 			UpateEntityTransforms();
 		}
@@ -102,6 +103,28 @@ namespace Networking
 			}
 		}
 
+		private IEnumerator SharePlayerInputs()
+		{
+			while (stream == null || localPlayer == null) { yield return null; }
+
+			FrequentMessage message = new FrequentMessage()
+			{
+				ClientID = clientID
+			};
+
+			var waiter = new WaitForSecondsRealtime(0f);
+			while (localPlayer != null)
+			{
+				message.MillisecondTimestamp = GetTime;
+
+				message.movementInput = new float[] { localPlayer.movementInput.x, localPlayer.movementInput.y };
+				message.rotationInput = new float[] { localPlayer.aimInput.x, localPlayer.aimInput.y };
+
+				SendUdpMessage(message.ToArray());
+				yield return waiter;
+			}
+		}
+
 		private void UpateEntityTransforms()
 		{
 			if (!roundStarted)
@@ -111,8 +134,8 @@ namespace Networking
 			}
 			else if(networkPlayer != null && localPlayer != null)
 			{
-				networkPlayer.transform.position = bufferedPosition;
-				networkPlayer.transform.rotation = Quaternion.Euler(bufferedRotation);
+				//networkPlayer.transform.position = bufferedPosition;
+				//networkPlayer.transform.rotation = Quaternion.Euler(bufferedRotation);
 				while (incomingQueuedActions.Count > 0)
 				{
 					networkPlayer.PerformAction(incomingQueuedActions.Dequeue());
@@ -155,17 +178,17 @@ namespace Networking
 		{
 			var messageInst = NetworkMessage.Parse(message);
 			tcpLatency = GetTime - messageInst.MillisecondTimestamp;
-			HandleServerMessage(messageInst);
+			HandleTcpMessage(messageInst);
 		}
 
 		protected override void UdpMessageReceived(IPEndPoint sender, byte[] message)
 		{
-			var messageInst = NetworkMessage.Parse(message);
+			var messageInst = FrequentMessage.Parse(message);
 			udpLatency = GetTime - messageInst.MillisecondTimestamp;
-			HandleServerMessage(messageInst);
+			HandleUdpMessage(messageInst);
 		}
 
-		private void HandleServerMessage(NetworkMessage message)
+		private void HandleTcpMessage(NetworkMessage message)
 		{
 			switch ((MessageType)message.Type)
 			{
@@ -174,7 +197,6 @@ namespace Networking
 
 				case MessageType.Initialization:
 					clientID = message.ClientID;
-					Debug.Log(clientID);
 					break;
 
 				case MessageType.EntityPositions:
@@ -188,6 +210,19 @@ namespace Networking
 						message.playerRotation[1],
 						message.playerRotation[2]);
 					break;
+			}
+		}
+
+		private void HandleUdpMessage(FrequentMessage message)
+		{
+			try
+			{
+				networkPlayer.movementInput = new Vector2(message.movementInput[0], message.movementInput[1]);
+				networkPlayer.aimInput = new Vector2(message.rotationInput[0], message.rotationInput[1]);
+			}
+			catch(Exception e)
+			{
+				Debug.LogException(e);
 			}
 		}
 	}

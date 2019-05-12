@@ -12,6 +12,7 @@ namespace Networking
 
 		private List<NetworkStream> connectedClients;
 		private NetworkMessage[] storedMessages;
+		private FrequentMessage[] storedFrequentMessages;
 
 		private void Start()
 		{
@@ -19,6 +20,10 @@ namespace Networking
 			storedMessages = new NetworkMessage[maxClients];
 			storedMessages[0] = new NetworkMessage() { ClientID = 0 };
 			storedMessages[1] = new NetworkMessage() { ClientID = 1 };
+
+			storedFrequentMessages = new FrequentMessage[maxClients];
+			storedFrequentMessages[0] = new FrequentMessage() { ClientID = 0 };
+			storedFrequentMessages[1] = new FrequentMessage() { ClientID = 1 };
 
 			SetupAsServer();
 		}
@@ -63,7 +68,15 @@ namespace Networking
 
 		protected override void UdpMessageReceived(IPEndPoint sender, byte[] message)
 		{
-			//SendUdpMessage(sender, message); // reply
+			var netMessage = FrequentMessage.Parse(message);
+			storedFrequentMessages[netMessage.ClientID] = netMessage;
+			for(int i = 0; i < storedFrequentMessages.Length; i++)
+			{
+				if (storedFrequentMessages[i].ClientID == netMessage.ClientID) continue;
+				storedFrequentMessages[i].MillisecondTimestamp = netMessage.MillisecondTimestamp;
+
+				SendUdpMessage(sender, storedFrequentMessages[i].ToArray());
+			}
 		}
 
 		private void HandleClientMessage(NetworkMessage message, NetworkStream stream)

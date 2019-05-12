@@ -54,9 +54,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
+	public CharacterController charController;
 	private GameManager gameManager;
 	private CamShakeManager camShakeManager;
-	private CharacterController charController;
 	private InputMaster input;
 	
 	private Portal portalOne;
@@ -66,8 +66,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
 	private readonly List<PowerUpType> bufferedKeys = new List<PowerUpType>();
 
-	private Vector2 movementInput;
-	private Vector2 aimInput;
+	public Vector2 movementInput;
+	public Vector2 aimInput;
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
 
@@ -134,8 +134,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void Update()
 	{
-		if (NetworkControlled) return;
 		if (DebugKBControlsActive) DebugKeyboardInput();
+
 		UpdateMovement();
 		UpdateLookRotation();
 
@@ -299,7 +299,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		float mod = Time.deltaTime * currentMovespeed;
 		var movement = Vector3.ClampMagnitude
-			(camHorizontal * movementInput.x 
+			(camHorizontal * movementInput.x
 			+ camVertical * movementInput.y, 1f) * mod; // move player relative to camera
 
 		movement.y = charController.isGrounded ? 0f : Physics.gravity.y * Time.deltaTime;

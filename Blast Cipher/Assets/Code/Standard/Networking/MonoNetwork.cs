@@ -33,7 +33,6 @@ namespace Networking
 					{
 						var binaryFormatter = new BinaryFormatter();
 						binaryFormatter.Serialize(memoryStream, this);
-						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
 						
 
 						return memoryStream.ToArray();
@@ -53,7 +52,6 @@ namespace Networking
 					using (var memoryStream = new MemoryStream())
 					{
 						var binaryFormatter = new BinaryFormatter();
-						binaryFormatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Full;
 
 						memoryStream.Write(bytes, 0, bytes.Length);
 						memoryStream.Seek(0, SeekOrigin.Begin);
@@ -63,6 +61,64 @@ namespace Networking
 					}
 				}
 				catch(Exception e)
+				{
+					Debug.LogException(e);
+					return null;
+				}
+			}
+		}
+
+		[Serializable]
+		protected class FrequentMessage
+		{
+			internal FrequentMessage()
+			{
+				movementInput = new float[] { 0f, 0f };
+				rotationInput = new float[] { 0f, 0f };
+			}
+
+			internal byte ClientID;
+			internal int MillisecondTimestamp;
+
+			internal float[] movementInput;
+			internal float[] rotationInput;
+
+			internal byte[] ToArray()
+			{
+				try
+				{
+					using (var memoryStream = new MemoryStream())
+					{
+						var binaryFormatter = new BinaryFormatter();
+						binaryFormatter.Serialize(memoryStream, this);
+
+
+						return memoryStream.ToArray();
+					}
+				}
+				catch (Exception e)
+				{
+					Debug.LogException(e);
+					return null;
+				}
+			}
+
+			internal static FrequentMessage Parse(byte[] bytes)
+			{
+				try
+				{
+					using (var memoryStream = new MemoryStream())
+					{
+						var binaryFormatter = new BinaryFormatter();
+
+						memoryStream.Write(bytes, 0, bytes.Length);
+						memoryStream.Seek(0, SeekOrigin.Begin);
+
+						var message = binaryFormatter.Deserialize(memoryStream) as FrequentMessage;
+						return message;
+					}
+				}
+				catch (Exception e)
 				{
 					Debug.LogException(e);
 					return null;
