@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Input;
 using UnityEngine.Experimental.Input.Haptics;
 using UnityEngine.Experimental.Input.Plugins.Users;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public abstract class InputSystemMonoBehaviour : MonoBehaviour
@@ -213,7 +214,11 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void UpdateMovementControlled(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device) MovementInput = ctx.ReadValue<Vector2>();
+		if (_inputDevice == ctx.control.device)
+		{
+			MovementInput = ctx.ReadValue<Vector2>();
+			Debug.Log(ctx.control.device);
+		}
 	}
 
 	private void UpdateLookRotationControlled(InputAction.CallbackContext ctx)
@@ -257,6 +262,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			if (!aimLockInputBlocked)
 			{
 				aimLockTarget = gameManager.RequestNearestPlayer(this);
+				//Debug.Log(aimLockTarget.name);
 				aimLocked = !aimLocked;
 				aimLockInputBlocked = true;
 			}
@@ -419,7 +425,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		loadedProjectiles.Remove(projectile);
 		Shoot(projectile);
 
-		networkHook(ActionType.Shoot);
+		networkHook?.Invoke(ActionType.Shoot);
 	}
 
 	private void Shoot(Projectile projectile)
@@ -458,6 +464,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		OneShotAudioManager.PlayOneShotAudio(settings.PlayerDeathSounds, transform.position);
 		
 		Destroy(gameObject);
+
+		SceneManager.LoadScene("Gameplay Proto", LoadSceneMode.Single);
 	}
 
 	public void PickupProjectile(Projectile projectile)

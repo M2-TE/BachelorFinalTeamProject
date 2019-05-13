@@ -105,7 +105,7 @@ public class LocalLobbyManager : MonoBehaviour
 
     private void StartLocalGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 
     private void Start()
@@ -136,6 +136,11 @@ public class LocalLobbyManager : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
                     SecondPlayerToggle(true);
             }
+
+			if (Input.GetKeyDown(KeyCode.Return))
+			{
+				ManageConfirmation();
+			}
         }
     }
 }

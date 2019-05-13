@@ -28,7 +28,7 @@ namespace EZCameraShake
         void Awake()
         {
             Instance = this;
-            instanceList.Add(gameObject.name, this);
+			if (!instanceList.ContainsValue(this)) instanceList.Add(gameObject.name, this);
         }
 
         void Update()
