@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum LocalLobbyState { Selection, Ready, Start}
 
@@ -84,6 +85,27 @@ public class LocalLobbyManager : MonoBehaviour
         playerTwoJoined = joined;
         SecondPlayerToggleNode.gameObject.SetActive(joined);
         notJoinedBlinker.Enabled = !joined;
+    }
+
+    private void ManageConfirmation()
+    {
+        switch (currentLeftState)
+        {
+            case LocalLobbyState.Selection:
+                break;
+            case LocalLobbyState.Ready:
+                break;
+            case LocalLobbyState.Start:
+                StartLocalGame();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void StartLocalGame()
+    {
+        SceneManager.LoadScene(1);
     }
 
     private void Start()
