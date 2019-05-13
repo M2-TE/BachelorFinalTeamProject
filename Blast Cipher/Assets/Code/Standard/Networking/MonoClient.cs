@@ -48,9 +48,7 @@ namespace Networking
 		{
 			if (newPosBuffered)
 			{
-				//networkPlayer.transform.position = Vector3.MoveTowards(networkPlayer.transform.position, bufferedPosition, .1f);
 				networkPlayer.transform.position = Vector3.Lerp(networkPlayer.transform.position, bufferedPosition, .1f);
-				//networkPlayer.transform.position = bufferedPosition;
 				newPosBuffered = false;
 			}
 		}
@@ -164,6 +162,8 @@ namespace Networking
 		protected override void TcpMessageReceived(NetworkStream sender, byte[] messageBytes)
 		{
 			var message = NetworkMessage.Parse<TcpMessage>(messageBytes);
+			tcpLatency = GetTime - message.MillisecondTimestamp;
+
 			switch ((MessageType)message.MessageType)
 			{
 				case MessageType.Initialization:
@@ -186,6 +186,7 @@ namespace Networking
 		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
 		{
 			var message = NetworkMessage.Parse<UdpMessage>(messageBytes);
+			udpLatency = GetTime - message.MillisecondTimestamp;
 
 			networkPlayer.MovementInput = message.MovementInput;
 			networkPlayer.AimInput = message.AimInput;

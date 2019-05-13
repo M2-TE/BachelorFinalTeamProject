@@ -95,7 +95,7 @@ namespace Networking
 				aimInput = new float[2];
 			}
 
-			private float[] movementInput;
+			private readonly float[] movementInput;
 			internal Vector2 MovementInput
 			{
 				get => new Vector2(movementInput[0], movementInput[1]);
@@ -106,7 +106,7 @@ namespace Networking
 				}
 			}
 
-			private float[] aimInput;
+			private readonly float[] aimInput;
 			internal Vector2 AimInput
 			{
 				get => new Vector2(aimInput[0], aimInput[1]);
@@ -188,11 +188,7 @@ namespace Networking
 			}
 			catch (ObjectDisposedException e)
 			{
-				Debug.Log(e);
-			}
-			catch (Exception e)
-			{
-				Debug.LogException(e);
+				return;
 			}
 		}
 
@@ -232,13 +228,13 @@ namespace Networking
 				// wait for more messages
 				connection.Stream.BeginRead(connection.Message, 0, connection.Message.Length, OnTcpMessageReceive, connection);
 			}
-			catch(ObjectDisposedException e)
+			catch(ObjectDisposedException)
 			{
-				Debug.Log(e);
+				return;
 			}
-			catch (Exception e)
+			catch (IOException)
 			{
-				Debug.LogException(e);
+				return;
 			}
 		}
 
@@ -248,22 +244,15 @@ namespace Networking
 			{
 				((NetworkStream)ar.AsyncState).EndWrite(ar);
 			}
-			catch (Exception e)
+			catch (SocketException)
 			{
-				Debug.LogException(e);
+				return;
 			}
 		}
 
 		protected void SendTcpMessage(NetworkStream stream, byte[] message)
 		{
-			try
-			{
-				stream.BeginWrite(message, 0, message.Length, OnTcpMessageSend, stream);
-			}
-			catch (Exception e)
-			{
-				Debug.LogException(e);
-			}
+			stream.BeginWrite(message, 0, message.Length, OnTcpMessageSend, stream);
 		}
 
 		protected virtual void TcpConnectionEstablished(NetworkStream stream) { }
@@ -283,50 +272,25 @@ namespace Networking
 
 				udpClient.BeginReceive(OnUdpMessageReceive, null);
 			}
-			catch (ObjectDisposedException e)
+			catch (ObjectDisposedException)
 			{
-				Debug.Log(e);
-			}
-			catch (Exception e)
-			{
-				Debug.LogException(e);
+				return;
 			}
 		}
 
 		private void OnUdpMessageSend(IAsyncResult ar)
 		{
-			try
-			{
-				udpClient.EndSend(ar);
-			}
-			catch (Exception e)
-			{
-				Debug.LogException(e);
-			}
+			udpClient.EndSend(ar);
 		}
 
 		protected void SendUdpMessage(byte[] message)
 		{
-			try
-			{
-				udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
-			}
-			catch (Exception e)
-			{
-				Debug.LogException(e);
-			}
+			udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
 		}
 
 		protected void SendUdpMessage(IPEndPoint target, byte[] message)
 		{
-			try
-			{
-				udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
-			}
-			catch (Exception e)
-			{
-				Debug.LogException(e);
-			}
+			udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
 		}
 
 		protected virtual void UdpMessageReceived(IPEndPoint sender, byte[] message) { }
