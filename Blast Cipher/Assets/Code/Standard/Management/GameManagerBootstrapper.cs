@@ -4,7 +4,6 @@ using UnityEngine;
 public class GameManagerBootstrapper : Bootstrapper
 {
 	public InputMaster InputMaster;
-	public Camera MainCam;
 	public float ShakeMagnitude;
 	public float ShakeRoughness;
 
@@ -20,14 +19,6 @@ public class GameManagerBootstrapper : Bootstrapper
 		//Cursor.visible = false;
 		InputMaster.Enable();
 		gameManager = GameManager.Instance;
-	}
-
-	private void Start()
-	{
-		var shakeManager = CamShakeManager.Instance;
-		shakeManager.ShakeMagnitude = ShakeMagnitude;
-		shakeManager.ShakeRoughness = ShakeRoughness;
-		shakeManager.ShakeMagnitudeDecline = shakeMagnitudeDecline;
 	}
 
 	private void Update() => gameManager.TriggerExtendedUpdates();

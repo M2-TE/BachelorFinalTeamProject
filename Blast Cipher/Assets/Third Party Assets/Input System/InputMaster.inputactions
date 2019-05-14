@@ -229,16 +229,26 @@
                     "processors": "",
                     "interactions": "Press",
                     "bindings": []
+                },
+                {
+                    "name": "DPadInput",
+                    "id": "ed2fd65d-dddb-4a4d-8ca6-63a5ca7cffb3",
+                    "expectedControlLayout": "Dpad",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
                 }
             ],
             "bindings": [
                 {
                     "name": "",
-                    "id": "8c0de52c-19a2-41b3-94f2-dfa4c9020cb7",
-                    "path": "<Keyboard>/p",
+                    "id": "12a1a6fc-a9bd-4a18-8591-2992077d6e6e",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
-                    "groups": "KeyboardAndMouse",
+                    "groups": "Gamepad;MainGamepadScheme",
                     "action": "RegisterDevice",
                     "chainWithPrevious": false,
                     "isComposite": false,
@@ -246,16 +256,68 @@
                     "modifiers": ""
                 },
                 {
-                    "name": "",
-                    "id": "12a1a6fc-a9bd-4a18-8591-2992077d6e6e",
-                    "path": "<Gamepad>/start",
+                    "name": "DPad",
+                    "id": "0f298309-dd4e-48bc-ba25-d8ec0d713c4f",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Gamepad",
-                    "action": "RegisterDevice",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": true,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "up",
+                    "id": "37f7381a-f166-4a6b-b59a-67af18535932",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "DPadInput",
                     "chainWithPrevious": false,
                     "isComposite": false,
-                    "isPartOfComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "down",
+                    "id": "7208852f-3133-4495-9ea1-007c31a60f59",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "left",
+                    "id": "133f2aa6-da0f-4df0-807e-1ae9c12dcb10",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "right",
+                    "id": "ce689ff2-47e3-4451-b1a6-1b2afc023d3d",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
                     "modifiers": ""
                 }
             ]

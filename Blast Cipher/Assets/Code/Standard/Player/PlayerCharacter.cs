@@ -10,8 +10,7 @@ using Random = UnityEngine.Random;
 
 public abstract class InputSystemMonoBehaviour : MonoBehaviour
 {
-	private bool _canBeTeleported = true;
-	public bool CanBeTeleported { get => _canBeTeleported; set => _canBeTeleported = value; }
+	public bool CanBeTeleported = true;
 
 	private void OnEnable() => RegisterActions();
 	private void OnDisable() => UnregisterActions();
@@ -22,6 +21,9 @@ public abstract class InputSystemMonoBehaviour : MonoBehaviour
 
 public class PlayerCharacter : InputSystemMonoBehaviour
 {
+	public enum ActionType { Undefined, Shoot, Dodge }
+	public delegate void Hook(ActionType action);
+
 	#region Fields
 	[SerializeField] private PlayerCharacterSettings settings;
 
@@ -36,43 +38,24 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
 
-	public enum ActionType { Undefined, Shoot, Dodge }
-	public delegate void Hook(ActionType action);
-	private Hook networkHook;
-
-	private DualMotorRumble rumble;
-	private InputUser inputUser;
-	private InputDevice _inputDevice;
-	public InputDevice InputDevice
-	{
-		get => _inputDevice;
-		set
-		{
-			_inputDevice = value;
-
-			inputUser = InputUser.PerformPairingWithDevice(value, options: InputUserPairingOptions.UnpairCurrentDevicesFromUser);
-		}
-	}
-
 	[NonSerialized] public CharacterController CharController;
 	[NonSerialized] public Vector2 MovementInput;
 	[NonSerialized] public Vector2 AimInput;
 	[NonSerialized] public bool NetworkControlled = false;
 
-	private GameManager gameManager;
-	private CamShakeManager camShakeManager;
-	private InputMaster input;
-	
-	private Portal portalOne;
-	private Portal portalTwo;
-
 	[NonSerialized] public readonly Dictionary<PowerUpType, float> activePowerUps = new Dictionary<PowerUpType, float>();
 	private readonly List<Projectile> loadedProjectiles = new List<Projectile>();
 	private readonly List<PowerUpType> bufferedKeys = new List<PowerUpType>();
 
+	private GameManager gameManager;
+	private CamShakeManager camShakeManager;
+	private Hook networkHook;
+
+	private int playerID;
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
-
+	private Portal portalOne;
+	private Portal portalTwo;
 	private float currentMovespeed;
 	private float currentShotCooldown = 0f;
 	private float currentParryCooldown = 0f;
@@ -80,62 +63,28 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
-	
 	private bool aimLockInputBlocked = false; //               \/
 	private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
 	#endregion
-
-	protected override void RegisterActions()
-	{
-		if (NetworkControlled) return;
-
-		input.Player.Movement.performed += UpdateMovementControlled;
-		input.Player.Aim.performed += UpdateLookRotationControlled;
-		input.Player.Shoot.performed += TriggerShotControlled;
-		input.Player.Jump.performed += TriggerDash;
-		input.Player.Parry.performed += TriggerParry;
-		input.Player.LockAim.performed += TriggerAimLock;
-		input.Player.PortalOne.performed += TriggerPortalOne;
-		input.Player.PortalTwo.performed += TriggerPortalTwo;
-
-		input.Player.Debug.performed += TriggerDebugAction;
-	}
-
-	protected override void UnregisterActions()
-	{
-		if (NetworkControlled) return;
-
-		input.Player.Movement.performed -= UpdateMovementControlled;
-		input.Player.Aim.performed -= UpdateLookRotationControlled;
-		input.Player.Shoot.performed -= TriggerShotControlled;
-		input.Player.Jump.performed -= TriggerDash;
-		input.Player.Parry.performed -= TriggerParry;
-		input.Player.LockAim.performed -= TriggerAimLock;
-		input.Player.PortalOne.performed -= TriggerPortalOne;
-		input.Player.PortalTwo.performed -= TriggerPortalTwo;
-
-		input.Player.Debug.performed -= TriggerDebugAction;
-	}
 
 	private void Awake()
 	{
 		camShakeManager = CamShakeManager.Instance;
 		gameManager = GameManager.Instance;
-		input = gameManager.InputMaster;
-		gameManager.RegisterPlayerCharacter(this);
+		playerID = gameManager.RegisterPlayerCharacter(this);
 		
 		CharController = GetComponent<CharacterController>();
-
-		InitializeFields();
 	}
 
 	private void Start()
 	{
-		//Initialize();
+		Initialize();
 	}
 
 	private void Update()
 	{
+		if (!gameManager.playerInputsActive) return;
+
 		if (DebugKBControlsActive) DebugKeyboardInput();
 
 		UpdateMovement();
@@ -146,31 +95,66 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateMiscValues();
 	}
 
+	private void OnDestroy()
+	{
+		gameManager.UnregisterPlayerCharacter(this);
+	}
+
+	#region Setup
+	protected override void RegisterActions()
+	{
+		if (NetworkControlled) return;
+
+		settings.InputMaster.Player.Movement.performed += UpdateMovementControlled;
+		settings.InputMaster.Player.Aim.performed += UpdateLookRotationControlled;
+		settings.InputMaster.Player.Shoot.performed += TriggerShotControlled;
+		settings.InputMaster.Player.Jump.performed += TriggerDash;
+		settings.InputMaster.Player.Parry.performed += TriggerParry;
+		settings.InputMaster.Player.LockAim.performed += TriggerAimLock;
+		settings.InputMaster.Player.PortalOne.performed += TriggerPortalOne;
+		settings.InputMaster.Player.PortalTwo.performed += TriggerPortalTwo;
+
+		settings.InputMaster.Player.Debug.performed += TriggerDebugAction;
+	}
+
+	protected override void UnregisterActions()
+	{
+		if (NetworkControlled) return;
+
+		settings.InputMaster.Player.Movement.performed -= UpdateMovementControlled;
+		settings.InputMaster.Player.Aim.performed -= UpdateLookRotationControlled;
+		settings.InputMaster.Player.Shoot.performed -= TriggerShotControlled;
+		settings.InputMaster.Player.Jump.performed -= TriggerDash;
+		settings.InputMaster.Player.Parry.performed -= TriggerParry;
+		settings.InputMaster.Player.LockAim.performed -= TriggerAimLock;
+		settings.InputMaster.Player.PortalOne.performed -= TriggerPortalOne;
+		settings.InputMaster.Player.PortalTwo.performed -= TriggerPortalTwo;
+
+		settings.InputMaster.Player.Debug.performed -= TriggerDebugAction;
+	}
+
 	public void Initialize()
 	{
+		currentMovespeed = settings.MovespeedMod;
+
+		// convert core rotation v3 to quaternion
+		coreRotationDelta = Quaternion.Euler(settings.OrbitDelta);
+
 		// since its only 1o1, this only needs to be called once
 		aimLockTarget = gameManager.RequestNearestPlayer(this);
 
 		// spawn initial projectile
 		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 	}
-
-	public void RegisterNetworkHook(Hook hook)
-	{
-		networkHook = hook;
-	}
-
-	public void PerformAction(ActionType action)
-	{
-		switch (action)
-		{
-			case ActionType.Shoot:
-				if(loadedProjectiles.Count > 0) Shoot();
-				break;
-		}
-	}
+	#endregion
 
 	#region InputSystem event calls
+	private bool IsAssignedDevice(InputDevice controller)
+	{
+		if (playerID >= gameManager.inputDevices.Length) return false;
+		return gameManager.inputDevices[playerID] == controller;
+	}
+
 	private void DebugKeyboardInput()
 	{
 		MovementInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
@@ -214,21 +198,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void UpdateMovementControlled(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device)
+		if (IsAssignedDevice(ctx.control.device))
 		{
 			MovementInput = ctx.ReadValue<Vector2>();
-			Debug.Log(ctx.control.device);
 		}
 	}
 
 	private void UpdateLookRotationControlled(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device) AimInput = ctx.ReadValue<Vector2>();
+		if (IsAssignedDevice(ctx.control.device)) AimInput = ctx.ReadValue<Vector2>();
 	}
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
 	{
-		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && _inputDevice == ctx.control.device)
+		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsAssignedDevice(ctx.control.device))
 		{
 			Shoot();
 		}
@@ -236,7 +219,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerDash(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device
+		if (IsAssignedDevice(ctx.control.device)
 			&& currentDashCooldown == 0f 
 			&& CharController.velocity.sqrMagnitude > .1f)
 		{
@@ -247,7 +230,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerParry(InputAction.CallbackContext ctx)
 	{
-		if (currentParryCooldown == 0f && _inputDevice == ctx.control.device)
+		if (currentParryCooldown == 0f && IsAssignedDevice(ctx.control.device))
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
 			currentParryCooldown = settings.ParryCooldown;
@@ -256,7 +239,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerAimLock(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device)
+		if (IsAssignedDevice(ctx.control.device))
 		{
 			providingAimLockInputThisFrame = true;
 			if (!aimLockInputBlocked)
@@ -271,17 +254,17 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerPortalOne(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device) CreatePortal(0);
+		if (IsAssignedDevice(ctx.control.device)) CreatePortal(0);
 	}
 
 	private void TriggerPortalTwo(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device) CreatePortal(1);
+		if (IsAssignedDevice(ctx.control.device)) CreatePortal(1);
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
-		if (_inputDevice == ctx.control.device && currentShotCooldown == 0f)
+		if (IsAssignedDevice(ctx.control.device) && currentShotCooldown == 0f)
 		{
 			currentShotCooldown = settings.ShotCooldown;
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
@@ -289,17 +272,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	}
 	#endregion
 
-	private void InitializeFields()
-	{
-		currentMovespeed = settings.MovespeedMod;
-
-		// convert core rotation v3 to quaternion
-		coreRotationDelta = Quaternion.Euler(settings.OrbitDelta);
-	}
-
+	#region Regular Updates
 	private void UpdateMovement()
 	{
-		Camera mainCam = gameManager.MainCam; // dont save reference to main cam to avoid static MonoBehavior ref
+		Camera mainCam = CamMover.Instance.Cam;
+		if (mainCam == null)
+		{
+			Debug.Log("main cam missing");
+			return;
+		}
 
 		var camHorizontal = new Vector3(mainCam.transform.right.x, 0f, mainCam.transform.right.z).normalized;
 		var camVertical = new Vector3(mainCam.transform.forward.x, 0f, mainCam.transform.forward.z).normalized;
@@ -415,7 +396,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			bufferedKeys.Clear();
 		}
 	}
+	#endregion
 
+	#region Actions
 	private void Shoot()
 	{
 		camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
@@ -459,13 +442,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 
 		camShakeManager.ShakeMagnitude = settings.DeathShakeMagnitude;
-
-
 		OneShotAudioManager.PlayOneShotAudio(settings.PlayerDeathSounds, transform.position);
-		
+		gameManager.StartNextRound();
 		Destroy(gameObject);
-
-		SceneManager.LoadScene("Gameplay Proto", LoadSceneMode.Single);
 	}
 
 	public void PickupProjectile(Projectile projectile)
@@ -535,7 +514,26 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 				break;
 		}
 	}
+	#endregion
 
+	#region Network Specific
+	public void RegisterNetworkHook(Hook hook)
+	{
+		networkHook = hook;
+	}
+
+	public void PerformAction(ActionType action)
+	{
+		switch (action)
+		{
+			case ActionType.Shoot:
+				if (loadedProjectiles.Count > 0) Shoot();
+				break;
+		}
+	}
+	#endregion
+
+	#region PowerUpHandling
 	public void OnPowerUpCollect(PowerUpType type)
 	{
 		if (activePowerUps.ContainsKey(type)) activePowerUps[type] += settings.PowerUpDuration;
@@ -546,7 +544,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
-	#region PowerUpHandling
 	private void ApplyPowerUp(PowerUpType powerUp, Projectile projectile)
 	{
 		switch (powerUp)

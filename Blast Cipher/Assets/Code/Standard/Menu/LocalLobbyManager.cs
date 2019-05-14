@@ -105,8 +105,9 @@ public class LocalLobbyManager : MonoBehaviour
 
     private void StartLocalGame()
     {
-        SceneManager.LoadScene(1, LoadSceneMode.Single);
-    }
+		GameManager.Instance.LoadScene(1);
+		//SceneManager.LoadScene(1, LoadSceneMode.Single);
+	}
 
     private void Start()
     {

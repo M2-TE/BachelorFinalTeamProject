@@ -14,11 +14,12 @@ public sealed class EssentialsLoader
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 	static void BeforeSceneLoad()
 	{
-		//if (!sceneLoaded)
-		//{
-		//	SceneManager.LoadScene("AsyncEssentials", LoadSceneMode.Additive);
-		//	sceneLoaded = true;
-		//}
+		if (!sceneLoaded)
+		{
+			var sceneParams = new LoadSceneParameters(LoadSceneMode.Additive, LocalPhysicsMode.None);
+			GameManager.Instance.SetAsyncEssentialsScene(SceneManager.LoadScene("AsyncEssentials", sceneParams));
+			sceneLoaded = true;
+		}
 	}
 
 	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]

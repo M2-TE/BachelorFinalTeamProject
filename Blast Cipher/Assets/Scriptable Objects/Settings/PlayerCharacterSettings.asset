@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0ab0392f52bfe94388e7e0825f6a38f, type: 3}
   m_Name: PlayerCharacterSettings
   m_EditorClassIdentifier: 
+  InputMaster:
+    m_Asset: {fileID: -944628639613478452, guid: 798775c046f8d1544915d9e792273ab8,
+      type: 3}
   ProjectilePrefab: {fileID: 8900639728585163244, guid: dc2e0ed5918ca324d953b4a4257d119c,
     type: 3}
   PortalPrefab: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,

@@ -3,6 +3,7 @@
 [CreateAssetMenu(fileName = "PlayerCharacterSettings", menuName = "Settings/PlayerCharacter", order = 0)]
 public class PlayerCharacterSettings : ReadonlySettings
 {
+	public InputMaster InputMaster;
 	public Projectile ProjectilePrefab;
 	public Portal PortalPrefab;
 

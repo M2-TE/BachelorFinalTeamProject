@@ -2,7 +2,7 @@
 
 public class CamMover : MonoBehaviour
 {
-	[SerializeField] private Camera cam;
+	public Camera Cam;
 	[SerializeField] private PlayerCharacter playerOne;
 	[SerializeField] private PlayerCharacter playerTwo;
 
@@ -13,8 +13,12 @@ public class CamMover : MonoBehaviour
 	[SerializeField] private float maxSpeed;
 	
 	[SerializeField] private float minHeight;
-	
+
+	public static CamMover Instance { get; private set; }
 	private Vector3 camVelocity = default;
+
+	private void OnEnable() => Instance = this;
+	private void OnDisable() => Instance = Instance == this ? null : Instance;
 
 	private void Update()
 	{
@@ -25,8 +29,8 @@ public class CamMover : MonoBehaviour
 
 	private void UpdateStuff()
 	{
-		Vector2 playerOneViewportPos = cam.WorldToViewportPoint(playerOne.transform.position);
-		Vector2 playerTwoViewportPos = cam.WorldToViewportPoint(playerTwo.transform.position);
+		Vector2 playerOneViewportPos = Cam.WorldToViewportPoint(playerOne.transform.position);
+		Vector2 playerTwoViewportPos = Cam.WorldToViewportPoint(playerTwo.transform.position);
 		Vector2 middle = playerTwoViewportPos + (playerOneViewportPos - playerTwoViewportPos) * .5f;
 
 		Vector2 target = middle - new Vector2(.5f, .5f) + centerOffset;
@@ -35,9 +39,9 @@ public class CamMover : MonoBehaviour
 		transform.position = Vector3.SmoothDamp
 			(transform.position, 
 			transform.position + new Vector3(target.x, 0f, target.y), 
-			ref camVelocity, 
-			smoothTime, 
-			maxSpeed, 
+			ref camVelocity,
+			smoothTime,
+			maxSpeed,
 			Time.deltaTime);
 	}
 }

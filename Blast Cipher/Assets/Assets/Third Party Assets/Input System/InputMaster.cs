@@ -32,6 +32,7 @@ public class InputMaster : InputActionAssetReference
         // General
         m_General = asset.GetActionMap("General");
         m_General_RegisterDevice = m_General.GetAction("RegisterDevice");
+        m_General_DPadInput = m_General.GetAction("DPadInput");
         m_Initialized = true;
     }
     private void Uninitialize()
@@ -48,6 +49,7 @@ public class InputMaster : InputActionAssetReference
         m_Player_PortalTwo = null;
         m_General = null;
         m_General_RegisterDevice = null;
+        m_General_DPadInput = null;
         m_Initialized = false;
     }
     public void SetAsset(InputActionAsset newAsset)
@@ -102,11 +104,13 @@ public class InputMaster : InputActionAssetReference
     // General
     private InputActionMap m_General;
     private InputAction m_General_RegisterDevice;
+    private InputAction m_General_DPadInput;
     public struct GeneralActions
     {
         private InputMaster m_Wrapper;
         public GeneralActions(InputMaster wrapper) { m_Wrapper = wrapper; }
         public InputAction @RegisterDevice { get { return m_Wrapper.m_General_RegisterDevice; } }
+        public InputAction @DPadInput { get { return m_Wrapper.m_General_DPadInput; } }
         public InputActionMap Get() { return m_Wrapper.m_General; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
