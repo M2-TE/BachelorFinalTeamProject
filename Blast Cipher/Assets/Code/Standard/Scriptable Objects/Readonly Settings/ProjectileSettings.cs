@@ -10,6 +10,7 @@ public class ProjectileSettings : ReadonlySettings
 
 	public string PlayerTag = "Player";
 	public string WallTag = "Wall";
+	public string ShieldWallTag = "ParryShield";
 
 	public float MaxRadiansOnAutoTarget = 7f;
 	public float VelocityChangeOnWallHit = .1f;

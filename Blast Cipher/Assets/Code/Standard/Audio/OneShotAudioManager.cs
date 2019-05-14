@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -23,12 +24,22 @@ public class OneShotAudioManager : MonoBehaviour
 		{
 			audioSource = instance.queuedAudioSources.Dequeue();
 		}
-		else audioSource = Instantiate(instance.prefab);
+		else
+		{
+			audioSource = Instantiate(instance.prefab);
+			instance.StartCoroutine(DelayedEnqueue(audioSource, clip.length));
+		}
 
 		audioSource.transform.position = worldPos;
 		audioSource.AudioSource.PlayOneShot(clip);
 
 
 		return audioSource;
+	}
+
+	private static IEnumerator DelayedEnqueue(OneShotAudioSource source, float waitDelay)
+	{
+		yield return new WaitForSecondsRealtime(waitDelay);
+		instance.queuedAudioSources.Enqueue(source);
 	}
 }

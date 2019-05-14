@@ -22,6 +22,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 62994c4327304b041b1e73872ab58dd7, type: 3}
   PlayerTag: Player
   WallTag: Wall
+  ShieldWallTag: ParryShield
   MaxRadiansOnAutoTarget: 3
   VelocityChangeOnWallHit: 0.1
   StandardProjectileMaterial: {fileID: 2100000, guid: c399e5a9a74cc2842927a850a389a8cf,

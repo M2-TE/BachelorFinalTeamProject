@@ -93,6 +93,10 @@ public class Projectile : MonoBehaviour, ITeleportable
 					ExplicitTarget = null;
 				}
 			}
+			else if (go.CompareTag(settings.ShieldWallTag))
+			{
+				OneShotAudioManager.PlayOneShotAudio(settings.wallBounceSounds, transform.position, 1f);
+			}
 		}
 	}
 

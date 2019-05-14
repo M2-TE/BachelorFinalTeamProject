@@ -5217,7 +5217,7 @@ GameObject:
   - component: {fileID: 1758753375}
   m_Layer: 12
   m_Name: Shield Wall
-  m_TagString: Untagged
+  m_TagString: ParryShield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5267,7 +5267,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1758753372}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 508dbc5257a557d47a6229fa5c0f6244, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
