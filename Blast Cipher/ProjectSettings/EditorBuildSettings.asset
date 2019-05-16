@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Gameplay Proto/Menu Proto.unity
+    path: Assets/Scenes/Menu Proto.unity
     guid: aaa18c2a0b71da743b3c677e7e1e5bb0
   - enabled: 1
     path: Assets/Scenes/Gameplay Proto/Gameplay Proto.unity
