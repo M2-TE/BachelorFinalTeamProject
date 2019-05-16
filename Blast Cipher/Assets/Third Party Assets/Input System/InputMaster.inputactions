@@ -94,6 +94,16 @@
                     "processors": "",
                     "interactions": "",
                     "bindings": []
+                },
+                {
+                    "name": "Decline",
+                    "id": "e9ab90b7-fe8d-4e24-8f00-eb2aa304e430",
+                    "expectedControlLayout": "Button",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
                 }
             ],
             "bindings": [
@@ -222,6 +232,19 @@
                     "processors": "",
                     "groups": ";MainGamepadScheme",
                     "action": "Shoot",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "404b495a-d453-4875-bea5-aa4f3ee1b1bf",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Decline",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,

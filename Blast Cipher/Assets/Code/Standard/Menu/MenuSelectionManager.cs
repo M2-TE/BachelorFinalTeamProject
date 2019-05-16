@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Experimental.Input;
 
 public enum MenuState { Local, Online, CharacterEditor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
 public class MenuSelectionManager : MenuManager
 {
-
     [SerializeField] private MaterialsHolder localGame, onlineGame, characterEditor, profile, exit;
     [SerializeField] private MenuState standartState = 0;
     [SerializeField] private Transform[] selectorPoints;
@@ -17,17 +17,13 @@ public class MenuSelectionManager : MenuManager
     [SerializeField] private LocalLobbyManager localLobbyManager;
     [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
-    private bool isFocused = false;
-    private bool inSubmenu = false;
     private MenuState currentState;
+    private bool inTitleScreen;
+    private MenuManager currentActiveManager;
 
     public MenuState CurrentState { get => currentState; private set => SetMaterials(currentState,currentState = value); }
 
-    public bool Focus { get => isFocused; set => isFocused = value; }
-
-    public override bool Activated { get => true; set => throw new System.NotImplementedException(); }
-
-    public override void ChangeState(bool increment)
+    private void ChangeState(bool increment)
     {
         if (increment)
             CurrentState = ((int)CurrentState) + 1 >= System.Enum.GetValues(typeof(MenuState)).Length ? CurrentState : CurrentState + 1;
@@ -50,11 +46,10 @@ public class MenuSelectionManager : MenuManager
         }
     }
 
-    private IEnumerator RotateCamera(bool toMenu)
+    private IEnumerator RotateCamera(bool toTitleScreen)
     {
-        Focus = false;
-        float start = toMenu ? 0f : 90f;
-        float finish = toMenu ? 90f : 0f;
+        float start = !toTitleScreen ? 0f : 90f;
+        float finish = !toTitleScreen ? 90f : 0f;
         float startTime = Time.time;
         while (mainCamera.rotation != Quaternion.Euler(finish, 0, 0))
         {
@@ -62,14 +57,12 @@ public class MenuSelectionManager : MenuManager
             mainCamera.rotation = Quaternion.Lerp(Quaternion.Euler(start,0,0),Quaternion.Euler(finish,0,0), distance / 90);
             yield return new WaitForEndOfFrame();
         }
-        Focus = toMenu;
     }
 
-    private IEnumerator CameraSubmenuMovement()
+    private IEnumerator CameraSubmenuMovement(bool inSubmenu)
     {
-        inSubmenu = !inSubmenu;
-        Vector3 start = inSubmenu ? new Vector3(0f,30f,-10f) : new Vector3(0f,-10f,-10f);
-        Vector3 finish = inSubmenu ? new Vector3(0f,-10f,-10f) : new Vector3(0f,30f,-10f);
+        Vector3 start = !inSubmenu ? new Vector3(0f,30f,-10f) : new Vector3(0f,-10f,-10f);
+        Vector3 finish = !inSubmenu ? new Vector3(0f,-10f,-10f) : new Vector3(0f,30f,-10f);
         float startTime = Time.time;
         while (mainCamera.position != finish)
         {
@@ -109,20 +102,21 @@ public class MenuSelectionManager : MenuManager
         }
     }
 
-    private void ManageSubmenu(bool open)
+    public void ManageSubmenu(bool open)
     {
         switch (currentState)
         {
             case MenuState.Local:
-                StartCoroutine(CameraSubmenuMovement());
-                localLobbyManager.Activated = open;
+                StartCoroutine(CameraSubmenuMovement(!open));
+                currentActiveManager = open ? (MenuManager)localLobbyManager : this;
+                localLobbyManager.ToggleActivation(open);
                 break;
             case MenuState.Online:
                 break;
             case MenuState.CharacterEditor:
                 break;
             case MenuState.Profile:
-                StartCoroutine(CameraSubmenuMovement());
+                StartCoroutine(CameraSubmenuMovement(!open));
                 profileSelectionManager.Activated = open;
                 break;
             case MenuState.Exit:
@@ -133,30 +127,75 @@ public class MenuSelectionManager : MenuManager
         }
     }
 
-    private void Start()
+    public override void OnDPadInput(InputAction.CallbackContext ctx)
     {
-        CurrentState = standartState;
+        if (!currentActiveManager.Equals(this))
+            currentActiveManager.OnDPadInput(ctx);
+        else
+        {
+            Vector2 inputValue = ctx.ReadValue<Vector2>();
+            if (inputValue.y > 0f)
+                ChangeState(false);
+            else if (inputValue.y < 0f)
+                ChangeState(true);
+        }
     }
 
-    private void Update()
+    public override void OnStartPressed(InputAction.CallbackContext ctx)
     {
-        if (Input.GetKeyDown(KeyCode.Return) && !Focus && !inSubmenu)
-            StartCoroutine(RotateCamera(true));
-        else if (Focus && !inSubmenu)
+        if (!currentActiveManager.Equals(this))
+            currentActiveManager.OnStartPressed(ctx);
+        else if(inTitleScreen)
+            StartCoroutine(RotateCamera(inTitleScreen = false));
+    }
+
+    public override void OnConfirmation(InputAction.CallbackContext ctx)
+    {
+        if (!currentActiveManager.Equals(this))
+            currentActiveManager.OnConfirmation(ctx);
+        else
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-                StartCoroutine(RotateCamera(false));
-            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-                ChangeState(true);
-            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-                ChangeState(false);
-            else if (Input.GetKeyDown(KeyCode.Return))
+            if (inTitleScreen)
+                StartCoroutine(RotateCamera(inTitleScreen = false));
+            else
                 ManageSubmenu(true);
         }
-        else if(Focus && inSubmenu)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-                ManageSubmenu(false);
-        }
     }
+
+    public override void OnDecline(InputAction.CallbackContext ctx)
+    {
+        if (!currentActiveManager.Equals(this))
+            currentActiveManager.OnDecline(ctx);
+        else
+            StartCoroutine(RotateCamera(inTitleScreen = true));
+    }
+
+    private void Start()
+    {
+        mainManager = this;
+        CurrentState = standartState;
+        currentActiveManager = this;
+        inTitleScreen = true;
+    }
+
+    private void OnEnable() => RegisterActions();
+
+    private void OnDisable() => UnregisterActions();
+
+    private void RegisterActions()
+    {
+        input.General.RegisterDevice.performed += OnStartPressed;
+        input.General.DPadInput.performed += OnDPadInput;
+        input.Player.Jump.performed += OnConfirmation;
+        input.Player.Decline.performed += OnDecline;
+    }
+
+    private void UnregisterActions()
+    {
+        input.General.RegisterDevice.performed -= OnStartPressed;
+        input.General.DPadInput.performed -= OnDPadInput;
+        input.Player.Jump.performed -= OnConfirmation;
+        input.Player.Decline.performed -= OnDecline;
+    }
+
 }
