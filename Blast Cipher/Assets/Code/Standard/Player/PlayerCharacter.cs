@@ -92,7 +92,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		UpdateLookRotation();
 
 		UpdateProjectileOrbit();
-
+		UpdateShooting();
 		UpdateMiscValues();
 	}
 
@@ -212,14 +212,14 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
 	{
-		if (loadedProjectiles.Count > 0 && IsAssignedDevice(ctx.control.device))
+		if (IsAssignedDevice(ctx.control.device))
 		{
 			var inputVal = ctx.ReadValue<float>();
 			if (inputVal < 1f)
 			{
 				if (shooting)
 				{
-					Debug.Log(name + " Stopping");
+					//Debug.Log(name + " Stopping");
 				}
 				shooting = false;
 			}
@@ -227,14 +227,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			{
 				if (!shooting)
 				{
-					Debug.Log(name + " Shooting");
+					//Debug.Log(name + " Shooting");
 				}
 				shooting = true;
 			}
-			//if (currentShotCooldown == 0f)
-			//{
-			//	Shoot();
-			//}
 		}
 	}
 
@@ -387,13 +383,23 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime, 
 			Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime);
 	}
+
+	private void UpdateShooting()
+	{
+		Utilities.CountDownVal(ref currentShotCooldown);
+
+		if (shooting && currentShotCooldown == 0f && loadedProjectiles.Count > 0)
+		{
+			Shoot();
+			currentShotCooldown = settings.ShotCooldown;
+		}
+	}
 	
 	private void UpdateMiscValues()
 	{
 		if (!providingAimLockInputThisFrame && aimLockInputBlocked) aimLockInputBlocked = false;
 		providingAimLockInputThisFrame = false;
 
-		Utilities.CountDownVal(ref currentShotCooldown);
 		Utilities.CountDownVal(ref currentParryCooldown);
 		Utilities.CountDownVal(ref currentDashCooldown);
 
