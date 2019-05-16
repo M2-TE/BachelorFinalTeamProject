@@ -1,30 +1,73 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Input;
 using UnityEngine.SceneManagement;
 
 public enum LocalLobbyState { Selection, Ready, Start}
 
-[RequireComponent(typeof(PressStartBlinker))]
-public class LocalLobbyManager : MonoBehaviour
+public class LocalLobbyManager : MenuManager
 {
     [SerializeField] private MaterialsHolder lSelectors, lReady, rSelectors, rReady, start;
     [SerializeField] private LocalLobbyState standartState = 0;
-    [SerializeField] private Material defaultMat, highlightedMat;
-    [SerializeField] private Transform ToggleNode, SecondPlayerToggleNode;
+    [SerializeField] private Transform toggleNode, firstPlayerToggleNode, secondPlayerToggleNode;
+    [SerializeField] private PressStartBlinker notJoinedBlinkerLeft, notJoinedBlinkerRight;
 
     private LocalLobbyState currentLeftState;
     private LocalLobbyState currentRightState;
 
-    private PressStartBlinker notJoinedBlinker;
-    private bool playerTwoJoined = false;
-    private bool activated = false;
+    private InputDevice playerOne, playerTwo;
 
     public LocalLobbyState CurrentLeftState { get => currentLeftState; private set => SetMaterials(currentLeftState,currentLeftState = value, true); }
     public LocalLobbyState CurrentRightState { get => currentRightState; private set => SetMaterials(currentRightState, currentRightState = value, false); }
-    public bool Activated { get => activated; set => ToggleActivation(value); }
 
-    public void ChangeState(bool increment, bool leftSide)
+    private void AssignedPlayerToggle(bool gained, InputAction.CallbackContext ctx)
+    {
+        if (gained)
+        {
+            if(playerOne == null && playerTwo != ctx.control.device)
+            {
+                playerOne = ctx.control.device;
+                TogglePlayerJoinedTransform(true);
+            }
+            else if(playerTwo == null && playerOne != ctx.control.device)
+            {
+                playerTwo = ctx.control.device;
+                TogglePlayerJoinedTransform(false);
+            }
+        }
+        else
+        {
+            if (playerTwo == ctx.control.device)
+            {
+                playerTwo = null;
+                TogglePlayerJoinedTransform(false);
+            }
+            else if (playerOne == ctx.control.device)
+            {
+                playerOne = null;
+                TogglePlayerJoinedTransform(true);
+            }
+            else if(playerOne == null && playerTwo == null)
+                mainManager.ManageSubmenu(false);
+        }
+    }
+
+    private void TogglePlayerJoinedTransform(bool leftPlayer)
+    {
+        if (leftPlayer)
+        {
+            notJoinedBlinkerLeft.Enabled = firstPlayerToggleNode.gameObject.activeInHierarchy;
+            firstPlayerToggleNode.gameObject.SetActive(!firstPlayerToggleNode.gameObject.activeInHierarchy);
+        }
+        else
+        {
+            notJoinedBlinkerRight.Enabled = secondPlayerToggleNode.gameObject.activeInHierarchy;
+            secondPlayerToggleNode.gameObject.SetActive(!secondPlayerToggleNode.gameObject.activeInHierarchy);
+        }
+    }
+
+    private void ChangeState(bool increment, bool leftSide)
     {
         if (increment)
         {
@@ -72,35 +115,33 @@ public class LocalLobbyManager : MonoBehaviour
         }
     }
 
-    private void ToggleActivation(bool setActive)
+    private void ManageConfirmation(bool leftSide)
     {
-        ToggleNode.gameObject.SetActive(setActive);
-        activated = setActive;
-
-        SecondPlayerToggle(false);
-    }
-
-    private void SecondPlayerToggle(bool joined)
-    {
-        playerTwoJoined = joined;
-        SecondPlayerToggleNode.gameObject.SetActive(joined);
-        notJoinedBlinker.Enabled = !joined;
-    }
-
-    private void ManageConfirmation()
-    {
-        switch (currentLeftState)
-        {
-            case LocalLobbyState.Selection:
-                break;
-            case LocalLobbyState.Ready:
-                break;
-            case LocalLobbyState.Start:
-                StartLocalGame();
-                break;
-            default:
-                break;
-        }
+        if(leftSide)
+            switch (currentLeftState)
+            {
+                case LocalLobbyState.Selection:
+                    break;
+                case LocalLobbyState.Ready:
+                    break;
+                case LocalLobbyState.Start:
+                    StartLocalGame();
+                    break;
+                default:
+                    break;
+            }
+        else
+            switch (currentRightState)
+            {
+                case LocalLobbyState.Selection:
+                    break;
+                case LocalLobbyState.Ready:
+                    break;
+                case LocalLobbyState.Start:
+                    break;
+                default:
+                    break;
+            }
     }
 
     private void StartLocalGame()
@@ -113,35 +154,49 @@ public class LocalLobbyManager : MonoBehaviour
     {
         CurrentLeftState = standartState;
         CurrentRightState = standartState;
-        notJoinedBlinker = gameObject.GetComponent<PressStartBlinker>();
-        Activated = false;
+        firstPlayerToggleNode.gameObject.SetActive(false);
+        secondPlayerToggleNode.gameObject.SetActive(false);
     }
 
-    private void Update()
+    public override void OnDPadInput(InputAction.CallbackContext ctx)
     {
-        if (activated)
-        {
-            if (Input.GetKeyDown(KeyCode.W))
-                ChangeState(false, true);
-            else if (Input.GetKeyDown(KeyCode.S))
-                ChangeState(true, true);
-            if (playerTwoJoined)
-            {
-                if (Input.GetKeyDown(KeyCode.DownArrow))
-                    ChangeState(true, false);
-                else if (Input.GetKeyDown(KeyCode.UpArrow))
-                    ChangeState(false, false);
-            }
-            else
-            {
-                if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.UpArrow))
-                    SecondPlayerToggle(true);
-            }
+        Vector2 inputValue = ctx.ReadValue<Vector2>();
 
-			if (Input.GetKeyDown(KeyCode.Return))
-			{
-				ManageConfirmation();
-			}
+        if (ctx.control.device == playerOne)
+        {
+            if (inputValue.y > 0f)
+                ChangeState(false, true);
+            else if (inputValue.y < 0f)
+                ChangeState(true, true);
+
+            // Sideways
         }
+        else if (ctx.control.device == playerTwo)
+        {
+            if (inputValue.y > 0f)
+                ChangeState(false, false);
+            else if (inputValue.y < 0f)
+                ChangeState(true, false);
+
+            // Sideways
+        }
+    }
+
+    public override void OnConfirmation(InputAction.CallbackContext ctx)
+    {
+        if (ctx.control.device == playerOne)
+            ManageConfirmation(true);
+        else if (ctx.control.device == playerTwo)
+            ManageConfirmation(false);
+    }
+
+    public override void OnDecline(InputAction.CallbackContext ctx)
+    {
+        AssignedPlayerToggle(false,ctx); // already implemented back to menu function
+    }
+
+    public override void OnStartPressed(InputAction.CallbackContext ctx)
+    {
+        AssignedPlayerToggle(true,ctx); // already implemented controller overflow and duplicate ignore function
     }
 }

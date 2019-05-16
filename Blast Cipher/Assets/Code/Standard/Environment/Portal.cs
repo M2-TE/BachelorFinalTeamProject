@@ -69,8 +69,8 @@ public class Portal : MonoBehaviour
 
 				OneShotAudioManager.PlayOneShotAudio(portalSettings.teleportationSounds, transform.position, 1f);
 
-				//Debug.DrawRay(transform.position, originalVelocity, Color.green, 5f);
-				//Debug.DrawRay(transform.position, newVelocity, Color.red, 5f);
+				Debug.DrawRay(transform.position, originalVelocity, Color.green, 5f);
+				Debug.DrawRay(transform.position, newVelocity, Color.red, 5f);
 				break;
 
 			case "Player":
@@ -85,7 +85,10 @@ public class Portal : MonoBehaviour
 		otherPortal.opposingPortal = this;
 
 		// create line renderer connection
-		lineRenderer = Instantiate(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
+		if (lineRenderer == null)
+		{
+			lineRenderer = Instantiate(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
+		}
 		opposingPortal.lineRenderer = lineRenderer;
 
 		lineRenderer.SetPosition(0, postTeleportPosition.position);

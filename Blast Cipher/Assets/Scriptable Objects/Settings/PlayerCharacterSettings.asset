@@ -34,6 +34,7 @@ MonoBehaviour:
   ShotCooldown: 0.15
   ShotStrength: 25
   PowerUpDuration: 10
+  startProjectileCount: 3
   OrbitDelta: {x: 0, y: 100, z: 0}
   MaxOrbitDist: 10
   MovementOrbit: 2.5
@@ -43,7 +44,15 @@ MonoBehaviour:
   RotationMax: 100
   ShotShakeMagnitude: 0.35
   DeathShakeMagnitude: 1
-  TeleportCompatibleLayers:
+  WallTag: Wall
+  WallLayers:
     serializedVersion: 2
     m_Bits: 512
+  OuterWallTag: OuterWall
+  OuterWallLayer:
+    serializedVersion: 2
+    m_Bits: 65536
+  TeleportCompatibleLayers:
+    serializedVersion: 2
+    m_Bits: 66048
   AimLineLengthMax: 3

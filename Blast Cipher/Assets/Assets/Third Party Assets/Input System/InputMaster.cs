@@ -26,9 +26,9 @@ public class InputMaster : InputActionAssetReference
         m_Player_Jump = m_Player.GetAction("Jump");
         m_Player_Parry = m_Player.GetAction("Parry");
         m_Player_LockAim = m_Player.GetAction("LockAim");
-        m_Player_PortalOne = m_Player.GetAction("PortalOne");
-        m_Player_PortalTwo = m_Player.GetAction("PortalTwo");
+        m_Player_Portal = m_Player.GetAction("Portal");
         m_Player_Shoot = m_Player.GetAction("Shoot");
+        m_Player_Decline = m_Player.GetAction("Decline");
         // General
         m_General = asset.GetActionMap("General");
         m_General_RegisterDevice = m_General.GetAction("RegisterDevice");
@@ -44,9 +44,9 @@ public class InputMaster : InputActionAssetReference
         m_Player_Jump = null;
         m_Player_Parry = null;
         m_Player_LockAim = null;
-        m_Player_PortalOne = null;
-        m_Player_PortalTwo = null;
+        m_Player_Portal = null;
         m_Player_Shoot = null;
+        m_Player_Decline = null;
         m_General = null;
         m_General_RegisterDevice = null;
         m_General_DPadInput = null;
@@ -70,9 +70,9 @@ public class InputMaster : InputActionAssetReference
     private InputAction m_Player_Jump;
     private InputAction m_Player_Parry;
     private InputAction m_Player_LockAim;
-    private InputAction m_Player_PortalOne;
-    private InputAction m_Player_PortalTwo;
+    private InputAction m_Player_Portal;
     private InputAction m_Player_Shoot;
+    private InputAction m_Player_Decline;
     public struct PlayerActions
     {
         private InputMaster m_Wrapper;
@@ -83,9 +83,9 @@ public class InputMaster : InputActionAssetReference
         public InputAction @Jump { get { return m_Wrapper.m_Player_Jump; } }
         public InputAction @Parry { get { return m_Wrapper.m_Player_Parry; } }
         public InputAction @LockAim { get { return m_Wrapper.m_Player_LockAim; } }
-        public InputAction @PortalOne { get { return m_Wrapper.m_Player_PortalOne; } }
-        public InputAction @PortalTwo { get { return m_Wrapper.m_Player_PortalTwo; } }
+        public InputAction @Portal { get { return m_Wrapper.m_Player_Portal; } }
         public InputAction @Shoot { get { return m_Wrapper.m_Player_Shoot; } }
+        public InputAction @Decline { get { return m_Wrapper.m_Player_Decline; } }
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }

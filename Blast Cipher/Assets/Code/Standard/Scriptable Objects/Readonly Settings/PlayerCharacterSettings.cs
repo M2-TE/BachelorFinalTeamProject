@@ -25,6 +25,7 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public float PowerUpDuration = 10f;
 
 	[Header("Projectiles")]
+	public int startProjectileCount = 3;
 	public Vector3 OrbitDelta = new Vector3(0f, 100f, 0f);
 	public float MaxOrbitDist = 10f;
 	public float MovementOrbit = 2.5f;
@@ -38,6 +39,13 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public float DeathShakeMagnitude = 1f;
 
 	[Header("Misc")]
+	public string WallTag = "Wall";
+	public LayerMask WallLayers;
+
+	public string OuterWallTag = "OuterWall";
+	public LayerMask OuterWallLayer;
+
+	[Space]
 	public LayerMask TeleportCompatibleLayers;
 	public float AimLineLengthMax = 3f;
 }

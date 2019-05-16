@@ -66,18 +66,8 @@
                     "bindings": []
                 },
                 {
-                    "name": "PortalOne",
+                    "name": "Portal",
                     "id": "bc00c7c3-0cad-40d6-906a-2ea88a5eea69",
-                    "expectedControlLayout": "Button",
-                    "continuous": true,
-                    "passThrough": true,
-                    "processors": "",
-                    "interactions": "",
-                    "bindings": []
-                },
-                {
-                    "name": "PortalTwo",
-                    "id": "6169c624-d227-4892-9cc3-73cdc09b809b",
                     "expectedControlLayout": "Button",
                     "continuous": true,
                     "passThrough": true,
@@ -93,6 +83,16 @@
                     "passThrough": true,
                     "processors": "",
                     "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Decline",
+                    "id": "e9ab90b7-fe8d-4e24-8f00-eb2aa304e430",
+                    "expectedControlLayout": "Button",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
                     "bindings": []
                 }
             ],
@@ -182,20 +182,7 @@
                     "interactions": "Press(pressPoint=1)",
                     "processors": "",
                     "groups": ";MainGamepadScheme",
-                    "action": "PortalOne",
-                    "chainWithPrevious": false,
-                    "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
-                },
-                {
-                    "name": "",
-                    "id": "31076c64-faf2-4870-a4be-2b0e9bd666f2",
-                    "path": "<Gamepad>/rightShoulder",
-                    "interactions": "Press(pressPoint=1)",
-                    "processors": "",
-                    "groups": ";MainGamepadScheme",
-                    "action": "PortalTwo",
+                    "action": "Portal",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,
@@ -222,6 +209,19 @@
                     "processors": "",
                     "groups": ";MainGamepadScheme",
                     "action": "Shoot",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "404b495a-d453-4875-bea5-aa4f3ee1b1bf",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Decline",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,

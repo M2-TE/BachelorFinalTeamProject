@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
-using UnityEngine.Experimental.Input.Haptics;
-using UnityEngine.Experimental.Input.Plugins.Users;
-using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public abstract class InputSystemMonoBehaviour : MonoBehaviour
@@ -14,6 +11,7 @@ public abstract class InputSystemMonoBehaviour : MonoBehaviour
 
 	private void OnEnable() => RegisterActions();
 	private void OnDisable() => UnregisterActions();
+
 
 	protected abstract void RegisterActions();
 	protected abstract void UnregisterActions();
@@ -25,7 +23,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	public delegate void Hook(ActionType action);
 
 	#region Fields
-	[SerializeField] private PlayerCharacterSettings settings;
+	public PlayerCharacterSettings Settings;
 
 	[Space]
 	public bool DebugKBControlsActive = false;
@@ -57,15 +55,18 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private Portal portalOne;
 	private Portal portalTwo;
 	private float currentMovespeed;
-	private float currentShotCooldown = 0f;
-	private float currentParryCooldown = 0f;
-	private float currentDashCooldown = 0f;
 	private bool shooting = false;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
 	private bool aimLockInputBlocked = false; //               \/
 	private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
+	
+	private float currentShotCooldown = 0f;
+	private float currentParryCooldown = 0f;
+	public float CurrentParryCooldown { get => currentParryCooldown; }
+	private float currentDashCooldown = 0f;
+	public float CurrentDashCooldown { get => currentDashCooldown; }
 	#endregion
 
 	private void Awake()
@@ -106,46 +107,47 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (NetworkControlled) return;
 
-		settings.InputMaster.Player.Movement.performed += UpdateMovementControlled;
-		settings.InputMaster.Player.Aim.performed += UpdateLookRotationControlled;
-		settings.InputMaster.Player.Shoot.performed += TriggerShotControlled;
-		settings.InputMaster.Player.Jump.performed += TriggerDash;
-		settings.InputMaster.Player.Parry.performed += TriggerParry;
-		settings.InputMaster.Player.LockAim.performed += TriggerAimLock;
-		settings.InputMaster.Player.PortalOne.performed += TriggerPortalOne;
-		settings.InputMaster.Player.PortalTwo.performed += TriggerPortalTwo;
+		Settings.InputMaster.Player.Movement.performed += UpdateMovementControlled;
+		Settings.InputMaster.Player.Aim.performed += UpdateLookRotationControlled;
+		Settings.InputMaster.Player.Shoot.performed += TriggerShotControlled;
+		Settings.InputMaster.Player.Jump.performed += TriggerDash;
+		Settings.InputMaster.Player.Parry.performed += TriggerParry;
+		Settings.InputMaster.Player.LockAim.performed += TriggerAimLock;
+		Settings.InputMaster.Player.Portal.performed += TriggerPortalOne;
 
-		settings.InputMaster.Player.Debug.performed += TriggerDebugAction;
+		Settings.InputMaster.Player.Debug.performed += TriggerDebugAction;
 	}
 
 	protected override void UnregisterActions()
 	{
 		if (NetworkControlled) return;
 
-		settings.InputMaster.Player.Movement.performed -= UpdateMovementControlled;
-		settings.InputMaster.Player.Aim.performed -= UpdateLookRotationControlled;
-		settings.InputMaster.Player.Shoot.performed -= TriggerShotControlled;
-		settings.InputMaster.Player.Jump.performed -= TriggerDash;
-		settings.InputMaster.Player.Parry.performed -= TriggerParry;
-		settings.InputMaster.Player.LockAim.performed -= TriggerAimLock;
-		settings.InputMaster.Player.PortalOne.performed -= TriggerPortalOne;
-		settings.InputMaster.Player.PortalTwo.performed -= TriggerPortalTwo;
+		Settings.InputMaster.Player.Movement.performed -= UpdateMovementControlled;
+		Settings.InputMaster.Player.Aim.performed -= UpdateLookRotationControlled;
+		Settings.InputMaster.Player.Shoot.performed -= TriggerShotControlled;
+		Settings.InputMaster.Player.Jump.performed -= TriggerDash;
+		Settings.InputMaster.Player.Parry.performed -= TriggerParry;
+		Settings.InputMaster.Player.LockAim.performed -= TriggerAimLock;
+		Settings.InputMaster.Player.Portal.performed -= TriggerPortalOne;
 
-		settings.InputMaster.Player.Debug.performed -= TriggerDebugAction;
+		Settings.InputMaster.Player.Debug.performed -= TriggerDebugAction;
 	}
 
 	public void Initialize()
 	{
-		currentMovespeed = settings.MovespeedMod;
+		currentMovespeed = Settings.MovespeedMod;
 
 		// convert core rotation v3 to quaternion
-		coreRotationDelta = Quaternion.Euler(settings.OrbitDelta);
+		coreRotationDelta = Quaternion.Euler(Settings.OrbitDelta);
 
 		// since its only 1o1, this only needs to be called once
 		aimLockTarget = gameManager.RequestNearestPlayer(this);
 
 		// spawn initial projectile
-		PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+		for(int i = 0; i < Settings.startProjectileCount; i++)
+		{
+			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+		}
 	}
 	#endregion
 
@@ -168,12 +170,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Q))
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
-			currentParryCooldown = settings.ParryCooldown;
+			currentParryCooldown = Settings.ParryCooldown;
 		}
 
 		if (Input.GetKeyDown(KeyCode.R))
 		{
-			currentShotCooldown = settings.ShotCooldown;
+			currentShotCooldown = Settings.ShotCooldown;
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 		}
 
@@ -184,14 +186,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			aimLockInputBlocked = true;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Y)) CreatePortal(0);
-		else if (Input.GetKeyDown(KeyCode.X)) CreatePortal(1);
-
+		if (Input.GetKeyDown(KeyCode.Y)) CreatePortal();
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			if (currentDashCooldown == 0f && CharController.velocity.sqrMagnitude > .1f)
 			{
-				currentDashCooldown = settings.DashCooldown;
+				currentDashCooldown = Settings.DashCooldown;
 				StartCoroutine(DashSequence());
 			}
 		}
@@ -240,7 +240,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			&& currentDashCooldown == 0f 
 			&& CharController.velocity.sqrMagnitude > .1f)
 		{
-			currentDashCooldown = settings.DashCooldown;
+			currentDashCooldown = Settings.DashCooldown;
 			StartCoroutine(DashSequence());
 		}
 	}
@@ -250,7 +250,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (currentParryCooldown == 0f && IsAssignedDevice(ctx.control.device))
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
-			currentParryCooldown = settings.ParryCooldown;
+			currentParryCooldown = Settings.ParryCooldown;
 		}
 	}
 
@@ -271,19 +271,14 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerPortalOne(InputAction.CallbackContext ctx)
 	{
-		if (IsAssignedDevice(ctx.control.device)) CreatePortal(0);
-	}
-
-	private void TriggerPortalTwo(InputAction.CallbackContext ctx)
-	{
-		if (IsAssignedDevice(ctx.control.device)) CreatePortal(1);
+		if (IsAssignedDevice(ctx.control.device)) CreatePortal();
 	}
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
 		if (IsAssignedDevice(ctx.control.device) && currentShotCooldown == 0f)
 		{
-			currentShotCooldown = settings.ShotCooldown;
+			currentShotCooldown = Settings.ShotCooldown;
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 		}
 	}
@@ -325,7 +320,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 			lookDir = (aimLockTarget.transform.position - transform.position).normalized;
 			lookDir.y = 0f;
-			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, settings.AimLineLengthMax));
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, Settings.AimLineLengthMax));
 		}
 		else if (AimInput.sqrMagnitude < .1f)
 		{
@@ -335,7 +330,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		else
 		{
 			lookDir = new Vector3(AimInput.x, 0f, AimInput.y);
-			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, AimInput.magnitude * settings.AimLineLengthMax));
+			aimLineRenderer.SetPosition(1, new Vector3(0f, 0f, AimInput.magnitude * Settings.AimLineLengthMax));
 		}
 
 
@@ -356,20 +351,20 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			Quaternion selfRotation = 
 				Quaternion.Euler(new Vector3(0f, (360 / loadedProjectiles.Count) * i, 0f)) 
 				* currentCoreRotation; // combine partial rotation with core rotation for this particles rotation around the orbit center
-			Vector3 orbitVec = Vector3.forward * settings.OrbitDist; // identity vector for all projectiles
+			Vector3 orbitVec = Vector3.forward * Settings.OrbitDist; // identity vector for all projectiles
 			orbitVec = selfRotation * orbitVec; // vector from orbit center to target position (local space)
 			targetPos = projectileOrbitCenter.position + orbitVec;
 
 			if (MovementInput.sqrMagnitude > .5f)
 			{
-				Vector3 targetPosTwo = transform.position + transform.up * settings.MovementOrbit;
-				targetPos = Vector3.Lerp(targetPos, targetPosTwo, settings.MovementInterpolation);
+				Vector3 targetPosTwo = transform.position + transform.up * Settings.MovementOrbit;
+				targetPos = Vector3.Lerp(targetPos, targetPosTwo, Settings.MovementInterpolation);
 			}
 
 			projectile.transform.position = Vector3.MoveTowards
 				(projectile.transform.position, 
 				targetPos, 
-				Vector3.Distance(projectile.transform.position, targetPos) * settings.MaxOrbitDist * Time.deltaTime);
+				Vector3.Distance(projectile.transform.position, targetPos) * Settings.MaxOrbitDist * Time.deltaTime);
 
 			UpdateProjectileRotation(projectile);
 		}
@@ -379,9 +374,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		projectile.transform.rotation *= 
 			Quaternion.Euler
-			(Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime, 
-			Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime, 
-			Random.Range(settings.RotationMin, settings.RotationMax) * Time.deltaTime);
+			(Random.Range(Settings.RotationMin, Settings.RotationMax) * Time.deltaTime, 
+			Random.Range(Settings.RotationMin, Settings.RotationMax) * Time.deltaTime, 
+			Random.Range(Settings.RotationMin, Settings.RotationMax) * Time.deltaTime);
 	}
 
 	private void UpdateShooting()
@@ -391,7 +386,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (shooting && currentShotCooldown == 0f && loadedProjectiles.Count > 0)
 		{
 			Shoot();
-			currentShotCooldown = settings.ShotCooldown;
+			currentShotCooldown = Settings.ShotCooldown;
 		}
 	}
 	
@@ -428,8 +423,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region Actions
 	private void Shoot()
 	{
-		camShakeManager.ShakeMagnitude = settings.ShotShakeMagnitude;
-		currentShotCooldown = settings.ShotCooldown;
+		camShakeManager.ShakeMagnitude = Settings.ShotShakeMagnitude;
+		currentShotCooldown = Settings.ShotCooldown;
 
 		var projectile = loadedProjectiles[0];
 		loadedProjectiles.Remove(projectile);
@@ -447,7 +442,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		var forceVec = projectileLaunchPos.position - transform.position;
 		forceVec.y = 0f;
 
-		Vector3 shotVec = forceVec.normalized * settings.ShotStrength;
+		Vector3 shotVec = forceVec.normalized * Settings.ShotStrength;
 		projectile.rgb.AddForce(shotVec, ForceMode.Impulse);
 		projectile.actualVelocity = shotVec; // for portal/wall bounces
 
@@ -455,7 +450,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		projectile = null;
 
-		OneShotAudioManager.PlayOneShotAudio(settings.ProjectileShotSounds, projectileLaunchPos.position);
+		OneShotAudioManager.PlayOneShotAudio(Settings.ProjectileShotSounds, projectileLaunchPos.position);
 	}
 
 	public void TriggerDeath()
@@ -468,8 +463,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			loadedProjectiles[i].CanPickup = true;
 		}
 
-		camShakeManager.ShakeMagnitude = settings.DeathShakeMagnitude;
-		OneShotAudioManager.PlayOneShotAudio(settings.PlayerDeathSounds, transform.position);
+		camShakeManager.ShakeMagnitude = Settings.DeathShakeMagnitude;
+		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
 		gameManager.StartNextRound();
 		Destroy(gameObject);
 	}
@@ -496,53 +491,76 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		CharController.detectCollisions = false;
 
 		var main = afterImageParticleSystem.main;
-		main.duration = settings.DashDuration + settings.DashAfterimagePadding;
+		main.duration = Settings.DashDuration + Settings.DashAfterimagePadding;
 		afterImageParticleSystem.Play();
 
 		float baseSpeed = currentMovespeed;
-		currentMovespeed = settings.DashSpeed;
+		currentMovespeed = Settings.DashSpeed;
 
-		yield return new WaitForSeconds(settings.DashDuration);
+		yield return new WaitForSeconds(Settings.DashDuration);
 		currentMovespeed = baseSpeed;
 		CharController.detectCollisions = true;
 	}
 
-	public void CreatePortal(int portalID)
+	public void CreatePortal()
 	{
-		if (!Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, settings.TeleportCompatibleLayers)) return;
-		float yRot;
-		Quaternion rotation;
+		if (!Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, Settings.TeleportCompatibleLayers)) return;
+		if (portalOne == null) portalOne = Instantiate(Settings.PortalPrefab);
+		if (portalTwo == null) portalTwo = Instantiate(Settings.PortalPrefab);
 
-		switch (portalID)
+
+		var yRot = Vector3.Angle(Vector3.right, hit.normal);
+		var rotation = Quaternion.Euler(0f, yRot, 90f);
+		portalOne.transform.position = hit.point;
+		portalOne.transform.rotation = rotation;
+		
+		if (hit.collider.CompareTag(Settings.WallTag))
 		{
-			case 0:
-				if (portalOne != null)
-				{
-					if (portalOne.lineRenderer != null) Destroy(portalOne.lineRenderer.gameObject);
-					Destroy(portalOne.gameObject);
-				}
 
-				yRot = Vector3.Angle(Vector3.right, hit.normal);
-				rotation = Quaternion.Euler(0f, yRot, 90f);
-				portalOne = Instantiate(settings.PortalPrefab, hit.point, rotation);
-
-				if (portalTwo != null) portalTwo.ConnectPortals(portalOne);
-				break;
-
-			case 1:
-				if (portalTwo != null)
-				{
-					if (portalTwo.lineRenderer != null) Destroy(portalTwo.lineRenderer.gameObject);
-					Destroy(portalTwo.gameObject);
-				}
-
-				yRot = Vector3.Angle(Vector3.right, hit.normal);
-				rotation = Quaternion.Euler(0f, yRot, 90f);
-				portalTwo = Instantiate(settings.PortalPrefab, hit.point, rotation);
-
-				if (portalOne != null) portalOne.ConnectPortals(portalTwo);
-				break;
 		}
+		else if(hit.collider.CompareTag(Settings.OuterWallTag))
+		{
+			var wallFound = Physics.Raycast(hit.point, hit.normal, out var hitOuter, 100f, Settings.OuterWallLayer);
+			portalTwo.transform.position = hitOuter.point;
+			portalTwo.transform.rotation = rotation;
+		}
+
+		portalOne.ConnectPortals(portalTwo);
+
+
+		//float yRot;
+		//Quaternion rotation;
+
+		//switch (portalID)
+		//{
+		//	case 0:
+		//		if (portalOne != null)
+		//		{
+		//			if (portalOne.lineRenderer != null) Destroy(portalOne.lineRenderer.gameObject);
+		//			Destroy(portalOne.gameObject);
+		//		}
+
+		//		yRot = Vector3.Angle(Vector3.right, hit.normal);
+		//		rotation = Quaternion.Euler(0f, yRot, 90f);
+		//		portalOne = Instantiate(Settings.PortalPrefab, hit.point, rotation);
+
+		//		if (portalTwo != null) portalTwo.ConnectPortals(portalOne);
+		//		break;
+
+		//	case 1:
+		//		if (portalTwo != null)
+		//		{
+		//			if (portalTwo.lineRenderer != null) Destroy(portalTwo.lineRenderer.gameObject);
+		//			Destroy(portalTwo.gameObject);
+		//		}
+
+		//		yRot = Vector3.Angle(Vector3.right, hit.normal);
+		//		rotation = Quaternion.Euler(0f, yRot, 90f);
+		//		portalTwo = Instantiate(Settings.PortalPrefab, hit.point, rotation);
+
+		//		if (portalOne != null) portalOne.ConnectPortals(portalTwo);
+		//		break;
+		//}
 	}
 	#endregion
 
@@ -566,10 +584,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region PowerUpHandling
 	public void OnPowerUpCollect(PowerUpType type)
 	{
-		if (activePowerUps.ContainsKey(type)) activePowerUps[type] += settings.PowerUpDuration;
+		if (activePowerUps.ContainsKey(type)) activePowerUps[type] += Settings.PowerUpDuration;
 		else
 		{
-			activePowerUps.Add(type, settings.PowerUpDuration);
+			activePowerUps.Add(type, Settings.PowerUpDuration);
 			ApplyPowerUp(type, loadedProjectiles);
 		}
 	}

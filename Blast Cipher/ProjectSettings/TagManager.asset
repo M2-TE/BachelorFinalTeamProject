@@ -8,6 +8,7 @@ TagManager:
   - Projectile
   - ParryShield
   - PowerUp
+  - OuterWall
   layers:
   - Default
   - TransparentFX
@@ -25,7 +26,7 @@ TagManager:
   - PowerUps
   - Portals
   - Explosion
-  - 
+  - OuterWalls
   - 
   - 
   - 

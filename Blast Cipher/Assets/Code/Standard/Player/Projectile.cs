@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Projectile : MonoBehaviour, ITeleportable
 {
@@ -53,7 +54,6 @@ public class Projectile : MonoBehaviour, ITeleportable
 	public Rigidbody rgb;
 	public new Collider collider;
 	public new Renderer renderer;
-
 	public PlayerCharacter InitialShooter;
 
 	public bool CanBeTeleported { get; set; } = true;
@@ -68,7 +68,7 @@ public class Projectile : MonoBehaviour, ITeleportable
 				go.GetComponent<PlayerCharacter>().TriggerDeath();
 				Destroy(gameObject);
 			}
-			else if (go.CompareTag(settings.WallTag) && CanBeTeleported)
+			else if ((go.CompareTag(settings.WallTag) || go.CompareTag(settings.OuterWallTag)) && CanBeTeleported)
 			{
 				if (_explosive)
 				{
