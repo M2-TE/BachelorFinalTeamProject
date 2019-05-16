@@ -504,7 +504,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public void CreatePortal()
 	{
-		if (!Physics.Raycast(projectileLaunchPos.position, transform.forward, out var hit, 100f, Settings.TeleportCompatibleLayers)) return;
+		if (!Physics.Raycast
+			(transform.position + new Vector3(0f, projectileLaunchPos.position.y, 0f), 
+			transform.forward, 
+			out var hit, 1000f, 
+			Settings.TeleportCompatibleLayers)) return;
+
 		if (portalOne == null) portalOne = Instantiate(Settings.PortalPrefab);
 		if (portalTwo == null) portalTwo = Instantiate(Settings.PortalPrefab);
 
@@ -516,7 +521,22 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		
 		if (hit.collider.CompareTag(Settings.WallTag))
 		{
+			var bounds = hit.collider.bounds;
+			Vector3 inDir = hit.transform.position - hit.point;
 
+			float xPerc = inDir.x / (bounds.size.x * .5f);
+			float zPerc = inDir.z / (bounds.size.z * .5f);
+			if(Mathf.Abs(xPerc) > Mathf.Abs(zPerc))
+			{
+				inDir.z *= -1f;
+			}
+			else
+			{
+				inDir.x *= -1f;
+			}
+
+			portalTwo.transform.position = hit.transform.position + inDir;
+			portalTwo.transform.rotation = rotation;
 		}
 		else if(hit.collider.CompareTag(Settings.OuterWallTag))
 		{
@@ -526,41 +546,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 
 		portalOne.ConnectPortals(portalTwo);
-
-
-		//float yRot;
-		//Quaternion rotation;
-
-		//switch (portalID)
-		//{
-		//	case 0:
-		//		if (portalOne != null)
-		//		{
-		//			if (portalOne.lineRenderer != null) Destroy(portalOne.lineRenderer.gameObject);
-		//			Destroy(portalOne.gameObject);
-		//		}
-
-		//		yRot = Vector3.Angle(Vector3.right, hit.normal);
-		//		rotation = Quaternion.Euler(0f, yRot, 90f);
-		//		portalOne = Instantiate(Settings.PortalPrefab, hit.point, rotation);
-
-		//		if (portalTwo != null) portalTwo.ConnectPortals(portalOne);
-		//		break;
-
-		//	case 1:
-		//		if (portalTwo != null)
-		//		{
-		//			if (portalTwo.lineRenderer != null) Destroy(portalTwo.lineRenderer.gameObject);
-		//			Destroy(portalTwo.gameObject);
-		//		}
-
-		//		yRot = Vector3.Angle(Vector3.right, hit.normal);
-		//		rotation = Quaternion.Euler(0f, yRot, 90f);
-		//		portalTwo = Instantiate(Settings.PortalPrefab, hit.point, rotation);
-
-		//		if (portalOne != null) portalOne.ConnectPortals(portalTwo);
-		//		break;
-		//}
 	}
 	#endregion
 

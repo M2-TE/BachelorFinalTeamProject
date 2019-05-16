@@ -121,36 +121,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &32428727
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 32428728}
-  m_Layer: 0
-  m_Name: FRIX PORTALS
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &32428728
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 32428727}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.14302588, y: -46.2499, z: 18.418737}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &93776646 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4510281192056092052, guid: 75371f8f3c1c2d9448af6747bd9be059,
@@ -3638,7 +3608,7 @@ PrefabInstance:
     - target: {fileID: 2031054540412254078, guid: 4bfe6004267b1d44c813ab76593e6c11,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -1.3
       objectReference: {fileID: 0}
     - target: {fileID: 2031054540412254078, guid: 4bfe6004267b1d44c813ab76593e6c11,
         type: 3}
@@ -3683,12 +3653,12 @@ PrefabInstance:
     - target: {fileID: 2031054540412254078, guid: 4bfe6004267b1d44c813ab76593e6c11,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 2031054540412254078, guid: 4bfe6004267b1d44c813ab76593e6c11,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1
+      value: 2.1500015
       objectReference: {fileID: 0}
     - target: {fileID: 2031054540412254078, guid: 4bfe6004267b1d44c813ab76593e6c11,
         type: 3}
@@ -3730,16 +3700,16 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 2031054540412254073, guid: 4bfe6004267b1d44c813ab76593e6c11,
-        type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 992622906}
     - target: {fileID: 2031054540412254079, guid: 4bfe6004267b1d44c813ab76593e6c11,
         type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 1904500802}
+    - target: {fileID: 2031054540412254073, guid: 4bfe6004267b1d44c813ab76593e6c11,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 992622906}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4bfe6004267b1d44c813ab76593e6c11, type: 3}
 --- !u!1001 &4422398641582501794
