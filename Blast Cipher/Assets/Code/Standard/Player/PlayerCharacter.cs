@@ -60,6 +60,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private float currentShotCooldown = 0f;
 	private float currentParryCooldown = 0f;
 	private float currentDashCooldown = 0f;
+	private bool shooting = false;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
@@ -211,9 +212,29 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
 	{
-		if (currentShotCooldown == 0f && loadedProjectiles.Count > 0 && IsAssignedDevice(ctx.control.device))
+		if (loadedProjectiles.Count > 0 && IsAssignedDevice(ctx.control.device))
 		{
-			Shoot();
+			var inputVal = ctx.ReadValue<float>();
+			if (inputVal < 1f)
+			{
+				if (shooting)
+				{
+					Debug.Log(name + " Stopping");
+				}
+				shooting = false;
+			}
+			else
+			{
+				if (!shooting)
+				{
+					Debug.Log(name + " Shooting");
+				}
+				shooting = true;
+			}
+			//if (currentShotCooldown == 0f)
+			//{
+			//	Shoot();
+			//}
 		}
 	}
 
@@ -466,6 +487,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public IEnumerator DashSequence()
 	{
+		CharController.detectCollisions = false;
+
 		var main = afterImageParticleSystem.main;
 		main.duration = settings.DashDuration + settings.DashAfterimagePadding;
 		afterImageParticleSystem.Play();
@@ -475,6 +498,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		yield return new WaitForSeconds(settings.DashDuration);
 		currentMovespeed = baseSpeed;
+		CharController.detectCollisions = true;
 	}
 
 	public void CreatePortal(int portalID)

@@ -21,7 +21,6 @@ public class InputMaster : InputActionAssetReference
         // Player
         m_Player = asset.GetActionMap("Player");
         m_Player_Movement = m_Player.GetAction("Movement");
-        m_Player_Shoot = m_Player.GetAction("Shoot");
         m_Player_Aim = m_Player.GetAction("Aim");
         m_Player_Debug = m_Player.GetAction("Debug");
         m_Player_Jump = m_Player.GetAction("Jump");
@@ -29,6 +28,7 @@ public class InputMaster : InputActionAssetReference
         m_Player_LockAim = m_Player.GetAction("LockAim");
         m_Player_PortalOne = m_Player.GetAction("PortalOne");
         m_Player_PortalTwo = m_Player.GetAction("PortalTwo");
+        m_Player_Shoot = m_Player.GetAction("Shoot");
         // General
         m_General = asset.GetActionMap("General");
         m_General_RegisterDevice = m_General.GetAction("RegisterDevice");
@@ -39,7 +39,6 @@ public class InputMaster : InputActionAssetReference
     {
         m_Player = null;
         m_Player_Movement = null;
-        m_Player_Shoot = null;
         m_Player_Aim = null;
         m_Player_Debug = null;
         m_Player_Jump = null;
@@ -47,6 +46,7 @@ public class InputMaster : InputActionAssetReference
         m_Player_LockAim = null;
         m_Player_PortalOne = null;
         m_Player_PortalTwo = null;
+        m_Player_Shoot = null;
         m_General = null;
         m_General_RegisterDevice = null;
         m_General_DPadInput = null;
@@ -65,7 +65,6 @@ public class InputMaster : InputActionAssetReference
     // Player
     private InputActionMap m_Player;
     private InputAction m_Player_Movement;
-    private InputAction m_Player_Shoot;
     private InputAction m_Player_Aim;
     private InputAction m_Player_Debug;
     private InputAction m_Player_Jump;
@@ -73,12 +72,12 @@ public class InputMaster : InputActionAssetReference
     private InputAction m_Player_LockAim;
     private InputAction m_Player_PortalOne;
     private InputAction m_Player_PortalTwo;
+    private InputAction m_Player_Shoot;
     public struct PlayerActions
     {
         private InputMaster m_Wrapper;
         public PlayerActions(InputMaster wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement { get { return m_Wrapper.m_Player_Movement; } }
-        public InputAction @Shoot { get { return m_Wrapper.m_Player_Shoot; } }
         public InputAction @Aim { get { return m_Wrapper.m_Player_Aim; } }
         public InputAction @Debug { get { return m_Wrapper.m_Player_Debug; } }
         public InputAction @Jump { get { return m_Wrapper.m_Player_Jump; } }
@@ -86,6 +85,7 @@ public class InputMaster : InputActionAssetReference
         public InputAction @LockAim { get { return m_Wrapper.m_Player_LockAim; } }
         public InputAction @PortalOne { get { return m_Wrapper.m_Player_PortalOne; } }
         public InputAction @PortalTwo { get { return m_Wrapper.m_Player_PortalTwo; } }
+        public InputAction @Shoot { get { return m_Wrapper.m_Player_Shoot; } }
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
