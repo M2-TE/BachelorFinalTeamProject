@@ -186,7 +186,7 @@ namespace Networking
 				// listen for more clients
 				tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null);
 			}
-			catch (ObjectDisposedException e)
+			catch (ObjectDisposedException)
 			{
 				return;
 			}

@@ -4,5 +4,5 @@
 public class AudioContainer : ScriptableObject
 {
 	public AudioClip[] tracks;
-	public int[] bpmValues;
+	public float[] bpmValues;
 }

@@ -167,7 +167,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			Shoot();
 		}
 
-		if(Input.GetKeyDown(KeyCode.Q))
+		if(Input.GetKeyDown(KeyCode.Q) && CurrentParryCooldown == 0f)
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
 			currentParryCooldown = Settings.ParryCooldown;
@@ -187,6 +187,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 
 		if (Input.GetKeyDown(KeyCode.Y)) CreatePortal();
+
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			if (currentDashCooldown == 0f && CharController.velocity.sqrMagnitude > .1f)
