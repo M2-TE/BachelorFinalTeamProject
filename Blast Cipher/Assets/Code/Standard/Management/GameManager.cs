@@ -121,7 +121,7 @@ public sealed class GameManager
 
 	private void OnNextMusicBar()
 	{
-		LoadScene(1);
+		LoadScene("Gameplay Proto");
 
 		playerInputsActive = true;
 		nextRoundStarterInProgress = false;

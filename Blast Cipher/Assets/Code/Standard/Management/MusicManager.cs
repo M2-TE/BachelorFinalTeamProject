@@ -52,8 +52,6 @@ public sealed class MusicManager : Manager<MusicManager>
 			// on every bar (bar = 4 beats on 4/4 rhythm)
 			if(currentBeat % 4 == 0)
 			{
-				// show bar
-				bootstrapper.debugImageTwo.enabled = !bootstrapper.debugImageTwo.enabled;
 				
 				// invoke OnBar callbacks
 				if (onBarCallbacks.Count > 0)
@@ -75,8 +73,16 @@ public sealed class MusicManager : Manager<MusicManager>
 					currentBeat = 0;
 					timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
 
+					// retoggle main beat since this iteration of the loop is going to be skipped
+					bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
+
 					intensitySwitchBuffered = false;
 					continue;
+				}
+				else
+				{
+					// toggle bar
+					bootstrapper.debugImageTwo.enabled = !bootstrapper.debugImageTwo.enabled;
 				}
 			}
 
