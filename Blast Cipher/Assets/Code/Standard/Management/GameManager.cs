@@ -78,9 +78,6 @@ public sealed class GameManager
 
 		// set new scene active after single frame delay
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
-
-		playerInputsActive = true;
-		nextRoundStarterInProgress = false;
 	}
 	#endregion
 
@@ -102,17 +99,31 @@ public sealed class GameManager
 
 	public void StartNextRound()
 	{
-		bootstrapper.StartCoroutine(StartNextRoundCo());
-	}
-
-	private IEnumerator StartNextRoundCo()
-	{
 		if (!nextRoundStarterInProgress)
 		{
 			nextRoundStarterInProgress = true;
-			playerInputsActive = false;
-			yield return new WaitForSecondsRealtime(1f);
-			LoadScene(1);
+			//playerInputsActive = false;
+			MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
+			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
 		}
+	}
+
+	private IEnumerator TimeScalerOnRoundTransition()
+	{
+		float scaleModPerFrame = 1f;
+		while (nextRoundStarterInProgress)
+		{
+			Time.timeScale -= scaleModPerFrame * Time.deltaTime;
+			yield return new WaitForEndOfFrame();
+		}
+		Time.timeScale = 1f;
+	}
+
+	private void OnNextMusicBar()
+	{
+		LoadScene(1);
+
+		playerInputsActive = true;
+		nextRoundStarterInProgress = false;
 	}
 }

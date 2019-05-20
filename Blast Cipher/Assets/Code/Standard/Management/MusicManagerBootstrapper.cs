@@ -7,6 +7,7 @@ public class MusicManagerBootstrapper : Bootstrapper
 	public delegate void OnBeatCallback();
 
 	[SerializeField] internal Image debugImage;
+	[SerializeField] internal Image debugImageTwo;
 	[SerializeField] internal AudioMixer musicMixer;
 	[SerializeField] internal AudioContainer cont;
 
@@ -21,9 +22,9 @@ public class MusicManagerBootstrapper : Bootstrapper
 		manager = MusicManager.Instance;
 		manager.RegisterBootstrapper(this);
 
-		manager.RegisterCallOnNextBeat(DEBUGCALL, 8);
-		manager.RegisterCallOnNextBeat(DEBUGCALL, 5);
-		manager.RegisterCallOnNextBeat(DEBUGCALL, 12);
+		//manager.RegisterCallOnNextBeat(DEBUGCALL, 2, false);
+		//manager.RegisterCallOnNextBeat(DEBUGCALL, 2, true);
+		//manager.RegisterCallOnNextBeat(DEBUGCALL, 12);
 
 		manager.PlayMusic(cont);
 	}

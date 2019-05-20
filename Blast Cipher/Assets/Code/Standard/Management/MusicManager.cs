@@ -5,13 +5,18 @@ using UnityEngine;
 public sealed class MusicManager : Manager<MusicManager>
 {
 	public delegate void OnBeatCallback();
-
-
+	
 	private MusicManagerBootstrapper bootstrapper;
-	private readonly LinkedList<OnBeatCallback> list = new LinkedList<OnBeatCallback>();
 	private AudioSource source;
 	private AudioContainer trackContainer;
+
+	private readonly LinkedList<OnBeatCallback> onBeatCallbacks = new LinkedList<OnBeatCallback>();
+	private readonly LinkedList<OnBeatCallback> onBarCallbacks = new LinkedList<OnBeatCallback>();
 	private int currentActiveTrack = 0;
+	private int currentBeat = 0;
+	private float targetTime = 0f;
+	private float timeBetweenBeats = 0f;
+	private bool intensitySwitchBuffered = false;
 
 	internal void RegisterBootstrapper(MusicManagerBootstrapper bootstrapper)
 	{
@@ -21,8 +26,7 @@ public sealed class MusicManager : Manager<MusicManager>
 
 	private IEnumerator MusicHandler()
 	{
-		float bpm = trackContainer.bpmValues[currentActiveTrack];
-		float timeBetweenBeats = 60f / bpm;
+		timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
 		var waiter = new WaitForSecondsRealtime(timeBetweenBeats);
 
 		var clip = trackContainer.tracks[currentActiveTrack];
@@ -30,28 +34,76 @@ public sealed class MusicManager : Manager<MusicManager>
 		source.clip = clip;
 		source.Play();
 
-		int currentBeat = 0;
-		float targetTime = 0f;
 		while (true)
 		{
-			bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
-
-			if (list.Count > 0)
+			// on every beat
 			{
-				list.First.Value?.Invoke();
-				list.RemoveFirst();
+				// show beat
+				bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
+
+				// invoke OnBeat callbacks
+				if (onBeatCallbacks.Count > 0)
+				{
+					onBeatCallbacks.First.Value?.Invoke();
+					onBeatCallbacks.RemoveFirst();
+				}
 			}
 
+			// on every bar (bar = 4 beats on 4/4 rhythm)
+			if(currentBeat % 4 == 0)
+			{
+				// show bar
+				bootstrapper.debugImageTwo.enabled = !bootstrapper.debugImageTwo.enabled;
+				
+				// invoke OnBar callbacks
+				if (onBarCallbacks.Count > 0)
+				{
+					onBarCallbacks.First.Value?.Invoke();
+					onBarCallbacks.RemoveFirst();
+				}
+
+				// check if next intensity should be switched to
+				if (intensitySwitchBuffered)
+				{
+					currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
+					Debug.Log(currentActiveTrack);
+
+					clip = trackContainer.tracks[currentActiveTrack];
+					source.clip = clip;
+					source.Play();
+
+					currentBeat = 0;
+					timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
+
+					intensitySwitchBuffered = false;
+					continue;
+				}
+			}
+
+			// calc new targetTime
 			targetTime = timeBetweenBeats * (++currentBeat);
 
+			// handle music looping
 			if (source.time + (targetTime - source.time) > source.clip.length)
 			{
 				currentBeat = 1;
 				targetTime = timeBetweenBeats;
 			}
+
+			// wait until next beat
 			waiter = new WaitForSecondsRealtime(targetTime - source.time);
 			yield return waiter;
 		}
+	}
+
+	private float GetTimeUntilNextBeat()
+	{
+		return default;
+	}
+
+	private float GetTimeUntilNextBar()
+	{
+		return (currentBeat % 4) * timeBetweenBeats + targetTime - source.time;
 	}
 
 	public void PlayMusic(AudioContainer tracks)
@@ -60,18 +112,44 @@ public sealed class MusicManager : Manager<MusicManager>
 		bootstrapper.StartCoroutine(MusicHandler());
 	}
 
-	public void RegisterCallOnNextBeat(OnBeatCallback callback, int beatsToSkip = 0)
+	public void TransitionToNextIntensity(OnBeatCallback onTransitionCallback)
 	{
-		if (list.First == null)
-			list.AddFirst(default(OnBeatCallback));
+		bootstrapper.StartCoroutine(TransitionEffect(onTransitionCallback));
+	}
 
-		var node = list.First;
+	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
+	{
+		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
+		float timeToWait = GetTimeUntilNextBar() + 4f * timeBetweenBeats;
+		snapshot.TransitionTo(timeToWait);
+		Debug.Log(timeToWait);
+
+		yield return new WaitForSecondsRealtime(GetTimeUntilNextBar() + 2f * timeBetweenBeats);
+		intensitySwitchBuffered = true;
+
+		yield return new WaitForSecondsRealtime(2f * timeBetweenBeats);
+		onTransitionCallback();
+
+		snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
+		snapshot.TransitionTo(2f);
+	}
+
+	public void RegisterCallOnNextBeat(OnBeatCallback callback, int beatsToSkip = 0, bool onBar = false)
+	{
+		var callbacks = onBar ? onBarCallbacks : onBeatCallbacks;
+
+		if (callbacks.First == null)
+		{
+			callbacks.AddFirst(default(OnBeatCallback));
+		}
+		var node = callbacks.First;
 
 		for (int i = 0; i < beatsToSkip; i++)
 		{
 			if (node.Next == null)
-				list.AddLast(default(OnBeatCallback));
-
+			{
+				callbacks.AddLast(default(OnBeatCallback));
+			}
 			node = node.Next;
 		}
 
