@@ -29,6 +29,7 @@ public class InputMaster : InputActionAssetReference
         m_Player_Portal = m_Player.GetAction("Portal");
         m_Player_Shoot = m_Player.GetAction("Shoot");
         m_Player_Decline = m_Player.GetAction("Decline");
+        m_Player_ProjectileCollect = m_Player.GetAction("ProjectileCollect");
         // General
         m_General = asset.GetActionMap("General");
         m_General_RegisterDevice = m_General.GetAction("RegisterDevice");
@@ -47,6 +48,7 @@ public class InputMaster : InputActionAssetReference
         m_Player_Portal = null;
         m_Player_Shoot = null;
         m_Player_Decline = null;
+        m_Player_ProjectileCollect = null;
         m_General = null;
         m_General_RegisterDevice = null;
         m_General_DPadInput = null;
@@ -73,6 +75,7 @@ public class InputMaster : InputActionAssetReference
     private InputAction m_Player_Portal;
     private InputAction m_Player_Shoot;
     private InputAction m_Player_Decline;
+    private InputAction m_Player_ProjectileCollect;
     public struct PlayerActions
     {
         private InputMaster m_Wrapper;
@@ -86,6 +89,7 @@ public class InputMaster : InputActionAssetReference
         public InputAction @Portal { get { return m_Wrapper.m_Player_Portal; } }
         public InputAction @Shoot { get { return m_Wrapper.m_Player_Shoot; } }
         public InputAction @Decline { get { return m_Wrapper.m_Player_Decline; } }
+        public InputAction @ProjectileCollect { get { return m_Wrapper.m_Player_ProjectileCollect; } }
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }

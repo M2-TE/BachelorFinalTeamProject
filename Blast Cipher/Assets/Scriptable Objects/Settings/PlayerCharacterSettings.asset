@@ -35,6 +35,7 @@ MonoBehaviour:
   ShotStrength: 25
   PowerUpDuration: 10
   startProjectileCount: 3
+  projectileRespawnTimer: 5
   OrbitDelta: {x: 0, y: 100, z: 0}
   MaxOrbitDist: 10
   MovementOrbit: 2.5
@@ -52,6 +53,11 @@ MonoBehaviour:
   OuterWallLayer:
     serializedVersion: 2
     m_Bits: 65536
+  ProjectileLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  ProjectileMagnetRadius: 15
+  ProjectileMagnetForce: 30
   TeleportCompatibleLayers:
     serializedVersion: 2
     m_Bits: 66048

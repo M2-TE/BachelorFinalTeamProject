@@ -94,6 +94,16 @@
                     "processors": "",
                     "interactions": "Press",
                     "bindings": []
+                },
+                {
+                    "name": "ProjectileCollect",
+                    "id": "8feb83a2-8796-401b-8bdf-50d1635a22e8",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
                 }
             ],
             "bindings": [
@@ -178,7 +188,7 @@
                 {
                     "name": "",
                     "id": "ebf8b1cb-2387-4b11-866b-b433ac036c06",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "Press(pressPoint=1)",
                     "processors": "",
                     "groups": ";MainGamepadScheme",
@@ -222,6 +232,19 @@
                     "processors": "",
                     "groups": ";MainGamepadScheme",
                     "action": "Decline",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "950335ae-88e9-4679-ac77-0c13ffc78eb5",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "ProjectileCollect",
                     "chainWithPrevious": false,
                     "isComposite": false,
                     "isPartOfComposite": false,

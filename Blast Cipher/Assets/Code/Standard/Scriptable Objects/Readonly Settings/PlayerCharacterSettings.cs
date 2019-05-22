@@ -26,6 +26,7 @@ public class PlayerCharacterSettings : ReadonlySettings
 
 	[Header("Projectiles")]
 	public int startProjectileCount = 3;
+	public float projectileRespawnTimer = 5f;
 	public Vector3 OrbitDelta = new Vector3(0f, 100f, 0f);
 	public float MaxOrbitDist = 10f;
 	public float MovementOrbit = 2.5f;
@@ -44,6 +45,11 @@ public class PlayerCharacterSettings : ReadonlySettings
 
 	public string OuterWallTag = "OuterWall";
 	public LayerMask OuterWallLayer;
+
+	[Space]
+	public LayerMask ProjectileLayer;
+	public float ProjectileMagnetRadius;
+	public float ProjectileMagnetForce;
 
 	[Space]
 	public LayerMask TeleportCompatibleLayers;

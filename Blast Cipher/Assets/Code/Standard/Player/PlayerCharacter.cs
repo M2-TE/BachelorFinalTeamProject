@@ -94,6 +94,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		UpdateProjectileOrbit();
 		UpdateShooting();
+		PullInProjectilesGradual();
 		UpdateMiscValues();
 	}
 
@@ -114,6 +115,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		Settings.InputMaster.Player.Parry.performed += TriggerParry;
 		Settings.InputMaster.Player.LockAim.performed += TriggerAimLock;
 		Settings.InputMaster.Player.Portal.performed += TriggerPortalOne;
+		Settings.InputMaster.Player.ProjectileCollect.performed += CollectProjectiles;
 
 		Settings.InputMaster.Player.Debug.performed += TriggerDebugAction;
 	}
@@ -129,6 +131,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		Settings.InputMaster.Player.Parry.performed -= TriggerParry;
 		Settings.InputMaster.Player.LockAim.performed -= TriggerAimLock;
 		Settings.InputMaster.Player.Portal.performed -= TriggerPortalOne;
+		Settings.InputMaster.Player.ProjectileCollect.performed -= CollectProjectiles;
 
 		Settings.InputMaster.Player.Debug.performed -= TriggerDebugAction;
 	}
@@ -148,6 +151,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 		}
+
+		StartCoroutine(SpawnProjectilesCR());
 	}
 	#endregion
 
@@ -275,8 +280,14 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (IsAssignedDevice(ctx.control.device)) CreatePortal();
 	}
 
+	private void CollectProjectiles(InputAction.CallbackContext ctx)
+	{
+		if (IsAssignedDevice(ctx.control.device)) PullInProjectilesInstant();
+	}
+
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
+		return;
 		if (IsAssignedDevice(ctx.control.device) && currentShotCooldown == 0f)
 		{
 			currentShotCooldown = Settings.ShotCooldown;
@@ -390,6 +401,24 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			currentShotCooldown = Settings.ShotCooldown;
 		}
 	}
+
+	private void PullInProjectilesGradual()
+	{
+		var hits = Physics.SphereCastAll(transform.position, Settings.ProjectileMagnetRadius, Vector3.forward, 0f, Settings.ProjectileLayer);
+		for(int i = 0; i < hits.Length; i++)
+		{
+			if (hits[i].collider.GetComponent<Projectile>().CanPickup)
+			{
+				hits[i].rigidbody.AddExplosionForce
+					(-Settings.ProjectileMagnetForce,
+					transform.position,
+					Settings.ProjectileMagnetRadius, 
+					0f,
+					ForceMode.Force);
+			}
+			
+		}
+	}
 	
 	private void UpdateMiscValues()
 	{
@@ -485,6 +514,19 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		projectile.rgb.useGravity = enableState;
 		projectile.collider.enabled = enableState;
+	}
+
+	private void PullInProjectilesInstant()
+	{
+		var hits = Physics.SphereCastAll(transform.position, Settings.ProjectileMagnetRadius, Vector3.forward, 0f, Settings.ProjectileLayer);
+		for (int i = 0; i < hits.Length; i++)
+		{
+			var projectile = hits[i].collider.GetComponent<Projectile>();
+			if (projectile.CanPickup)
+			{
+				PickupProjectile(projectile);
+			}
+		}
 	}
 
 	public IEnumerator DashSequence()
@@ -646,6 +688,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			OnPowerUpCollect(hit.gameObject.GetComponent<PowerUp>().type);
 			Destroy(hit.gameObject);
+		}
+	}
+
+	private IEnumerator SpawnProjectilesCR()
+	{
+		while (true)
+		{
+			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+			yield return new WaitForSeconds(Settings.projectileRespawnTimer);
 		}
 	}
 }
