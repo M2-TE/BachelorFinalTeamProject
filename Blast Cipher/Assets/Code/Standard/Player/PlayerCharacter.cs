@@ -59,8 +59,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
-	private bool aimLockInputBlocked = false; //               \/
-	private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
+	//private bool aimLockInputBlocked = false; //               \/
+	//private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
 	
 	private float currentShotCooldown = 0f;
 	private float currentParryCooldown = 0f;
@@ -188,7 +188,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			aimLockTarget = gameManager.RequestNearestPlayer(this);
 			aimLocked = !aimLocked;
-			aimLockInputBlocked = true;
+			//aimLockInputBlocked = true;
 		}
 
 		if (Input.GetKeyDown(KeyCode.Y)) CreatePortal();
@@ -264,13 +264,16 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (IsAssignedDevice(ctx.control.device))
 		{
-			providingAimLockInputThisFrame = true;
-			if (!aimLockInputBlocked)
+			float val = ctx.ReadValue<float>();
+			if(aimLockTarget == null) gameManager.RequestNearestPlayer(this);
+
+			if(val > 0f && !aimLocked)
 			{
-				aimLockTarget = gameManager.RequestNearestPlayer(this);
-				//Debug.Log(aimLockTarget.name);
-				aimLocked = !aimLocked;
-				aimLockInputBlocked = true;
+				aimLocked = true;
+			}
+			else if(val == 0f)
+			{
+				aimLocked = false;
 			}
 		}
 	}
@@ -422,8 +425,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	
 	private void UpdateMiscValues()
 	{
-		if (!providingAimLockInputThisFrame && aimLockInputBlocked) aimLockInputBlocked = false;
-		providingAimLockInputThisFrame = false;
+		//if (!providingAimLockInputThisFrame && aimLockInputBlocked) aimLockInputBlocked = false;
+		//providingAimLockInputThisFrame = false;
 
 		Utilities.CountDownVal(ref currentParryCooldown);
 		Utilities.CountDownVal(ref currentDashCooldown);
@@ -518,7 +521,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void PullInProjectilesInstant()
 	{
-		var hits = Physics.SphereCastAll(transform.position, Settings.ProjectileMagnetRadius, Vector3.forward, 0f, Settings.ProjectileLayer);
+		var hits = Physics.SphereCastAll(transform.position, Settings.ProjectileMagnetRadius * .25f, Vector3.forward, 0f, Settings.ProjectileLayer);
 		for (int i = 0; i < hits.Length; i++)
 		{
 			var projectile = hits[i].collider.GetComponent<Projectile>();

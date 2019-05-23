@@ -111,11 +111,14 @@ public sealed class GameManager
 	private IEnumerator TimeScalerOnRoundTransition()
 	{
 		float scaleModPerFrame = 1f;
+		float fixedDeltaTime = Time.fixedDeltaTime;
 		while (nextRoundStarterInProgress)
 		{
 			Time.timeScale -= scaleModPerFrame * Time.deltaTime;
+			Time.fixedDeltaTime = fixedDeltaTime * Time.timeScale;
 			yield return new WaitForEndOfFrame();
 		}
+		Time.fixedDeltaTime = fixedDeltaTime;
 		Time.timeScale = 1f;
 	}
 
