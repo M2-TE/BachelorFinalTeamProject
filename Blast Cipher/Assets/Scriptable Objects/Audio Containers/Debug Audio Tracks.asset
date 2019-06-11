@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b784e6a532d3f2d4482c6e4304679c50, type: 3}
   m_Name: Debug Audio Tracks
   m_EditorClassIdentifier: 
+  TransitionTrack: {fileID: 8300000, guid: 780bafa296a71e14db0a1cd4274c0d9f, type: 3}
   tracks:
   - {fileID: 8300000, guid: d9c1e5a58825b0142b5f0ed5931d4cee, type: 3}
   - {fileID: 8300000, guid: 05b7e449261028544b7bd0a5ad4d8729, type: 3}

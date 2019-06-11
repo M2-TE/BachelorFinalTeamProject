@@ -1512,7 +1512,7 @@ MonoBehaviour:
   debugImage: {fileID: 237080869}
   debugImageTwo: {fileID: 863155930}
   musicMixer: {fileID: 24100000, guid: cff79f6e66e34dd4da908bc8efaba5a6, type: 2}
-  cont: {fileID: 11400000, guid: f737ad9e118eb7f4aac2fb0fd542d221, type: 2}
+  cont: {fileID: 11400000, guid: beb8b8558c0c4864eb81b515ca3c582e, type: 2}
   fadeInCurve:
     serializedVersion: 2
     m_Curve:
