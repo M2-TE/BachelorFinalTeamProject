@@ -11,15 +11,18 @@ public class MenuSelectionManager : MenuManager
     [SerializeField] private MenuState standartState = 0;
     [SerializeField] private Transform[] selectorPoints;
     [SerializeField] private Transform selector;
-    [SerializeField][Range(10f,20f)] private float selectorSpeed = 10f;
+    [SerializeField] [Range(10f,20f)] private float selectorSpeed = 10f;
     [SerializeField] private Transform mainCamera;
     [SerializeField] [Range(10f, 50f)] private float cameraSpeed = 1f;
+    [SerializeField] [Range(0.5f, 0.1f)] private float buttonDelayAmount;
     [SerializeField] private LocalLobbyManager localLobbyManager;
     [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
     private MenuState currentState;
     private bool inTitleScreen;
     private MenuManager currentActiveManager;
+
+    private float buttonDelay = 0f;
 
     public MenuState CurrentState { get => currentState; private set => SetMaterials(currentState,currentState = value); }
 
@@ -129,6 +132,10 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnDPadInput(InputAction.CallbackContext ctx)
     {
+        if (buttonDelay > 0)
+            return;
+        else
+            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnDPadInput(ctx);
         else
@@ -143,6 +150,10 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnStartPressed(InputAction.CallbackContext ctx)
     {
+        if (buttonDelay > 0)
+            return;
+        else
+            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnStartPressed(ctx);
         else if(inTitleScreen)
@@ -151,6 +162,10 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnConfirmation(InputAction.CallbackContext ctx)
     {
+        if (buttonDelay > 0)
+            return;
+        else
+            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnConfirmation(ctx);
         else
@@ -164,6 +179,10 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnDecline(InputAction.CallbackContext ctx)
     {
+        if (buttonDelay > 0)
+            return;
+        else
+            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnDecline(ctx);
         else
@@ -178,13 +197,19 @@ public class MenuSelectionManager : MenuManager
         inTitleScreen = true;
     }
 
+    private void Update()
+    {
+        if(buttonDelay > 0)
+            buttonDelay -= Time.deltaTime;
+    }
+
     private void OnEnable() => RegisterActions();
 
     private void OnDisable() => UnregisterActions();
 
     private void RegisterActions()
     {
-        input.General.RegisterDevice.performed += OnStartPressed;
+        input.General.Start.performed += OnStartPressed;
         input.General.DPadInput.performed += OnDPadInput;
         input.Player.Jump.performed += OnConfirmation;
         input.Player.Decline.performed += OnDecline;
@@ -192,7 +217,7 @@ public class MenuSelectionManager : MenuManager
 
     private void UnregisterActions()
     {
-        input.General.RegisterDevice.performed -= OnStartPressed;
+        input.General.Start.performed -= OnStartPressed;
         input.General.DPadInput.performed -= OnDPadInput;
         input.Player.Jump.performed -= OnConfirmation;
         input.Player.Decline.performed -= OnDecline;
