@@ -35,6 +35,22 @@ public class InputMaster : InputActionAssetReference
         m_General_RegisterDevice = m_General.GetAction("RegisterDevice");
         m_General_DPadInput = m_General.GetAction("DPadInput");
         m_General_Start = m_General.GetAction("Start");
+        // CEditor
+        m_CEditor = asset.GetActionMap("CEditor");
+        m_CEditor_LeftStick = m_CEditor.GetAction("LeftStick");
+        m_CEditor_RightStick = m_CEditor.GetAction("RightStick");
+        m_CEditor_NorthButton = m_CEditor.GetAction("NorthButton");
+        m_CEditor_SouthButton = m_CEditor.GetAction("SouthButton");
+        m_CEditor_LeftTrigger = m_CEditor.GetAction("LeftTrigger");
+        m_CEditor_RightStickPress = m_CEditor.GetAction("RightStickPress");
+        m_CEditor_LeftShoulder = m_CEditor.GetAction("LeftShoulder");
+        m_CEditor_RightShoulder = m_CEditor.GetAction("RightShoulder");
+        m_CEditor_RightTrigger = m_CEditor.GetAction("RightTrigger");
+        m_CEditor_EastButton = m_CEditor.GetAction("EastButton");
+        m_CEditor_LeftStickPress = m_CEditor.GetAction("LeftStickPress");
+        m_CEditor_WestButton = m_CEditor.GetAction("WestButton");
+        m_CEditor_Start = m_CEditor.GetAction("Start");
+        m_CEditor_Select = m_CEditor.GetAction("Select");
         m_Initialized = true;
     }
     private void Uninitialize()
@@ -54,6 +70,21 @@ public class InputMaster : InputActionAssetReference
         m_General_RegisterDevice = null;
         m_General_DPadInput = null;
         m_General_Start = null;
+        m_CEditor = null;
+        m_CEditor_LeftStick = null;
+        m_CEditor_RightStick = null;
+        m_CEditor_NorthButton = null;
+        m_CEditor_SouthButton = null;
+        m_CEditor_LeftTrigger = null;
+        m_CEditor_RightStickPress = null;
+        m_CEditor_LeftShoulder = null;
+        m_CEditor_RightShoulder = null;
+        m_CEditor_RightTrigger = null;
+        m_CEditor_EastButton = null;
+        m_CEditor_LeftStickPress = null;
+        m_CEditor_WestButton = null;
+        m_CEditor_Start = null;
+        m_CEditor_Select = null;
         m_Initialized = false;
     }
     public void SetAsset(InputActionAsset newAsset)
@@ -132,6 +163,55 @@ public class InputMaster : InputActionAssetReference
         {
             if (!m_Initialized) Initialize();
             return new GeneralActions(this);
+        }
+    }
+    // CEditor
+    private InputActionMap m_CEditor;
+    private InputAction m_CEditor_LeftStick;
+    private InputAction m_CEditor_RightStick;
+    private InputAction m_CEditor_NorthButton;
+    private InputAction m_CEditor_SouthButton;
+    private InputAction m_CEditor_LeftTrigger;
+    private InputAction m_CEditor_RightStickPress;
+    private InputAction m_CEditor_LeftShoulder;
+    private InputAction m_CEditor_RightShoulder;
+    private InputAction m_CEditor_RightTrigger;
+    private InputAction m_CEditor_EastButton;
+    private InputAction m_CEditor_LeftStickPress;
+    private InputAction m_CEditor_WestButton;
+    private InputAction m_CEditor_Start;
+    private InputAction m_CEditor_Select;
+    public struct CEditorActions
+    {
+        private InputMaster m_Wrapper;
+        public CEditorActions(InputMaster wrapper) { m_Wrapper = wrapper; }
+        public InputAction @LeftStick { get { return m_Wrapper.m_CEditor_LeftStick; } }
+        public InputAction @RightStick { get { return m_Wrapper.m_CEditor_RightStick; } }
+        public InputAction @NorthButton { get { return m_Wrapper.m_CEditor_NorthButton; } }
+        public InputAction @SouthButton { get { return m_Wrapper.m_CEditor_SouthButton; } }
+        public InputAction @LeftTrigger { get { return m_Wrapper.m_CEditor_LeftTrigger; } }
+        public InputAction @RightStickPress { get { return m_Wrapper.m_CEditor_RightStickPress; } }
+        public InputAction @LeftShoulder { get { return m_Wrapper.m_CEditor_LeftShoulder; } }
+        public InputAction @RightShoulder { get { return m_Wrapper.m_CEditor_RightShoulder; } }
+        public InputAction @RightTrigger { get { return m_Wrapper.m_CEditor_RightTrigger; } }
+        public InputAction @EastButton { get { return m_Wrapper.m_CEditor_EastButton; } }
+        public InputAction @LeftStickPress { get { return m_Wrapper.m_CEditor_LeftStickPress; } }
+        public InputAction @WestButton { get { return m_Wrapper.m_CEditor_WestButton; } }
+        public InputAction @Start { get { return m_Wrapper.m_CEditor_Start; } }
+        public InputAction @Select { get { return m_Wrapper.m_CEditor_Select; } }
+        public InputActionMap Get() { return m_Wrapper.m_CEditor; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled { get { return Get().enabled; } }
+        public InputActionMap Clone() { return Get().Clone(); }
+        public static implicit operator InputActionMap(CEditorActions set) { return set.Get(); }
+    }
+    public CEditorActions @CEditor
+    {
+        get
+        {
+            if (!m_Initialized) Initialize();
+            return new CEditorActions(this);
         }
     }
     private int m_MainGamepadSchemeSchemeIndex = -1;
