@@ -27,10 +27,10 @@ MonoBehaviour:
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.1
+    value: 0.05
   smoothness:
-    overrideState: 0
-    value: 0.2
+    overrideState: 1
+    value: 1
   roundness:
     overrideState: 0
     value: 1
@@ -69,6 +69,53 @@ MonoBehaviour:
     value: 0.1
   fastMode:
     overrideState: 0
+    value: 0
+--- !u!114 &-6630679990928778768
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c78650952f05a6469a2a6230834f6c1, type: 3}
+  m_Name: DigitalGlitchEffect
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  intensity:
+    overrideState: 1
+    value: 0
+--- !u!114 &-6503057566772601087
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd5e17fdcc315154a8e1a4151ab0c45f, type: 3}
+  m_Name: AnalogGlitchEffect
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  scanLineJitter:
+    overrideState: 1
+    value: 0
+  verticalJump:
+    overrideState: 1
+    value: 0
+  horizontalShake:
+    overrideState: 1
+    value: 0
+  colorDrift:
+    overrideState: 1
     value: 0
 --- !u!114 &-5958318589299600744
 MonoBehaviour:
@@ -1469,6 +1516,8 @@ MonoBehaviour:
   - {fileID: 509478970682747285}
   - {fileID: -3084378587621293626}
   - {fileID: -8704564216186573706}
+  - {fileID: -6630679990928778768}
+  - {fileID: -6503057566772601087}
 --- !u!114 &509478970682747285
 MonoBehaviour:
   m_ObjectHideFlags: 3

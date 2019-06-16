@@ -12,7 +12,6 @@ public sealed class MusicManager : Manager<MusicManager>
 
 	private readonly LinkedList<OnBeatCallback> onBeatCallbacks = new LinkedList<OnBeatCallback>();
 	private readonly LinkedList<OnBeatCallback> onBarCallbacks = new LinkedList<OnBeatCallback>();
-	private int transitions = 0;
 	private int currentActiveTrack = 0;
 	private int currentBeat = 0;
 	private float targetTime = 0f;
@@ -67,42 +66,35 @@ public sealed class MusicManager : Manager<MusicManager>
 				{
 					// get playback position
 					float bufferedTime = source.time;
-
-					// switch to next intensity int
-					currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
 					
 					// callback
 					bufferedTransitionCall();
 
-					if (transitions % 3 == 0)
-					{
-						// play transition
-						source.volume = .2f;
-						source.PlayOneShot(trackContainer.TransitionTrack[currentActiveTrack], 5f);
-						//source.clip = trackContainer.TransitionTrack[currentActiveTrack];
-						//source.time = 0f;
-						//source.Play();
-						
-						yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
-						source.volume = 1f;
-					}
-					else
-					{
-						// out smoothing
-						var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
-						snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
-						snapshot.TransitionTo(4f * timeBetweenBeats);
-					}
+					// out smoothing
+					var snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
+					snapshot.TransitionTo(4f * timeBetweenBeats);
 
+					// switch to next intensity int
+					currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
+
+					// play transition
+					source.volume = .2f;
+					source.PlayOneShot(trackContainer.TransitionTrack[currentActiveTrack], 5f);
+
+					yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
+					source.volume = 1f;
+					
+					Effects.ResetVignette(1f);
 
 					// switch to next intensity track
 					clip = trackContainer.tracks[currentActiveTrack];
 					source.clip = clip;
 
 					// calc new time buffer (due to bpm difference)
-					currentBeat = (int)(bufferedTime / timeBetweenBeats);
-					timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
-					bufferedTime = currentBeat * timeBetweenBeats /*+ timeBetweenBeats * .025f*/;
+					//currentBeat = (int)(bufferedTime / timeBetweenBeats);
+					//timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
+					bufferedTime = /*(currentBeat - 2) * timeBetweenBeats*/0f;
+					currentBeat = 0;
 					bootstrapper.StartCoroutine(SmoothVolIn());
 
 					// set new track 
@@ -113,7 +105,6 @@ public sealed class MusicManager : Manager<MusicManager>
 					bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
 
 					intensitySwitchBuffered = false;
-					transitions++;
 					continue;
 				}
 				else
@@ -143,15 +134,12 @@ public sealed class MusicManager : Manager<MusicManager>
 	{
 		source.volume *= .5f;
 		float targetTime = source.time + .25f;
-		int calls = 0;
 		do
 		{
 			source.volume = Mathf.MoveTowards(source.volume, 1f, .1f);
-			calls++;
 			yield return null;
 		} while (source.time < targetTime);
 		source.volume = 1f;
-		Debug.Log(calls);
 	}
 
 	private float GetTimeUntilNextBeat()
@@ -175,38 +163,59 @@ public sealed class MusicManager : Manager<MusicManager>
 		bootstrapper.StartCoroutine(TransitionEffect(onTransitionCallback));
 	}
 
+	public void RoundTransitionSmoother(OnBeatCallback onTransitionCallback)
+	{
+		bootstrapper.StartCoroutine(RoundTransitionSmoothingEffect(onTransitionCallback));
+	}
+
+	private IEnumerator RoundTransitionSmoothingEffect(OnBeatCallback onTransitionCallback)
+	{
+		float standardInDuration = 2.5f;
+		float standardOutDuration = 3.5f;
+
+		Effects.StartVignetteTransition(.4f, standardInDuration);
+
+		// in smoothing
+		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
+		snapshot.TransitionTo(standardInDuration);
+
+		yield return new WaitForSecondsRealtime(standardInDuration);
+		onTransitionCallback();
+
+		snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
+		snapshot.TransitionTo(standardOutDuration);
+
+		Effects.ResetVignette(1f);
+	}
+
 	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
 	{
 		// waiter until next bar with a minimum wait time of a 4 beats/1 bar
 		float timeUntilNextBar = GetTimeUntilNextBar();
 		timeUntilNextBar += 4f * timeBetweenBeats;
 
-		if(timeUntilNextBar < 6f * timeBetweenBeats)
+		if(timeUntilNextBar < 5f * timeBetweenBeats)
 		{
 			timeUntilNextBar += 4f * timeBetweenBeats;
+			Debug.Log("lengthened");
 		}
-		else if(timeUntilNextBar > 8f * timeBetweenBeats)
+		else if(timeUntilNextBar > 11f * timeBetweenBeats)
 		{
 			timeUntilNextBar -= 4f * timeBetweenBeats;
+			Debug.Log("shortened");
 		}
 
-		//float timeToWait = GetTimeUntilNextBar() + 4f * timeBetweenBeats;
+		// set target vignette
+		Effects.StartVignetteTransition(.4f, timeUntilNextBar);
 
-		if(transitions % 3 != 0)
-		{
-			// in smoothing
-			var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
-			snapshot.TransitionTo(timeUntilNextBar);
-		}
+		// in smoothing
+		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
+		snapshot.TransitionTo(timeUntilNextBar * .9f);
 
 		// buffer switch to next intensity for the music handler
 		yield return new WaitForSecondsRealtime(timeUntilNextBar - 2f * timeBetweenBeats);
 		intensitySwitchBuffered = true;
 		bufferedTransitionCall = onTransitionCallback;
-
-		//call the transition callback on the full bar
-		//yield return new WaitForSecondsRealtime(2f * timeBetweenBeats);
-		//onTransitionCallback();
 	}
 
 	public void RegisterCallOnNextBeat(OnBeatCallback callback, int beatsToSkip = 0, bool onBar = false)

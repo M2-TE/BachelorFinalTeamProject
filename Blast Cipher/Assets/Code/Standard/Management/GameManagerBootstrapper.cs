@@ -1,8 +1,10 @@
 ﻿using EZCameraShake;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class GameManagerBootstrapper : Bootstrapper
 {
+	public PostProcessVolume PostProcessing;
 	public InputMaster InputMaster;
 	public float ShakeMagnitude;
 	public float ShakeRoughness;

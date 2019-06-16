@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
+using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 
 public sealed class GameManager
@@ -19,6 +20,7 @@ public sealed class GameManager
 	public readonly InputDevice[] inputDevices = new InputDevice[2];
 	public bool playerInputsActive = true;
 
+	private int roundCount;
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
@@ -30,7 +32,13 @@ public sealed class GameManager
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>();
 
 	#region Mono Registrations
-	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper) => this.bootstrapper = bootstrapper;
+	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper)
+	{
+		this.bootstrapper = bootstrapper;
+
+		bootstrapper.PostProcessing.profile.TryGetSettings<Vignette>(out var vignette);
+		Effects.Init(bootstrapper.PostProcessing);
+	}
 	internal void UnregisterBootstrapper() => bootstrapper = null;
 
 	public int RegisterPlayerCharacter(PlayerCharacter playerCharacter)
@@ -101,8 +109,17 @@ public sealed class GameManager
 		{
 			nextRoundStarterInProgress = true;
 			//playerInputsActive = false;
-			MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
+			if(roundCount != 0 && roundCount % 3 == 0)
+			{
+				MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
+			}
+			else
+			{
+				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar);
+			}
 			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
+
+			roundCount++;
 		}
 	}
 
@@ -126,5 +143,55 @@ public sealed class GameManager
 
 		playerInputsActive = true;
 		nextRoundStarterInProgress = false;
+	}
+}
+
+public class Effects
+{
+	private Effects() { }
+	private static Effects instance;
+
+	public static void Init(PostProcessVolume ppVol)
+	{
+		instance = new Effects
+		{
+			ppVol = ppVol
+		};
+
+		ppVol.profile.TryGetSettings(out instance.vignette);
+		instance.baseVignetteIntensity = instance.vignette.intensity;
+	}
+
+	private PostProcessVolume ppVol;
+
+	private Vignette vignette;
+	private float baseVignetteIntensity;
+
+	private AnalogGlitchEffect analogGlitch;
+	private float baseGlitchIntensity;
+
+	private DigitalGlitchEffect digitalGlitchEffect;
+	private float stuff;
+	
+	private static IEnumerator Transition(FloatParameter param, float targetIntensity, float duration)
+	{
+		float baseIntensity = param.value;
+		float timer = 0f;
+		do
+		{
+			param.value = Mathf.LerpUnclamped(baseIntensity, targetIntensity, timer / duration);
+			timer += Time.unscaledDeltaTime;
+			yield return null;
+		}
+		while (timer < duration);
+	}
+
+	public static void ResetVignette(float duration)
+	{
+		StartVignetteTransition(instance.baseVignetteIntensity, duration);
+	}
+	public static void StartVignetteTransition(float targetIntensity, float duration)
+	{
+		instance.ppVol.StartCoroutine(Transition(instance.vignette.intensity, targetIntensity, duration));
 	}
 }

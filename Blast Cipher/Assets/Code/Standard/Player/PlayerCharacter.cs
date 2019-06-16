@@ -689,8 +689,9 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 		else if (hit.collider.CompareTag("PowerUp"))
 		{
-			OnPowerUpCollect(hit.gameObject.GetComponent<PowerUp>().type);
-			Destroy(hit.gameObject);
+			var powerUp = hit.gameObject.GetComponent<PowerUp>();
+			OnPowerUpCollect(powerUp.type);
+			hit.gameObject.SetActive(false);
 		}
 	}
 
