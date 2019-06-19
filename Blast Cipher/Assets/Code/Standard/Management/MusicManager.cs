@@ -83,8 +83,8 @@ public sealed class MusicManager : Manager<MusicManager>
 
 					yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
 					source.volume = 1f;
-					
-					Effects.ResetVignette(1f);
+
+					FadeOutCalls(1f);
 
 					// switch to next intensity track
 					clip = trackContainer.tracks[currentActiveTrack];
@@ -173,7 +173,7 @@ public sealed class MusicManager : Manager<MusicManager>
 		float standardInDuration = 2.5f;
 		float standardOutDuration = 3.5f;
 
-		Effects.StartVignetteTransition(.4f, standardInDuration);
+		FadeInCalls(standardInDuration);
 
 		// in smoothing
 		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
@@ -185,7 +185,7 @@ public sealed class MusicManager : Manager<MusicManager>
 		snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
 		snapshot.TransitionTo(standardOutDuration);
 
-		Effects.ResetVignette(1f);
+		FadeOutCalls(1f);
 	}
 
 	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
@@ -206,7 +206,7 @@ public sealed class MusicManager : Manager<MusicManager>
 		}
 
 		// set target vignette
-		Effects.StartVignetteTransition(.4f, timeUntilNextBar);
+		FadeInCalls(timeUntilNextBar);
 
 		// in smoothing
 		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
@@ -216,6 +216,20 @@ public sealed class MusicManager : Manager<MusicManager>
 		yield return new WaitForSecondsRealtime(timeUntilNextBar - 2f * timeBetweenBeats);
 		intensitySwitchBuffered = true;
 		bufferedTransitionCall = onTransitionCallback;
+	}
+
+	private void FadeInCalls(float duration)
+	{
+		Effects.StartVignetteTransition(.4f, duration);
+		Effects.StartDigitalGlitchTransition(.1f, duration);
+		Effects.StartAnalogGlitchTransition(.5f, .8f, 0f, .4f, duration);
+	}
+
+	private void FadeOutCalls(float duration)
+	{
+		Effects.ResetVignette(duration);
+		Effects.ResetDigitalGlitch(duration);
+		Effects.ResetAnalogGlitch(duration);
 	}
 
 	public void RegisterCallOnNextBeat(OnBeatCallback callback, int beatsToSkip = 0, bool onBar = false)

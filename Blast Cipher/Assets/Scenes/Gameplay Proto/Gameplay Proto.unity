@@ -1566,8 +1566,6 @@ GameObject:
   m_Component:
   - component: {fileID: 992622902}
   - component: {fileID: 992622906}
-  - component: {fileID: 992622908}
-  - component: {fileID: 992622907}
   - component: {fileID: 992622905}
   - component: {fileID: 992622904}
   - component: {fileID: 992622903}
@@ -1669,10 +1667,10 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles:
-  - assemblyQualifiedName: AnalogGlitchEffect, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+  - assemblyQualifiedName: AnalogGlitchEffect, GlitchEffects, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  - assemblyQualifiedName: DigitalGlitchEffect, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: DigitalGlitchEffect, GlitchEffects, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!81 &992622905
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1724,37 +1722,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &992622907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 992622901}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82e1829196d4fc348ab50ce89e07f98f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _intensity: 0
-  _shader: {fileID: 4800000, guid: 434eb41d258bc544693f27b4eae4ac76, type: 3}
---- !u!114 &992622908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 992622901}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb11281af40733a4197ea8be26984aab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _scanLineJitter: 0
-  _verticalJump: 0
-  _horizontalShake: 0
-  _colorDrift: 0
-  _shader: {fileID: 4800000, guid: 052d48181f79a664fbc4efda63bbee86, type: 3}
 --- !u!1 &1005907819
 GameObject:
   m_ObjectHideFlags: 0

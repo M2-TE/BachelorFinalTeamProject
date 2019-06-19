@@ -125,8 +125,8 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: ab4feec513b84b7409846cb37af34b5f, type: 2}
   actualVelocity: {x: 0, y: 0, z: 0}
   rgb: {fileID: 8900639728585163242}
-  collider: {fileID: 8900639728585163243}
-  renderer: {fileID: 0}
+  ownCollider: {fileID: 8900639728585163243}
+  ownRenderer: {fileID: 8900639728585163240}
   InitialShooter: {fileID: 0}
 --- !u!96 &1344594712615354886
 TrailRenderer:

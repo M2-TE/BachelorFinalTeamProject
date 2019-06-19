@@ -3,9 +3,9 @@ using UnityEngine;
 
 public sealed class CamShakeManager : Manager<CamShakeManager>
 {
-	public CamShakeManager() => globalCamShake = CameraShaker.Instance.StartShake(1f, 1f, 0f);
+	public CamShakeManager() { }
 
-	private CameraShakeInstance globalCamShake;
+	public CameraShakeInstance globalCamShake;
 
 	private float _shakeMagnitude;
 	public float ShakeMagnitude

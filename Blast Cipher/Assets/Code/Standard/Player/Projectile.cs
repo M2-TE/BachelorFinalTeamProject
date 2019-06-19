@@ -52,8 +52,8 @@ public class Projectile : MonoBehaviour, ITeleportable
 
 	public Vector3 actualVelocity; // TODO update this value properly to handle portal physics
 	public Rigidbody rgb;
-	public new Collider collider;
-	public new Renderer renderer;
+	public Collider ownCollider;
+	public Renderer ownRenderer;
 	public PlayerCharacter InitialShooter;
 
 	public bool CanBeTeleported { get; set; } = true;
@@ -102,7 +102,7 @@ public class Projectile : MonoBehaviour, ITeleportable
 
 	private void Awake()
 	{
-		renderer = GetComponent<Renderer>();
+		ownRenderer = GetComponent<Renderer>();
 	}
 
 	private void Update()
@@ -121,22 +121,22 @@ public class Projectile : MonoBehaviour, ITeleportable
 
 	private void UpdateActiveMaterial()
 	{
-		if (_explicitTarget == null && !_explosive && _bounces == 0f) renderer.material = settings.StandardProjectileMaterial;
+		if (_explicitTarget == null && !_explosive && _bounces == 0f) ownRenderer.material = settings.StandardProjectileMaterial;
 
 		else if (_explicitTarget != null)
 		{
-			if (_explosive && _bounces != 0f) renderer.material = settings.StandardProjectileMaterial; // COMBINED MAT HERE
-			else if (_explosive) renderer.material = settings.AutoAimAndExplosionCombinedMaterial;
-			else if (_bounces != 0f) renderer.material = settings.AutoAimAndBounceCombinedMaterial;
-			else renderer.material = settings.AutoAimCubeMaterial;
+			if (_explosive && _bounces != 0f) ownRenderer.material = settings.StandardProjectileMaterial; // COMBINED MAT HERE
+			else if (_explosive) ownRenderer.material = settings.AutoAimAndExplosionCombinedMaterial;
+			else if (_bounces != 0f) ownRenderer.material = settings.AutoAimAndBounceCombinedMaterial;
+			else ownRenderer.material = settings.AutoAimCubeMaterial;
 		}
 
 		else if (_explosive)
 		{
-			if (_bounces != 0f) renderer.material = settings.BounceAndExplosionCombinedMaterial;
-			else renderer.material = settings.ExplosionCubeMaterial;
+			if (_bounces != 0f) ownRenderer.material = settings.BounceAndExplosionCombinedMaterial;
+			else ownRenderer.material = settings.ExplosionCubeMaterial;
 		}
 
-		else if (_bounces != 0f) renderer.material = settings.BounceCubeMaterial;
+		else if (_bounces != 0f) ownRenderer.material = settings.BounceCubeMaterial;
 	}
 }

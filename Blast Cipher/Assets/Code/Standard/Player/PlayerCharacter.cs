@@ -290,12 +290,11 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerDebugAction(InputAction.CallbackContext ctx)
 	{
-		return;
-		if (IsAssignedDevice(ctx.control.device) && currentShotCooldown == 0f)
-		{
-			currentShotCooldown = Settings.ShotCooldown;
-			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
-		}
+		//if (IsAssignedDevice(ctx.control.device) && currentShotCooldown == 0f)
+		//{
+		//	currentShotCooldown = Settings.ShotCooldown;
+		//	PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+		//}
 	}
 	#endregion
 
@@ -516,7 +515,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		else projectile.rgb.Sleep();
 
 		projectile.rgb.useGravity = enableState;
-		projectile.collider.enabled = enableState;
+		projectile.ownCollider.enabled = enableState;
 	}
 
 	private void PullInProjectilesInstant()
