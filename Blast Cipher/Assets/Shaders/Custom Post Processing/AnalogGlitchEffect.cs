@@ -7,6 +7,9 @@ using UnityEngine.Rendering.PostProcessing;
 public sealed class AnalogGlitchEffect : PostProcessEffectSettings
 {
 	[Range(0f, 1f)]
+	public FloatParameter timeScaleLerp = new FloatParameter { value = 0f };
+
+	[Range(0f, 1f)]
 	public FloatParameter scanLineJitter = new FloatParameter { value = 0f };
 
 	[Range(0f, 1f)]

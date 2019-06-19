@@ -257,6 +257,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
 			currentParryCooldown = Settings.ParryCooldown;
+			OneShotAudioManager.PlayOneShotAudio(Settings.ShieldConstructionSounds, transform.position);
 		}
 	}
 
@@ -533,6 +534,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public IEnumerator DashSequence()
 	{
+		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDashSounds, transform.position);
+
 		CharController.detectCollisions = false;
 
 		var main = afterImageParticleSystem.main;

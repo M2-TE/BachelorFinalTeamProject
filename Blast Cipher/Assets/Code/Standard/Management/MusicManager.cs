@@ -84,7 +84,7 @@ public sealed class MusicManager : Manager<MusicManager>
 					yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
 					source.volume = 1f;
 
-					FadeOutCalls(1f);
+					FadeOutCalls();
 
 					// switch to next intensity track
 					clip = trackContainer.tracks[currentActiveTrack];
@@ -185,7 +185,7 @@ public sealed class MusicManager : Manager<MusicManager>
 		snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
 		snapshot.TransitionTo(standardOutDuration);
 
-		FadeOutCalls(1f);
+		FadeOutCalls();
 	}
 
 	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
@@ -221,11 +221,11 @@ public sealed class MusicManager : Manager<MusicManager>
 	private void FadeInCalls(float duration)
 	{
 		Effects.StartVignetteTransition(.4f, duration);
-		Effects.StartDigitalGlitchTransition(.1f, duration);
-		Effects.StartAnalogGlitchTransition(.5f, .8f, 0f, .4f, duration);
+		Effects.StartDigitalGlitchTransition(.3f, duration);
+		Effects.StartAnalogGlitchTransition(.7f, .5f, 0f, .4f, duration);
 	}
 
-	private void FadeOutCalls(float duration)
+	private void FadeOutCalls(float duration = 1.5f)
 	{
 		Effects.ResetVignette(duration);
 		Effects.ResetDigitalGlitch(duration);

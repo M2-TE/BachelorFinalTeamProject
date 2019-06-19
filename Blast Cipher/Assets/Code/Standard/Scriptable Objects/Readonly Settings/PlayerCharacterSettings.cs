@@ -10,6 +10,9 @@ public class PlayerCharacterSettings : ReadonlySettings
 	[Header("Audio")]
 	public AudioClip[] ProjectileShotSounds;
 	public AudioClip[] PlayerDeathSounds;
+	public AudioClip[] PlayerDashSounds;
+	public AudioClip[] PlayerStepSounds;
+	public AudioClip[] ShieldConstructionSounds;
 
 	[Header("Movement")]
 	public float MovespeedMod = 8f;

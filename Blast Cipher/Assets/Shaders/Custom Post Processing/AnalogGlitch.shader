@@ -34,6 +34,7 @@
 			float shake = (nrand(_Time.x, 2) - 0.5) * _HorizontalShake;
 
 			// Color drift
+			//float drift = sin(jump + _ColorDrift.y) * _ColorDrift.x;
 			float drift = sin(jump + _ColorDrift.y) * _ColorDrift.x;
 
 			float4 src1 = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, frac(float2(u + jitter + shake, jump)));
