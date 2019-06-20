@@ -64,6 +64,7 @@ MonoBehaviour:
     m_Bits: 2048
   ProjectileMagnetRadius: 15
   ProjectileMagnetForce: 30
+  ProjectileCollectionRadius: 2
   TeleportCompatibleLayers:
     serializedVersion: 2
     m_Bits: 66048

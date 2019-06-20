@@ -53,6 +53,7 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public LayerMask ProjectileLayer;
 	public float ProjectileMagnetRadius;
 	public float ProjectileMagnetForce;
+	public float ProjectileCollectionRadius;
 
 	[Space]
 	public LayerMask TeleportCompatibleLayers;

@@ -414,7 +414,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		var hits = Physics.SphereCastAll(transform.position, Settings.ProjectileMagnetRadius, Vector3.forward, 0f, Settings.ProjectileLayer);
 		for(int i = 0; i < hits.Length; i++)
 		{
-			if (hits[i].collider.GetComponent<Projectile>().CanPickup)
+			var projectile = hits[i].collider.GetComponent<Projectile>();
+			if (projectile.CanPickup)
 			{
 				hits[i].rigidbody.AddExplosionForce
 					(-Settings.ProjectileMagnetForce,
@@ -422,8 +423,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 					Settings.ProjectileMagnetRadius, 
 					0f,
 					ForceMode.Force);
+
+				if(Vector3.Distance(projectile.transform.position, transform.position) < Settings.ProjectileCollectionRadius)
+				{
+					PickupProjectile(projectile);
+				}
 			}
-			
 		}
 	}
 	

@@ -80,6 +80,7 @@ public sealed class MusicManager : Manager<MusicManager>
 					// play transition
 					source.volume = .2f;
 					source.PlayOneShot(trackContainer.TransitionTrack[currentActiveTrack], 5f);
+					Effects.StartVignetteTransition(1f, .1f);
 
 					yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
 					source.volume = 1f;
