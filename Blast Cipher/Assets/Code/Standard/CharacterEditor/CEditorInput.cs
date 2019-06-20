@@ -3,15 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
-public class CEditorInput : MonoBehaviour
+public class CEditorInput
 {
     public Vector2 Dpad, LeftStick, RightStick;
     public bool LeftShoulder, RightShoulder, LeftStickPress, RightStickPress, LeftTrigger, RightTrigger, UpButton, DownButton, LeftButton, RightButton, Select, StartButton;
 
-    public void Start()
-    {
+    private InputMaster input;
 
+    public void Start(InputMaster input)
+    {
+        this.input = input;
+        Dpad = new Vector2(0, 0);
+        LeftStick = Dpad;
+        RightStick = Dpad;
+        input.CEditor.LeftStick.performed += LeftStickInput;
+        input.CEditor.RightStick.performed += RightStickInput;
     }
+
+    public void Update()
+    {
+        //Debug.Log(this.ToString());
+    }
+
 
     private void DpadInput(InputAction.CallbackContext ctx)
     {
