@@ -52,7 +52,6 @@ public class ControllerAssignment : MonoBehaviour
 		{
 			input.General.DPadInput.performed += OnDPadInput;
 			Time.timeScale = 0f;
-			Debug.Log("triggered");
 		}
 		else
 		{

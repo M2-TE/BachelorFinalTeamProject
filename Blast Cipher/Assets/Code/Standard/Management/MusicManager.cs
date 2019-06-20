@@ -220,7 +220,7 @@ public sealed class MusicManager : Manager<MusicManager>
 
 	private void FadeInCalls(float duration)
 	{
-		Effects.StartVignetteTransition(.4f, duration);
+		Effects.StartVignetteTransition(.5f, duration);
 		Effects.StartDigitalGlitchTransition(.3f, duration);
 		Effects.StartAnalogGlitchTransition(.7f, .5f, 0f, .4f, duration);
 	}

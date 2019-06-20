@@ -17,9 +17,8 @@ public class CooldownDisplay : MonoBehaviour
 	
     void Update()
     {
-		if (player != null)
+		if (player.gameObject.activeInHierarchy == true)
 		{
-
 			transform.position = Vector3.SmoothDamp
 				(transform.position,
 				player.transform.position

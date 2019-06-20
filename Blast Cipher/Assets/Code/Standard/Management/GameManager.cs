@@ -29,7 +29,8 @@ public sealed class GameManager
 	public delegate void ExtendedUpdate();
 
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
-	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>();
+	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
+	private readonly List<GameObject> temporaryObjects = new List<GameObject>();
 
 	#region Mono Registrations
 	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper)
@@ -103,13 +104,40 @@ public sealed class GameManager
 		return registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
 	}
 
+	public GameObject SpawnObject (GameObject prefab)
+	{
+		var go = GameObject.Instantiate(prefab);
+		temporaryObjects.Add(go);
+		return go;
+	}
+
+	//public void StartNextRound()
+	//{
+	//	if (!nextRoundStarterInProgress)
+	//	{
+	//		nextRoundStarterInProgress = true;
+	//		//playerInputsActive = false;
+	//		if(roundCount != 0 && roundCount % 3 == 0)
+	//		{
+	//			MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
+	//		}
+	//		else
+	//		{
+	//			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar);
+	//		}
+	//		bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
+
+	//		roundCount++;
+	//	}
+	//}
+
 	public void StartNextRound()
 	{
 		if (!nextRoundStarterInProgress)
 		{
 			nextRoundStarterInProgress = true;
 			//playerInputsActive = false;
-			if(roundCount != 0 && roundCount % 3 == 0)
+			if (roundCount != 0 && roundCount % 3 == 0)
 			{
 				MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
 			}
@@ -139,9 +167,22 @@ public sealed class GameManager
 
 	private void OnNextMusicBar()
 	{
-		LoadScene("Gameplay Proto");
+		//LoadScene("Gameplay Proto");
+		ResetLevel();
 
 		playerInputsActive = true;
 		nextRoundStarterInProgress = false;
+	}
+
+	private void ResetLevel()
+	{
+		for (int i = 0; i < temporaryObjects.Count; i++)
+		{
+			GameObject.Destroy(temporaryObjects[i]);
+		}
+		for (int i = 0; i < registeredPlayerCharacters.Count; i++)
+		{
+			registeredPlayerCharacters[i].Reset();
+		}
 	}
 }

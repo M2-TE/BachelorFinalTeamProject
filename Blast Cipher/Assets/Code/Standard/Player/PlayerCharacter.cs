@@ -50,6 +50,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private Hook networkHook;
 
 	private int playerID;
+	private Vector3 startPos;
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
 	private Portal portalOne;
@@ -138,6 +139,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public void Initialize()
 	{
+		startPos = transform.position;
+
 		currentMovespeed = Settings.MovespeedMod;
 
 		// convert core rotation v3 to quaternion
@@ -147,9 +150,10 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		aimLockTarget = gameManager.RequestNearestPlayer(this);
 
 		// spawn initial projectile
+		var instance = GameManager.Instance;
 		for(int i = 0; i < Settings.startProjectileCount; i++)
 		{
-			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+			PickupProjectile(instance.SpawnObject(projectilePrefab).GetComponent<Projectile>());
 		}
 
 		StartCoroutine(SpawnProjectilesCR());
@@ -488,7 +492,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public void TriggerDeath()
 	{
-		Debug.Log(name + " died");
 		for (int i = 0; i < loadedProjectiles.Count; i++)
 		{
 			SetProjectileEnabled(loadedProjectiles[i], true);
@@ -499,7 +502,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		camShakeManager.ShakeMagnitude = Settings.DeathShakeMagnitude;
 		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
 		gameManager.StartNextRound();
-		Destroy(gameObject);
+
+		gameObject.SetActive(false);
 	}
 
 	public void PickupProjectile(Projectile projectile)
@@ -558,8 +562,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			out var hit, 1000f, 
 			Settings.TeleportCompatibleLayers)) return;
 
-		if (portalOne == null) portalOne = Instantiate(Settings.PortalPrefab);
-		if (portalTwo == null) portalTwo = Instantiate(Settings.PortalPrefab);
+		if (portalOne == null) portalOne = GameManager.Instance.SpawnObject(Settings.PortalPrefab.gameObject).GetComponent<Portal>();
+		if (portalTwo == null) portalTwo = GameManager.Instance.SpawnObject(Settings.PortalPrefab.gameObject).GetComponent<Portal>();
 
 
 		var yRot = Vector3.Angle(Vector3.right, hit.normal);
@@ -699,10 +703,42 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private IEnumerator SpawnProjectilesCR()
 	{
+		var instance = GameManager.Instance;
 		while (true)
 		{
-			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+			PickupProjectile(instance.SpawnObject(projectilePrefab).GetComponent<Projectile>());
 			yield return new WaitForSeconds(Settings.projectileRespawnTimer);
 		}
+	}
+
+	public void Reset()
+	{
+		// clear current loaded projectiles
+		loadedProjectiles.Clear();
+
+		// disable active power ups and shot inputs
+		activePowerUps.Clear();
+		shooting = false;
+
+		// spawn inital shots
+		var instance = GameManager.Instance;
+		for (int i = 0; i < Settings.startProjectileCount; i++)
+		{
+			PickupProjectile(instance.SpawnObject(projectilePrefab).GetComponent<Projectile>());
+		}
+
+		// reset cooldowns
+		currentShotCooldown = 0f;
+		currentDashCooldown = 0f;
+		currentParryCooldown = 0f;
+
+
+		// set active in case player died
+		gameObject.SetActive(true);
+
+		// teleport char controller to spawn pos
+		CharController.enabled = false;
+		transform.position = startPos;
+		CharController.enabled = true;
 	}
 }
