@@ -905,6 +905,69 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 901851309}
   m_CullTransparentMesh: 0
+--- !u!1 &908399302
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 908399305}
+  - component: {fileID: 908399304}
+  - component: {fileID: 908399303}
+  m_Layer: 0
+  m_Name: Networking
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &908399303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908399302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b63d41504a6e36f4bb8bbb04daaf57f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PORT: 18000
+  targetIP: 127.0.0.1
+  latencyUpdateInterval: 0.1
+  tcpLatencyText: {fileID: 0}
+  udpLatencyText: {fileID: 0}
+--- !u!114 &908399304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908399302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6946461188da4de4a98472ff4a4b321f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PORT: 18000
+  maxClients: 0
+--- !u!4 &908399305
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908399302}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &958304862
 GameObject:
   m_ObjectHideFlags: 0
@@ -1022,6 +1085,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b45abff6ec48ac4397e24632d6bbf2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Server: {fileID: 0}
+  Client: {fileID: 0}
   PostProcessing: {fileID: 447803166}
   InputMaster:
     m_Asset: {fileID: -944628639613478452, guid: 798775c046f8d1544915d9e792273ab8,
@@ -1561,7 +1626,7 @@ MonoBehaviour:
   debugImage: {fileID: 237080869}
   debugImageTwo: {fileID: 863155930}
   musicMixer: {fileID: 24100000, guid: cff79f6e66e34dd4da908bc8efaba5a6, type: 2}
-  cont: {fileID: 11400000, guid: beb8b8558c0c4864eb81b515ca3c582e, type: 2}
+  cont: {fileID: 11400000, guid: 9e339cd310eb0594f86c1028f40e7e55, type: 2}
   fadeInCurve:
     serializedVersion: 2
     m_Curve:

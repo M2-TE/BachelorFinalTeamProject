@@ -14,11 +14,13 @@ namespace Networking
 	{
 		protected enum MessageType : byte { Undefined, Initialization, Gameplay }
 
+		#region Network Messages
 		[Serializable]
 		protected abstract class NetworkMessage
 		{
 			internal byte ClientID;
 			internal int MillisecondTimestamp;
+			internal string DebugString;
 
 			internal byte[] ToArray()
 			{
@@ -66,57 +68,17 @@ namespace Networking
 		[Serializable]
 		protected class TcpMessage : NetworkMessage
 		{
-			internal TcpMessage()
-			{
-				playerPosition = new float[3];
-			}
+			internal TcpMessage() { }
 
 			internal byte MessageType;
-
-			private readonly float[] playerPosition;
-			internal Vector3 PlayerPosition
-			{
-				get => new Vector3(playerPosition[0], playerPosition[1], playerPosition[2]);
-				set
-				{
-					playerPosition[0] = value.x;
-					playerPosition[1] = value.y;
-					playerPosition[2] = value.z;
-				}
-			}
 		}
 
 		[Serializable]
 		protected class UdpMessage : NetworkMessage
 		{
-			internal UdpMessage()
-			{
-				movementInput = new float[2];
-				aimInput = new float[2];
-			}
-
-			private readonly float[] movementInput;
-			internal Vector2 MovementInput
-			{
-				get => new Vector2(movementInput[0], movementInput[1]);
-				set
-				{
-					movementInput[0] = value.x;
-					movementInput[1] = value.y;
-				}
-			}
-
-			private readonly float[] aimInput;
-			internal Vector2 AimInput
-			{
-				get => new Vector2(aimInput[0], aimInput[1]);
-				set
-				{
-					aimInput[0] = value.x;
-					aimInput[1] = value.y;
-				}
-			}
+			internal UdpMessage() { }
 		}
+		#endregion
 
 		private class ConnectionState
 		{

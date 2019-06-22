@@ -62,57 +62,57 @@ public sealed class MusicManager : Manager<MusicManager>
 				}
 
 				// check if next intensity should be switched to
-				if (intensitySwitchBuffered)
-				{
-					// get playback position
-					float bufferedTime = source.time;
+				//if (intensitySwitchBuffered)
+				//{
+				//	// get playback position
+				//	float bufferedTime = source.time;
 					
-					// callback
-					bufferedTransitionCall();
+				//	// callback
+				//	bufferedTransitionCall();
 
-					// out smoothing
-					var snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
-					snapshot.TransitionTo(4f * timeBetweenBeats);
+				//	// out smoothing
+				//	var snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
+				//	snapshot.TransitionTo(4f * timeBetweenBeats);
 
-					// switch to next intensity int
-					currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
+				//	// switch to next intensity int
+				//	currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
 
-					// play transition
-					source.volume = .2f;
-					source.PlayOneShot(trackContainer.TransitionTrack[currentActiveTrack], 5f);
-					Effects.StartVignetteTransition(1f, .1f);
+				//	// play transition
+				//	source.volume = .2f;
+				//	source.PlayOneShot(trackContainer.TransitionTrack[currentActiveTrack], 5f);
+				//	Effects.StartVignetteTransition(1f, .1f);
 
-					yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
-					source.volume = 1f;
+				//	yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
+				//	source.volume = 1f;
 
-					FadeOutCalls();
+				//	FadeOutCalls();
 
-					// switch to next intensity track
-					clip = trackContainer.tracks[currentActiveTrack];
-					source.clip = clip;
+				//	// switch to next intensity track
+				//	clip = trackContainer.tracks[currentActiveTrack];
+				//	source.clip = clip;
 
-					// calc new time buffer (due to bpm difference)
-					//currentBeat = (int)(bufferedTime / timeBetweenBeats);
-					//timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
-					bufferedTime = /*(currentBeat - 2) * timeBetweenBeats*/0f;
-					currentBeat = 0;
-					bootstrapper.StartCoroutine(SmoothVolIn());
+				//	// calc new time buffer (due to bpm difference)
+				//	//currentBeat = (int)(bufferedTime / timeBetweenBeats);
+				//	//timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
+				//	bufferedTime = /*(currentBeat - 2) * timeBetweenBeats*/0f;
+				//	currentBeat = 0;
+				//	bootstrapper.StartCoroutine(SmoothVolIn());
 
-					// set new track 
-					source.time = bufferedTime;
-					source.Play();
+				//	// set new track 
+				//	source.time = bufferedTime;
+				//	source.Play();
 
-					// retoggle main beat since this iteration of the loop is going to be skipped
-					bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
+				//	// retoggle main beat since this iteration of the loop is going to be skipped
+				//	bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
 
-					intensitySwitchBuffered = false;
-					continue;
-				}
-				else
-				{
-					// toggle bar
-					bootstrapper.debugImageTwo.enabled = !bootstrapper.debugImageTwo.enabled;
-				}
+				//	intensitySwitchBuffered = false;
+				//	continue;
+				//}
+				//else
+				//{
+				//	// toggle bar
+				//	bootstrapper.debugImageTwo.enabled = !bootstrapper.debugImageTwo.enabled;
+				//}
 			}
 
 			// calc new targetTime
@@ -159,34 +159,40 @@ public sealed class MusicManager : Manager<MusicManager>
 		bootstrapper.StartCoroutine(MusicHandler());
 	}
 
-	public void TransitionToNextIntensity(OnBeatCallback onTransitionCallback)
+	public void RoundTransitionSmoother(OnBeatCallback onTransitionCallback, bool transitionIntensity)
 	{
-		bootstrapper.StartCoroutine(TransitionEffect(onTransitionCallback));
+		bootstrapper.StartCoroutine(RoundTransitionSmoothingEffect(onTransitionCallback, transitionIntensity));
 	}
 
-	public void RoundTransitionSmoother(OnBeatCallback onTransitionCallback)
+	private IEnumerator RoundTransitionSmoothingEffect(OnBeatCallback onTransitionCallback, bool transitionIntensity)
 	{
-		bootstrapper.StartCoroutine(RoundTransitionSmoothingEffect(onTransitionCallback));
-	}
-
-	private IEnumerator RoundTransitionSmoothingEffect(OnBeatCallback onTransitionCallback)
-	{
-		float standardInDuration = 2.5f;
-		float standardOutDuration = 3.5f;
+		float standardInDuration = 2.0f;
+		float standardOutDuration = 3f;
 
 		FadeInCalls(standardInDuration);
 
-		// in smoothing
+		if (transitionIntensity)
+		{
+			source.PlayOneShot(bootstrapper.cont.TransitionTrack[0], 2f);
+			currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
+		}
+
 		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
 		snapshot.TransitionTo(standardInDuration);
-
+		
 		yield return new WaitForSecondsRealtime(standardInDuration);
 		onTransitionCallback();
+
+		if (transitionIntensity)
+		{
+			source.clip = bootstrapper.cont.tracks[currentActiveTrack];
+			source.Play();
+		}
 
 		snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
 		snapshot.TransitionTo(standardOutDuration);
 
-		FadeOutCalls();
+		FadeOutCalls(1f);
 	}
 
 	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
@@ -222,11 +228,11 @@ public sealed class MusicManager : Manager<MusicManager>
 	private void FadeInCalls(float duration)
 	{
 		Effects.StartVignetteTransition(.5f, duration);
-		Effects.StartDigitalGlitchTransition(.3f, duration);
+		Effects.StartDigitalGlitchTransition(.35f, duration);
 		Effects.StartAnalogGlitchTransition(.7f, .5f, 0f, .4f, duration);
 	}
 
-	private void FadeOutCalls(float duration = 1.5f)
+	private void FadeOutCalls(float duration)
 	{
 		Effects.ResetVignette(duration);
 		Effects.ResetDigitalGlitch(duration);

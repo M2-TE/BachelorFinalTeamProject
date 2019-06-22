@@ -1,9 +1,12 @@
 ﻿using EZCameraShake;
+using Networking;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
 public class GameManagerBootstrapper : Bootstrapper
 {
+	public MonoServer Server;
+	public MonoClient Client;
 	public PostProcessVolume PostProcessing;
 	public InputMaster InputMaster;
 	public float ShakeMagnitude;

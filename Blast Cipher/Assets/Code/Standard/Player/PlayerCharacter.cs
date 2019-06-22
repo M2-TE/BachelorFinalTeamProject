@@ -62,7 +62,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private bool aimLocked = false;
 	//private bool aimLockInputBlocked = false; //               \/
 	//private bool providingAimLockInputThisFrame = false;// these two are necessary due to a current bug in the input system during simultaneous inputs on stick presses
-	
+
+	private float currentProjectileReloadCooldown = 0f;
 	private float currentShotCooldown = 0f;
 	private float currentParryCooldown = 0f;
 	public float CurrentParryCooldown { get => currentParryCooldown; }
@@ -155,8 +156,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			PickupProjectile(instance.SpawnObject(projectilePrefab).GetComponent<Projectile>());
 		}
-
-		StartCoroutine(SpawnProjectilesCR());
 	}
 	#endregion
 
@@ -439,6 +438,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		Utilities.CountDownVal(ref currentParryCooldown);
 		Utilities.CountDownVal(ref currentDashCooldown);
+		Utilities.CountDownVal(ref currentProjectileReloadCooldown);
 
 		if(activePowerUps.Count > 0)
 		{
@@ -458,6 +458,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 				else activePowerUps[key] = val;
 			}
 			bufferedKeys.Clear();
+		}
+
+		if(currentProjectileReloadCooldown <= 0f)
+		{
+			PickupProjectile(GameManager.Instance.SpawnObject(projectilePrefab).GetComponent<Projectile>());
+			currentProjectileReloadCooldown = Settings.projectileRespawnTimer;
 		}
 	}
 	#endregion
@@ -706,16 +712,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 	}
 
-	private IEnumerator SpawnProjectilesCR()
-	{
-		var instance = GameManager.Instance;
-		while (true)
-		{
-			PickupProjectile(instance.SpawnObject(projectilePrefab).GetComponent<Projectile>());
-			yield return new WaitForSeconds(Settings.projectileRespawnTimer);
-		}
-	}
-
 	public void Reset()
 	{
 		// clear current loaded projectiles
@@ -736,6 +732,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		currentShotCooldown = 0f;
 		currentDashCooldown = 0f;
 		currentParryCooldown = 0f;
+		currentProjectileReloadCooldown = 0f;
 
 
 		// set active in case player died

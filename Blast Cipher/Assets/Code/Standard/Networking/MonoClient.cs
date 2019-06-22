@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 
@@ -14,129 +15,106 @@ namespace Networking
 	public sealed class MonoClient : MonoNetwork
 	{
 		[SerializeField] private string targetIP = "127.0.0.1";
-		[SerializeField] private float positionUpdateInterval = .1f;
-		[SerializeField] private Vector3[] playerSpawnPos;
-		[SerializeField] private GameObject playerPrefab;
 
-		#region Latency Display
-		[SerializeField] private float latencyUpdateInterval = .1f;
+		[Header("Latency Display"), SerializeField] private float latencyUpdateInterval = .1f;
 		[SerializeField] private TextMeshProUGUI tcpLatencyText;
 		[SerializeField] private TextMeshProUGUI udpLatencyText;
 		private StringBuilder stringBuilder = new StringBuilder();
 		private int tcpLatency = 0;
 		private int udpLatency = 0;
-		#endregion
 
-		private PlayerCharacter localPlayer;
-		private PlayerCharacter networkPlayer;
-		private Vector3 bufferedPosition = default;
-		private bool newPosBuffered = false;
+		//private PlayerCharacter[] players;
 
+		private Timer messageFactory;
 		private NetworkStream stream;
 		private byte clientID = byte.MaxValue;
 		private bool roundStarted = false;
 
+		private int DEBUGCOUNT = 0;
+
 		private void Start()
 		{
 			ConnectToServer(IPAddress.Parse(targetIP)); // DEBUG CALL
-			StartCoroutine(StartRoundDelayed()); // DEBUG CALL
-
-			StartCoroutine(UpdateLatencyDisplays());
 		}
 
-		private void LateUpdate()
+		private void OnDestroy()
 		{
-			if (newPosBuffered)
-			{
-				networkPlayer.transform.position = Vector3.Lerp(networkPlayer.transform.position, bufferedPosition, .1f);
-				newPosBuffered = false;
-			}
-		}
-
-		private void PlayerAction(PlayerCharacter.ActionType action)
-		{
-
+			KillConnection();
 		}
 
 		public void ConnectToServer(IPAddress targetIP)
 		{
 			SetupAsClient(targetIP);
+			messageFactory = new Timer(TimerTick, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2D));
+		}
+
+		private void TimerTick(object obj)
+		{
+			//if (DEBUGCOUNT >= 1000)
+			//{
+			//	Debug.Log("clocking in");
+			//	DEBUGCOUNT = 0;
+			//}
+			//else DEBUGCOUNT++;
+		}
+
+		public void KillConnection()
+		{
+			messageFactory.Dispose();
 		}
 
 		public void StartRound()
 		{
-			SpawnPlayers();
-
-			StartCoroutine(UpdateAndSendTcp());
-			StartCoroutine(UpdateAndSendUdp());
+			//StartCoroutine(UpdateAndSendTcp());
+			//StartCoroutine(UpdateAndSendUdp());
+			//StartCoroutine(UpdateLatencyDisplays());
 		}
 
-		public IEnumerator StartRoundDelayed()
+		private void PlayerAction(PlayerCharacter.ActionType action)
 		{
-			while (!roundStarted) yield return null;
-			StartRound();
+			Debug.Log(action + " performed");
 		}
 
-		private void SpawnPlayers()
-		{
-			for(int i = 0; i < playerSpawnPos.Length; i++)
-			{
-				if (i == clientID)
-				{
-					localPlayer = Instantiate(playerPrefab, playerSpawnPos[i], Quaternion.identity).GetComponent<PlayerCharacter>();
-					localPlayer.NetworkControlled = false;
-					localPlayer.RegisterNetworkHook(PlayerAction);
-				}
-				else
-				{
-					networkPlayer = Instantiate(playerPrefab, playerSpawnPos[i], Quaternion.identity).GetComponent<PlayerCharacter>();
-					networkPlayer.NetworkControlled = true;
-					networkPlayer.DebugKBControlsActive = false;
+		//private IEnumerator UpdateAndSendTcp()
+		//{
+		//	var message = new TcpMessage()
+		//	{
+		//		MessageType = (byte)MessageType.Gameplay,
+		//		ClientID = clientID
+		//	};
 
-					bufferedPosition = playerSpawnPos[i];
-				}
-			}
-		}
+		//	var waiter = new WaitForSecondsRealtime(positionUpdateInterval);
 
-		private IEnumerator UpdateAndSendTcp()
-		{
-			var message = new TcpMessage()
-			{
-				MessageType = (byte)MessageType.Gameplay,
-				ClientID = clientID
-			};
+		//	while(true)
+		//	{
+		//		//message.MillisecondTimestamp = GetTime;
+		//		//message.PlayerPosition = localPlayer.transform.position;
 
-			var waiter = new WaitForSecondsRealtime(positionUpdateInterval);
-			while(localPlayer != null && networkPlayer != null)
-			{
-				message.MillisecondTimestamp = GetTime;
-				message.PlayerPosition = localPlayer.transform.position;
+		//		//SendTcpMessage(stream, message.ToArray());
 
-				SendTcpMessage(stream, message.ToArray());
+		//		yield return waiter;
+		//	}
+		//}
 
-				yield return waiter;
-			}
-		}
+		//private IEnumerator UpdateAndSendUdp()
+		//{
+		//	var message = new UdpMessage()
+		//	{
+		//		ClientID = clientID
+		//	};
 
-		private IEnumerator UpdateAndSendUdp()
-		{
-			var message = new UdpMessage()
-			{
-				ClientID = clientID
-			};
+		//	var waiter = new WaitForSecondsRealtime(0f);
+		//	while (true)
+		//	{
+		//		message.MillisecondTimestamp = GetTime;
+		//		message.MovementInput = localPlayer.MovementInput;
+		//		message.AimInput = localPlayer.AimInput;
 
-			var waiter = new WaitForSecondsRealtime(0f);
-			while (localPlayer != null && networkPlayer != null)
-			{
-				message.MillisecondTimestamp = GetTime;
-				message.MovementInput = localPlayer.MovementInput;
-				message.AimInput = localPlayer.AimInput;
+		//		SendUdpMessage(message.ToArray());
 
-				SendUdpMessage(message.ToArray());
-
-				yield return waiter;
-			}
-		}
+		//		yield return waiter;
+		//	}
+		//}
 
 		private IEnumerator UpdateLatencyDisplays()
 		{
@@ -167,13 +145,11 @@ namespace Networking
 			switch ((MessageType)message.MessageType)
 			{
 				case MessageType.Initialization:
-					clientID = message.ClientID;
-					roundStarted = true;
+
 					break;
 
 				case MessageType.Gameplay:
-					bufferedPosition = message.PlayerPosition;
-					newPosBuffered = true;
+
 					break;
 
 				case MessageType.Undefined:
@@ -188,8 +164,7 @@ namespace Networking
 			var message = NetworkMessage.Parse<UdpMessage>(messageBytes);
 			udpLatency = GetTime - message.MillisecondTimestamp;
 
-			networkPlayer.MovementInput = message.MovementInput;
-			networkPlayer.AimInput = message.AimInput;
+
 		}
 	}
 }

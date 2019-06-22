@@ -17,7 +17,7 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   mode:
-    overrideState: 0
+    overrideState: 1
     value: 0
   color:
     overrideState: 0
@@ -32,10 +32,10 @@ MonoBehaviour:
     overrideState: 1
     value: 1
   roundness:
-    overrideState: 0
+    overrideState: 1
     value: 1
   rounded:
-    overrideState: 0
+    overrideState: 1
     value: 0
   mask:
     overrideState: 0
@@ -105,9 +105,9 @@ MonoBehaviour:
   enabled:
     overrideState: 1
     value: 1
-  useScaledDeltaTime:
-    overrideState: 1
-    value: 1
+  timeScaleLerp:
+    overrideState: 0
+    value: 0
   scanLineJitter:
     overrideState: 1
     value: 0

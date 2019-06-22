@@ -137,13 +137,13 @@ public sealed class GameManager
 		{
 			nextRoundStarterInProgress = true;
 			//playerInputsActive = false;
-			if (roundCount != 0 && roundCount % 3 == 0)
+			if (/*roundCount != 0 && roundCount % 3 == 0*/true)
 			{
-				MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
+				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
 			}
 			else
 			{
-				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar);
+				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, false);
 			}
 			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
 
