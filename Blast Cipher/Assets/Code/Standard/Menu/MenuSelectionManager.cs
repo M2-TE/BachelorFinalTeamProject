@@ -16,6 +16,7 @@ public class MenuSelectionManager : MenuManager
     [SerializeField] [Range(10f, 50f)] private float cameraSpeed = 1f;
     [SerializeField] [Range(0.5f, 0.1f)] private float buttonDelayAmount;
     [SerializeField] private LocalLobbyManager localLobbyManager;
+    [SerializeField] private OnlineLobbyManager onlineLobbyManager;
     [SerializeField] private RulesManager rulesManager;
     [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
@@ -139,12 +140,16 @@ public class MenuSelectionManager : MenuManager
                 }
                 break;
             case MenuState.Online:
+                StartCoroutine(CameraSubmenuMovement(!open));
+                currentActiveManager = open ? (MenuManager)onlineLobbyManager : this;
+                onlineLobbyManager.ToggleActivation(open);
                 break;
             case MenuState.CharacterEditor:
                 break;
             case MenuState.Profile:
                 StartCoroutine(CameraSubmenuMovement(!open));
-                profileSelectionManager.Activated = open;
+                currentActiveManager = open ? (MenuManager)profileSelectionManager : this;
+                profileSelectionManager.ToggleActivation(open);
                 break;
             case MenuState.Exit:
                 Application.Quit();

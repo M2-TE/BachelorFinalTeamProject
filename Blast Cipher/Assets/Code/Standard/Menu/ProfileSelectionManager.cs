@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Input;
 
 public enum ProfileSelectionState { Name, Settings, Achievements, Switch, Save, New }
 public enum NameSelectionState { Descriptor, FirstLetter, SecondLetter, ThirdLetter }
 
-public class ProfileSelectionManager : MonoBehaviour
+public class ProfileSelectionManager : MenuManager
 {
     [SerializeField] private MaterialsHolder username, settings, achievements, switchProfile, save, newProfile, letterSelection1, letterSelection2, letterSelection3;
     [SerializeField] private ProfileSelectionState standartState = 0;
     [SerializeField] private NameSelectionState standartLetterState = 0;
-    [SerializeField] private Material defaultMat, highlightedMat;
-    [SerializeField] private Transform ToggleNode;
     [SerializeField] private Transform[] selectorPoints;
     [SerializeField] private Transform selector;
 
@@ -20,11 +19,8 @@ public class ProfileSelectionManager : MonoBehaviour
     private ProfileSelectionState currentState;
     private NameSelectionState currentLetterState;
 
-    private bool activated = false;
-
     public ProfileSelectionState CurrentState { get => currentState; private set => SetMaterials(currentState,currentState = value); }
     public NameSelectionState CurrentLetterState { get => currentLetterState; private set => SetMaterials(currentLetterState,currentLetterState = value); }
-    public bool Activated { get => activated; set => ToggleActivation(value); }
 
     public void ChangeState(bool increment, bool sideways)
     {
@@ -136,32 +132,37 @@ public class ProfileSelectionManager : MonoBehaviour
         }
     }
 
-    private void ToggleActivation(bool setActive)
-    {
-        ToggleNode.gameObject.SetActive(setActive);
-        activated = setActive;
-
-        // ToDo: Load Profile
-    }
-
     private void Start()
     {
         CurrentState = standartState;
-        Activated = false;
+        ToggleActivation(false);
     }
 
-    private void Update()
+    public override void OnDPadInput(InputAction.CallbackContext ctx)
     {
-        if (activated)
-        {
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-                ChangeState(false, false);
-            else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-                ChangeState(true, false);
-            else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-                ChangeState(false, true);
-            else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-                ChangeState(true, true);
-        }
+        Vector2 inputValue = ctx.ReadValue<Vector2>();
+
+        if (inputValue.y > 0f)
+            ChangeState(false, false);
+        else if (inputValue.y < 0f)
+            ChangeState(true, false);
+        else if (inputValue.x > 0f)
+            ChangeState(true, true);
+        else if (inputValue.x < 0f)
+            ChangeState(false, true);
+    }
+
+    public override void OnConfirmation(InputAction.CallbackContext ctx)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void OnDecline(InputAction.CallbackContext ctx)
+    {
+        mainManager.ManageSubmenu(false);
+    }
+
+    public override void OnStartPressed(InputAction.CallbackContext ctx)
+    {
     }
 }

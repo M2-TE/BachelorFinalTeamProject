@@ -165,6 +165,7 @@ public class LocalLobbyManager : MenuManager
         firstPlayerToggleNode.gameObject.SetActive(false);
         secondPlayerToggleNode.gameObject.SetActive(false);
         rules = false;
+        ToggleActivation(false);
     }
 
     public override void OnDPadInput(InputAction.CallbackContext ctx)
