@@ -34,9 +34,12 @@ namespace EZCameraShake
             Instance = this;
 
 			var shakeManager = CamShakeManager.Instance;
+			shakeManager.globalCamShake = StartShake(1f, 1f, 0f);
 			shakeManager.ShakeMagnitude = ShakeMagnitude;
 			shakeManager.ShakeRoughness = ShakeRoughness;
 			shakeManager.ShakeMagnitudeDecline = ShakeMagnitudeDecline;
+
+			//StartShake(ShakeMagnitude, ShakeMagnitude, ShakeMagnitudeDecline);
 
 			if (!instanceList.ContainsKey(gameObject.name) && !instanceList.ContainsValue(this)) instanceList.Add(gameObject.name, this);
         }

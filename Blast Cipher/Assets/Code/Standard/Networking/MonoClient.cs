@@ -1,142 +1,97 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Experimental.Input;
+using Debug = UnityEngine.Debug;
 
 namespace Networking
 {
 	public sealed class MonoClient : MonoNetwork
 	{
 		[SerializeField] private string targetIP = "127.0.0.1";
-		[SerializeField] private float positionUpdateInterval = .1f;
-		[SerializeField] private Vector3[] playerSpawnPos;
-		[SerializeField] private GameObject playerPrefab;
+		[SerializeField] private InputMaster InputMaster;
 
-		#region Latency Display
-		[SerializeField] private float latencyUpdateInterval = .1f;
+		[Header("Latency Display"), SerializeField] private float latencyUpdateInterval = .1f;
 		[SerializeField] private TextMeshProUGUI tcpLatencyText;
 		[SerializeField] private TextMeshProUGUI udpLatencyText;
 		private StringBuilder stringBuilder = new StringBuilder();
 		private int tcpLatency = 0;
 		private int udpLatency = 0;
-		#endregion
 
-		private PlayerCharacter localPlayer;
-		private PlayerCharacter networkPlayer;
-		private Vector3 bufferedPosition = default;
-		private bool newPosBuffered = false;
+		private Vector2 movementInput;
+		private Vector2 aimInput;
 
-		private NetworkStream stream;
+		private InputDataMessageUdp cachedUdpMessage;
+		private TcpMessage cachedTcpMessage;
+		//private NetworkStream stream;
 		private byte clientID = byte.MaxValue;
 		private bool roundStarted = false;
 
 		private void Start()
 		{
+			cachedUdpMessage = new InputDataMessageUdp();
+			cachedTcpMessage = new TcpMessage();
+
 			ConnectToServer(IPAddress.Parse(targetIP)); // DEBUG CALL
-			StartCoroutine(StartRoundDelayed()); // DEBUG CALL
-
-			StartCoroutine(UpdateLatencyDisplays());
-		}
-
-		private void LateUpdate()
-		{
-			if (newPosBuffered)
-			{
-				networkPlayer.transform.position = Vector3.Lerp(networkPlayer.transform.position, bufferedPosition, .1f);
-				newPosBuffered = false;
-			}
-		}
-
-		private void PlayerAction(PlayerCharacter.ActionType action)
-		{
-
 		}
 
 		public void ConnectToServer(IPAddress targetIP)
 		{
-			SetupAsClient(targetIP);
+			SetupAsClient(true, true, targetIP);
+			//StartCoroutine(UpdateLatencyDisplays());
 		}
 
-		public void StartRound()
+		private void PlayerAction(PlayerCharacter.ActionType action)
 		{
-			SpawnPlayers();
-
-			StartCoroutine(UpdateAndSendTcp());
-			StartCoroutine(UpdateAndSendUdp());
+			Debug.Log(action + " performed");
 		}
 
-		public IEnumerator StartRoundDelayed()
-		{
-			while (!roundStarted) yield return null;
-			StartRound();
-		}
+		//private IEnumerator UpdateAndSendTcp()
+		//{
+		//	var message = new TcpMessage()
+		//	{
+		//		MessageType = (byte)MessageType.Gameplay,
+		//		ClientID = clientID
+		//	};
 
-		private void SpawnPlayers()
-		{
-			for(int i = 0; i < playerSpawnPos.Length; i++)
-			{
-				if (i == clientID)
-				{
-					localPlayer = Instantiate(playerPrefab, playerSpawnPos[i], Quaternion.identity).GetComponent<PlayerCharacter>();
-					localPlayer.NetworkControlled = false;
-					localPlayer.RegisterNetworkHook(PlayerAction);
-				}
-				else
-				{
-					networkPlayer = Instantiate(playerPrefab, playerSpawnPos[i], Quaternion.identity).GetComponent<PlayerCharacter>();
-					networkPlayer.NetworkControlled = true;
-					networkPlayer.DebugKBControlsActive = false;
+		//	var waiter = new WaitForSecondsRealtime(positionUpdateInterval);
 
-					bufferedPosition = playerSpawnPos[i];
-				}
-			}
-		}
+		//	while(true)
+		//	{
+		//		//message.MillisecondTimestamp = GetTime;
+		//		//message.PlayerPosition = localPlayer.transform.position;
 
-		private IEnumerator UpdateAndSendTcp()
-		{
-			var message = new TcpMessage()
-			{
-				MessageType = (byte)MessageType.Gameplay,
-				ClientID = clientID
-			};
+		//		//SendTcpMessage(stream, message.ToArray());
 
-			var waiter = new WaitForSecondsRealtime(positionUpdateInterval);
-			while(localPlayer != null && networkPlayer != null)
-			{
-				message.MillisecondTimestamp = GetTime;
-				message.PlayerPosition = localPlayer.transform.position;
+		//		yield return waiter;
+		//	}
+		//}
 
-				SendTcpMessage(stream, message.ToArray());
+		//private IEnumerator UpdateAndSendUdp()
+		//{
+		//	var message = new UdpMessage()
+		//	{
+		//		ClientID = clientID
+		//	};
 
-				yield return waiter;
-			}
-		}
+		//	var waiter = new WaitForSecondsRealtime(0f);
+		//	while (true)
+		//	{
+		//		message.MillisecondTimestamp = GetTime;
+		//		message.MovementInput = localPlayer.MovementInput;
+		//		message.AimInput = localPlayer.AimInput;
 
-		private IEnumerator UpdateAndSendUdp()
-		{
-			var message = new UdpMessage()
-			{
-				ClientID = clientID
-			};
+		//		SendUdpMessage(message.ToArray());
 
-			var waiter = new WaitForSecondsRealtime(0f);
-			while (localPlayer != null && networkPlayer != null)
-			{
-				message.MillisecondTimestamp = GetTime;
-				message.MovementInput = localPlayer.MovementInput;
-				message.AimInput = localPlayer.AimInput;
-
-				SendUdpMessage(message.ToArray());
-
-				yield return waiter;
-			}
-		}
+		//		yield return waiter;
+		//	}
+		//}
 
 		private IEnumerator UpdateLatencyDisplays()
 		{
@@ -154,26 +109,40 @@ namespace Networking
 			}
 		}
 
+
+		protected override void OnTimerTick(object obj)
+		{
+			//cachedUdpMessage.DebugString = "client message!";
+			cachedUdpMessage.MovementInput = movementInput;
+			cachedUdpMessage.AimInput = aimInput;
+			SendUdpMessage(cachedUdpMessage.ToArray());
+		}
+
+		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
+		{
+			//var message = NetworkMessage.Parse<UdpMessage>(messageBytes);
+			//udpLatency = GetTime - message.MillisecondTimestamp;
+		}
+
+		#region TCP
 		protected override void TcpConnectionEstablished(NetworkStream stream)
 		{
-			this.stream = stream;
+			//this.stream = stream;
 		}
 
 		protected override void TcpMessageReceived(NetworkStream sender, byte[] messageBytes)
 		{
 			var message = NetworkMessage.Parse<TcpMessage>(messageBytes);
-			tcpLatency = GetTime - message.MillisecondTimestamp;
+			//tcpLatency = GetTime - message.MillisecondTimestamp;
 
 			switch ((MessageType)message.MessageType)
 			{
 				case MessageType.Initialization:
 					clientID = message.ClientID;
-					roundStarted = true;
 					break;
 
 				case MessageType.Gameplay:
-					bufferedPosition = message.PlayerPosition;
-					newPosBuffered = true;
+
 					break;
 
 				case MessageType.Undefined:
@@ -182,14 +151,67 @@ namespace Networking
 					break;
 			}
 		}
+		#endregion
 
-		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
+		#region Client Input
+
+		private void OnEnable()
 		{
-			var message = NetworkMessage.Parse<UdpMessage>(messageBytes);
-			udpLatency = GetTime - message.MillisecondTimestamp;
-
-			networkPlayer.MovementInput = message.MovementInput;
-			networkPlayer.AimInput = message.AimInput;
+			InputMaster.Player.Movement.performed += UpdateMovementControlled;
+			InputMaster.Player.Aim.performed += UpdateLookRotationControlled;
+			InputMaster.Player.Shoot.performed += TriggerShotControlled;
+			InputMaster.Player.Jump.performed += TriggerDash;
+			InputMaster.Player.Parry.performed += TriggerParry;
+			InputMaster.Player.LockAim.performed += TriggerAimLock;
+			InputMaster.Player.Portal.performed += TriggerPortalOne;
 		}
+
+		private void OnDisable()
+		{
+			InputMaster.Player.Movement.performed -= UpdateMovementControlled;
+			InputMaster.Player.Aim.performed -= UpdateLookRotationControlled;
+			InputMaster.Player.Shoot.performed -= TriggerShotControlled;
+			InputMaster.Player.Jump.performed -= TriggerDash;
+			InputMaster.Player.Parry.performed -= TriggerParry;
+			InputMaster.Player.LockAim.performed -= TriggerAimLock;
+			InputMaster.Player.Portal.performed -= TriggerPortalOne;
+		}
+
+		private void UpdateMovementControlled(InputAction.CallbackContext ctx)
+		{
+			movementInput = ctx.ReadValue<Vector2>();
+		}
+
+		private void UpdateLookRotationControlled(InputAction.CallbackContext ctx)
+		{
+			aimInput = ctx.ReadValue<Vector2>();
+		}
+
+		private void TriggerShotControlled(InputAction.CallbackContext ctx)
+		{
+
+		}
+
+		private void TriggerDash(InputAction.CallbackContext ctx)
+		{
+
+		}
+
+		private void TriggerParry(InputAction.CallbackContext ctx)
+		{
+
+		}
+
+		private void TriggerAimLock(InputAction.CallbackContext ctx)
+		{
+
+		}
+
+		private void TriggerPortalOne(InputAction.CallbackContext ctx)
+		{
+
+		}
+		#endregion
+
 	}
 }

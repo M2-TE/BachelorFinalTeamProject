@@ -1,17 +1,36 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.UI;
 
 public class MusicManagerBootstrapper : Bootstrapper
 {
+	public delegate void OnBeatCallback();
+
+	[SerializeField] internal Image debugImage;
+	[SerializeField] internal Image debugImageTwo;
+	[SerializeField] internal AudioMixer musicMixer;
 	[SerializeField] internal AudioContainer cont;
 
 	[Space]
 	[SerializeField] internal AnimationCurve fadeInCurve;
 	[SerializeField] internal AnimationCurve fadeOutCurve;
-	[SerializeField] internal float maxVolume = .2f;
-	[SerializeField] internal float fadeDuration = 1f;
+
+	private MusicManager manager;
 	
 	private void Awake()
 	{
-		MusicManager.Instance.RegisterBootstrapper(this);
+		manager = MusicManager.Instance;
+		manager.RegisterBootstrapper(this);
+
+		//manager.RegisterCallOnNextBeat(DEBUGCALL, 2, false);
+		//manager.RegisterCallOnNextBeat(DEBUGCALL, 2, true);
+		//manager.RegisterCallOnNextBeat(DEBUGCALL, 12);
+
+		manager.PlayMusic(cont);
+	}
+
+	private void DEBUGCALL()
+	{
+		Debug.Log("Called");
 	}
 }

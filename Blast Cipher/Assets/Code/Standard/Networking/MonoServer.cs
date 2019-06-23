@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -9,60 +9,76 @@ namespace Networking
 	{
 		[SerializeField] private int maxClients;
 
-		private List<NetworkStream> tcpConnections;
-		private TcpMessage[] storedTcpMessages;
-		private UdpMessage[] storedUdpMessages;
+		private PlayerCharacter[] players;
+		private int connectedClients;
+		private bool gameStarted;
 
 		private void Start()
 		{
-			SetupAsServer();
-
-			tcpConnections = new List<NetworkStream>(maxClients);
-			storedTcpMessages = new TcpMessage[maxClients];
-			storedUdpMessages = new UdpMessage[maxClients];
-			for (int i = 0; i < maxClients; i++)
-			{
-				storedTcpMessages[i] = new TcpMessage();
-				storedUdpMessages[i] = new UdpMessage();
-			}
-	}
-
-		protected override void TcpConnectionEstablished(NetworkStream stream)
-		{
-			var message = new TcpMessage()
-			{
-				MessageType = (byte)MessageType.Initialization,
-				ClientID = (byte)tcpConnections.Count
-			};
-			tcpConnections.Add(stream);
-			SendTcpMessage(stream, message.ToArray());
+			SetupAsServer(true, true);
 		}
 
-		protected override void TcpMessageReceived(NetworkStream sender, byte[] messageBytes)
+		private void Update()
 		{
-			TcpMessage message = NetworkMessage.Parse<TcpMessage>(messageBytes);
-			storedTcpMessages[message.ClientID] = message;
+			if(connectedClients == maxClients)
+			{
+				StartGame();
+			}
+		}
 
-			var messageToSend = storedTcpMessages[message.ClientID == 0 ? 1 : 0];
-			messageToSend.MillisecondTimestamp = message.MillisecondTimestamp;
-			SendTcpMessage(sender, messageToSend.ToArray());
-			//try
-			//{
-			//}
-			//catch (Exception e)
-			//{
-			//	Debug.LogException(e);
-			//}
+		public void StartGame()
+		{
+			players = FindObjectsOfType<PlayerCharacter>();
+			gameStarted = true;
+		}
+
+		protected override void OnTimerTick(object obj)
+		{
+			//Debug.Log("server");
 		}
 
 		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
 		{
-			UdpMessage message = NetworkMessage.Parse<UdpMessage>(messageBytes);
-			storedUdpMessages[message.ClientID] = message;
+			if (!gameStarted) return;
 
-			var messageToSend = storedUdpMessages[message.ClientID == 0 ? 1 : 0];
-			messageToSend.MillisecondTimestamp = message.MillisecondTimestamp;
-			SendUdpMessage(sender, messageToSend.ToArray());
+			InputDataMessageUdp message = NetworkMessage.Parse<InputDataMessageUdp>(messageBytes);
+
+			players[message.ClientID].MovementInput = message.MovementInput;
+			players[message.ClientID].AimInput = message.AimInput;
+
+			//SendUdpMessage(sender, messageToSend.ToArray());
 		}
+
+		#region TCP
+		protected override void TcpConnectionEstablished(NetworkStream stream)
+		{
+			if (gameStarted) return;
+
+			var message = new TcpMessage()
+			{
+				MessageType = (byte)MessageType.Initialization,
+				ClientID = (byte)connectedClients
+			};
+
+			connectedClients++;
+			SendTcpMessage(stream, message.ToArray());
+
+			if (connectedClients == maxClients) StartGame();
+			//else if (connectedClients > maxClients)
+			//{
+			//	Debug.LogException(new System.Exception("Player Overflow"));
+			//}
+		}
+
+		protected override void TcpMessageReceived(NetworkStream sender, byte[] messageBytes)
+		{
+			if (!gameStarted) return;
+
+			//TcpMessage message = NetworkMessage.Parse<TcpMessage>(messageBytes);
+
+
+			//SendTcpMessage(sender, messageToSend.ToArray());
+		}
+		#endregion
 	}
 }

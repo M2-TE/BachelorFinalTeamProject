@@ -10,6 +10,9 @@ public class PlayerCharacterSettings : ReadonlySettings
 	[Header("Audio")]
 	public AudioClip[] ProjectileShotSounds;
 	public AudioClip[] PlayerDeathSounds;
+	public AudioClip[] PlayerDashSounds;
+	public AudioClip[] PlayerStepSounds;
+	public AudioClip[] ShieldConstructionSounds;
 
 	[Header("Movement")]
 	public float MovespeedMod = 8f;
@@ -25,6 +28,8 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public float PowerUpDuration = 10f;
 
 	[Header("Projectiles")]
+	public int startProjectileCount = 3;
+	public float projectileRespawnTimer = 5f;
 	public Vector3 OrbitDelta = new Vector3(0f, 100f, 0f);
 	public float MaxOrbitDist = 10f;
 	public float MovementOrbit = 2.5f;
@@ -38,6 +43,19 @@ public class PlayerCharacterSettings : ReadonlySettings
 	public float DeathShakeMagnitude = 1f;
 
 	[Header("Misc")]
+	public string WallTag = "Wall";
+	public LayerMask WallLayers;
+
+	public string OuterWallTag = "OuterWall";
+	public LayerMask OuterWallLayer;
+
+	[Space]
+	public LayerMask ProjectileLayer;
+	public float ProjectileMagnetRadius;
+	public float ProjectileMagnetForce;
+	public float ProjectileCollectionRadius;
+
+	[Space]
 	public LayerMask TeleportCompatibleLayers;
 	public float AimLineLengthMax = 3f;
 }

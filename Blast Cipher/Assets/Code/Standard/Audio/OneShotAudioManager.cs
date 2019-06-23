@@ -28,20 +28,19 @@ public class OneShotAudioManager : MonoBehaviour
 				if(instance.queuedAudioSources.Count > 0)
 				{
 					audioSource = instance.queuedAudioSources.Dequeue();
-
 				}
 				else
 				{
 					audioSource = Instantiate(instance.prefab);
-					instance.StartCoroutine(DelayedEnqueue(audioSource, clip.length));
+					//instance.StartCoroutine(DelayedEnqueue(audioSource, clip.length));
 				}
 			}
 		}
 		else
 		{
 			audioSource = Instantiate(instance.prefab);
-			instance.StartCoroutine(DelayedEnqueue(audioSource, clip.length));
 		}
+		instance.StartCoroutine(DelayedEnqueue(audioSource, clip.length));
 
 		audioSource.transform.position = worldPos;
 		audioSource.AudioSource.PlayOneShot(clip);

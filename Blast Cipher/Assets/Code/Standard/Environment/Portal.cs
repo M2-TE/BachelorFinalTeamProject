@@ -51,8 +51,9 @@ public class Portal : MonoBehaviour
 				rgb.MovePosition(postTeleportPosition.position);
 
 				Vector3 originalVelocity = projectile.actualVelocity;
-				Vector3 newVelocity = Vector3.Reflect(originalVelocity, transform.up);
-				newVelocity.y = 0f; // keep vector in x,z and ignore y
+				//Vector3 newVelocity = Vector3.Reflect(originalVelocity, transform.up);
+				//newVelocity.y = 0f; // keep vector in x,z and ignore y
+				Vector3 newVelocity = originalVelocity;
 									
 				// rotate new velocity according to both portals' rotations
 				float rotationDiff = senderPortal.transform.rotation.eulerAngles.y - transform.rotation.eulerAngles.y;
@@ -69,8 +70,8 @@ public class Portal : MonoBehaviour
 
 				OneShotAudioManager.PlayOneShotAudio(portalSettings.teleportationSounds, transform.position, 1f);
 
-				//Debug.DrawRay(transform.position, originalVelocity, Color.green, 5f);
-				//Debug.DrawRay(transform.position, newVelocity, Color.red, 5f);
+				Debug.DrawRay(opposingPortal.transform.position, originalVelocity, Color.red, 5f);
+				Debug.DrawRay(transform.position, newVelocity, Color.green, 5f);
 				break;
 
 			case "Player":
@@ -85,7 +86,10 @@ public class Portal : MonoBehaviour
 		otherPortal.opposingPortal = this;
 
 		// create line renderer connection
-		lineRenderer = Instantiate(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
+		if (lineRenderer == null)
+		{
+			lineRenderer = Instantiate(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
+		}
 		opposingPortal.lineRenderer = lineRenderer;
 
 		lineRenderer.SetPosition(0, postTeleportPosition.position);
