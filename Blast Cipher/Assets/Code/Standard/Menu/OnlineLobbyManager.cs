@@ -5,19 +5,14 @@ using UnityEngine.Experimental.Input;
 
 public enum OnlineLobbyState {  Selection, Ready, Connectors, Start }
 public enum ConnectorState {  Host, Join }
-public enum NumbersPadVertical {  first, second, third, forth, submit }
-public enum NumbersPadHorizontal { first, second, third }
 
 public class OnlineLobbyManager : MenuManager
 {
-    //[SerializeField] private MaterialsHolder selectors, ready, host, join, start, zero, one, two, three, four, five, six, seven, eight, nine, dot, remove, cancle, submit;
     [SerializeField] private MaterialsHolder selectors, ready, host, join, start;
     [SerializeField] OnlineLobbyState standartState = 0;
 
     private OnlineLobbyState currentLobbyState;
     private ConnectorState currentConnectorState;
-    private NumbersPadVertical numPadRowState;
-    private NumbersPadHorizontal numPadColumnState;
 
     public OnlineLobbyState CurrentLobbyState { get => currentLobbyState; private set => SetMaterials(currentLobbyState, currentLobbyState = value); }
     public ConnectorState CurrentConnectorState
