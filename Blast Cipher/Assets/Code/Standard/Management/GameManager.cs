@@ -28,9 +28,9 @@ public sealed class GameManager
 
 	public delegate void ExtendedUpdate();
 
-	public readonly List<GameObject> temporaryObjects = new List<GameObject>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
+	private readonly List<GameObject> temporaryObjects = new List<GameObject>();
 
 	#region Mono Registrations
 	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper)
@@ -137,7 +137,7 @@ public sealed class GameManager
 		{
 			nextRoundStarterInProgress = true;
 			//playerInputsActive = false;
-			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
+			if (/*roundCount != 0 && roundCount % 3 == 0*/true)
 			{
 				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
 			}

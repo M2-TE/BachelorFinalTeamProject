@@ -5488,6 +5488,7 @@ MonoBehaviour:
     type: 3}
   afterImageParticleSystem: {fileID: 152710554}
   aimLineRenderer: {fileID: 159009995}
+  currentDashCooldown: 0
 --- !u!1 &4422398641255969907
 GameObject:
   m_ObjectHideFlags: 0

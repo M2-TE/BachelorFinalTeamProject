@@ -26,7 +26,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	public PlayerCharacterSettings Settings;
 
 	[Space]
-	public bool DebugKBControlsActive;
+	public bool DebugKBControlsActive = false;
 	
 	[Space]
 	[SerializeField] private Animator parryAnimator;
@@ -183,8 +183,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.R))
 		{
-			//currentShotCooldown = Settings.ShotCooldown;
-			//PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
+			currentShotCooldown = Settings.ShotCooldown;
+			PickupProjectile(Instantiate(projectilePrefab).GetComponent<Projectile>());
 		}
 
 		if(Input.GetKeyDown(KeyCode.F))
@@ -511,7 +511,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 
 		camShakeManager.ShakeMagnitude = Settings.DeathShakeMagnitude;
-		//OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
+		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
 		gameManager.StartNextRound();
 
 		gameObject.SetActive(false);

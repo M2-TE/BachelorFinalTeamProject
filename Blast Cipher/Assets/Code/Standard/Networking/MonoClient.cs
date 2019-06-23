@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Experimental.Input;
-using Debug = UnityEngine.Debug;
 
 namespace Networking
 {
 	public sealed class MonoClient : MonoNetwork
 	{
 		[SerializeField] private string targetIP = "127.0.0.1";
-		[SerializeField] private InputMaster InputMaster;
 
 		[Header("Latency Display"), SerializeField] private float latencyUpdateInterval = .1f;
 		[SerializeField] private TextMeshProUGUI tcpLatencyText;
@@ -24,26 +23,50 @@ namespace Networking
 		private int tcpLatency = 0;
 		private int udpLatency = 0;
 
-		private Vector2 movementInput;
-		private Vector2 aimInput;
+		//private PlayerCharacter[] players;
 
-		private InputDataMessageUdp cachedUdpMessage;
-		private TcpMessage cachedTcpMessage;
-		//private NetworkStream stream;
+		private Timer messageFactory;
+		private NetworkStream stream;
 		private byte clientID = byte.MaxValue;
 		private bool roundStarted = false;
 
+		private int DEBUGCOUNT = 0;
+
 		private void Start()
 		{
-			cachedUdpMessage = new InputDataMessageUdp();
-			cachedTcpMessage = new TcpMessage();
-
 			ConnectToServer(IPAddress.Parse(targetIP)); // DEBUG CALL
+		}
+
+		private void OnDestroy()
+		{
+			KillConnection();
 		}
 
 		public void ConnectToServer(IPAddress targetIP)
 		{
-			SetupAsClient(true, true, targetIP);
+			SetupAsClient(targetIP);
+			messageFactory = new Timer(TimerTick, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(2D));
+		}
+
+		private void TimerTick(object obj)
+		{
+			//if (DEBUGCOUNT >= 1000)
+			//{
+			//	Debug.Log("clocking in");
+			//	DEBUGCOUNT = 0;
+			//}
+			//else DEBUGCOUNT++;
+		}
+
+		public void KillConnection()
+		{
+			messageFactory.Dispose();
+		}
+
+		public void StartRound()
+		{
+			//StartCoroutine(UpdateAndSendTcp());
+			//StartCoroutine(UpdateAndSendUdp());
 			//StartCoroutine(UpdateLatencyDisplays());
 		}
 
@@ -109,36 +132,20 @@ namespace Networking
 			}
 		}
 
-
-		protected override void OnTimerTick(object obj)
-		{
-			//cachedUdpMessage.DebugString = "client message!";
-			cachedUdpMessage.MovementInput = movementInput;
-			cachedUdpMessage.AimInput = aimInput;
-			SendUdpMessage(cachedUdpMessage.ToArray());
-		}
-
-		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
-		{
-			//var message = NetworkMessage.Parse<UdpMessage>(messageBytes);
-			//udpLatency = GetTime - message.MillisecondTimestamp;
-		}
-
-		#region TCP
 		protected override void TcpConnectionEstablished(NetworkStream stream)
 		{
-			//this.stream = stream;
+			this.stream = stream;
 		}
 
 		protected override void TcpMessageReceived(NetworkStream sender, byte[] messageBytes)
 		{
 			var message = NetworkMessage.Parse<TcpMessage>(messageBytes);
-			//tcpLatency = GetTime - message.MillisecondTimestamp;
+			tcpLatency = GetTime - message.MillisecondTimestamp;
 
 			switch ((MessageType)message.MessageType)
 			{
 				case MessageType.Initialization:
-					clientID = message.ClientID;
+
 					break;
 
 				case MessageType.Gameplay:
@@ -151,67 +158,13 @@ namespace Networking
 					break;
 			}
 		}
-		#endregion
 
-		#region Client Input
-
-		private void OnEnable()
+		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)
 		{
-			InputMaster.Player.Movement.performed += UpdateMovementControlled;
-			InputMaster.Player.Aim.performed += UpdateLookRotationControlled;
-			InputMaster.Player.Shoot.performed += TriggerShotControlled;
-			InputMaster.Player.Jump.performed += TriggerDash;
-			InputMaster.Player.Parry.performed += TriggerParry;
-			InputMaster.Player.LockAim.performed += TriggerAimLock;
-			InputMaster.Player.Portal.performed += TriggerPortalOne;
-		}
+			var message = NetworkMessage.Parse<UdpMessage>(messageBytes);
+			udpLatency = GetTime - message.MillisecondTimestamp;
 
-		private void OnDisable()
-		{
-			InputMaster.Player.Movement.performed -= UpdateMovementControlled;
-			InputMaster.Player.Aim.performed -= UpdateLookRotationControlled;
-			InputMaster.Player.Shoot.performed -= TriggerShotControlled;
-			InputMaster.Player.Jump.performed -= TriggerDash;
-			InputMaster.Player.Parry.performed -= TriggerParry;
-			InputMaster.Player.LockAim.performed -= TriggerAimLock;
-			InputMaster.Player.Portal.performed -= TriggerPortalOne;
-		}
-
-		private void UpdateMovementControlled(InputAction.CallbackContext ctx)
-		{
-			movementInput = ctx.ReadValue<Vector2>();
-		}
-
-		private void UpdateLookRotationControlled(InputAction.CallbackContext ctx)
-		{
-			aimInput = ctx.ReadValue<Vector2>();
-		}
-
-		private void TriggerShotControlled(InputAction.CallbackContext ctx)
-		{
 
 		}
-
-		private void TriggerDash(InputAction.CallbackContext ctx)
-		{
-
-		}
-
-		private void TriggerParry(InputAction.CallbackContext ctx)
-		{
-
-		}
-
-		private void TriggerAimLock(InputAction.CallbackContext ctx)
-		{
-
-		}
-
-		private void TriggerPortalOne(InputAction.CallbackContext ctx)
-		{
-
-		}
-		#endregion
-
 	}
 }
