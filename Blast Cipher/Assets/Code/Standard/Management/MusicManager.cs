@@ -16,7 +16,6 @@ public sealed class MusicManager : Manager<MusicManager>
 	private int currentBeat = 0;
 	private float targetTime = 0f;
 	private float timeBetweenBeats = 0f;
-	private bool intensitySwitchBuffered = false;
 	private OnBeatCallback bufferedTransitionCall;
 
 	internal void RegisterBootstrapper(MusicManagerBootstrapper bootstrapper)
@@ -221,7 +220,6 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		// buffer switch to next intensity for the music handler
 		yield return new WaitForSecondsRealtime(timeUntilNextBar - 2f * timeBetweenBeats);
-		intensitySwitchBuffered = true;
 		bufferedTransitionCall = onTransitionCallback;
 	}
 

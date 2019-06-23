@@ -1180,6 +1180,11 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 758007747}
+    - target: {fileID: 2031054540412254073, guid: 4bfe6004267b1d44c813ab76593e6c11,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 992622906}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4bfe6004267b1d44c813ab76593e6c11, type: 3}
 --- !u!1 &867327878
@@ -1779,7 +1784,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1015699395
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2052,6 +2057,16 @@ PrefabInstance:
         type: 3}
       propertyPath: DebugKBControlsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: debugKBControlsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
+        type: 3}
+      propertyPath: debugMode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4422398640955214209, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}
@@ -3657,11 +3672,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player Character
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
-        type: 3}
-      propertyPath: DebugKBControlsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4422398640955214209, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}

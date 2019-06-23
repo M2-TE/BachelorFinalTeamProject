@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using UnityEngine;
 
 using Debug = UnityEngine.Debug;
@@ -74,9 +75,60 @@ namespace Networking
 		}
 
 		[Serializable]
-		protected class UdpMessage : NetworkMessage
+		protected class InputDataMessageUdp : NetworkMessage
 		{
-			internal UdpMessage() { }
+			private readonly float[] inputData;
+
+			internal InputDataMessageUdp()
+			{
+				inputData = new float[4];
+			}
+
+			internal Vector2 MovementInput
+			{
+				get => new Vector2(inputData[0], inputData[1]);
+				set
+				{
+					inputData[0] = value.x;
+					inputData[1] = value.y;
+				}
+			}
+
+			internal Vector2 AimInput
+			{
+				get => new Vector2(inputData[2], inputData[3]);
+				set
+				{
+					inputData[2] = value.x;
+					inputData[3] = value.y;
+				}
+			}
+		}
+
+		[Serializable]
+		protected class BoardDataMessage : NetworkMessage
+		{
+			private int playerCount;
+			private float[] boardData;
+
+			internal BoardDataMessage(int playerCount)
+			{
+				this.playerCount = playerCount;
+				boardData = new float[playerCount * 4];
+			}
+
+			internal Vector2[] Positions
+			{
+				get
+				{
+					var positions = new Vector2[playerCount];
+					for(int i = 0; i < playerCount; i++)
+					{
+						positions[i] = new Vector2(i, i + 1);
+					}
+					return positions;
+				}
+			}
 		}
 		#endregion
 
@@ -87,50 +139,78 @@ namespace Networking
 		}
 
 		[SerializeField] private int PORT = 18_000;
+		[SerializeField] protected double tickrateMS;
 		private const int TCP_DATAGRAM_SIZE_MAX = 2048;
 
 		private Stopwatch stopwatch;
 		protected int GetTime { get => stopwatch.Elapsed.Milliseconds; }
+		protected Timer tickTimer;
+		private bool destroyIssued;
 
 		private UdpClient udpClient;
 
 		private TcpClient tcpClient;
 		private TcpListener tcpListener;
 
-		private void OnDestroy()
+		protected virtual void OnDestroy()
 		{
-			tcpListener?.Stop();
-			tcpClient.Close();
-
-			udpClient.Close();
+			CloseAll();
 		}
 
 		private void Awake()
 		{
 			stopwatch = new Stopwatch();
 			stopwatch.Start();
+			tickTimer = new Timer(OnTimerTick, stopwatch, TimeSpan.Zero, TimeSpan.FromMilliseconds(tickrateMS));
 		}
 
-		protected void SetupAsServer()
+		protected void SetupAsServer(bool setupUdp, bool setupTcp)
 		{
-			udpClient = new UdpClient(PORT);
-			udpClient.BeginReceive(OnUdpMessageReceive, null);
+			if (setupUdp)
+			{
+				udpClient = new UdpClient(PORT);
+				udpClient.BeginReceive(OnUdpMessageReceive, null);
+			}
 
-			tcpClient = new TcpClient();
-			tcpListener = TcpListener.Create(PORT);
-			tcpListener.Start();
-			tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null);
+			if (setupTcp)
+			{
+				tcpClient = new TcpClient();
+				tcpListener = TcpListener.Create(PORT);
+				tcpListener.Start();
+				tcpListener.BeginAcceptTcpClient(OnTcpClientAccept, null);
+			}
 		}
 
-		protected void SetupAsClient(IPAddress ipAdress)
+		protected void SetupAsClient(bool setupUdp, bool setupTcp, IPAddress ipAdress)
 		{
-			udpClient = new UdpClient();
-			udpClient.Connect(ipAdress, PORT);
-			udpClient.BeginReceive(OnUdpMessageReceive, null);
+			if (setupUdp)
+			{
+				udpClient = new UdpClient();
+				udpClient.Connect(ipAdress, PORT);
+				udpClient.BeginReceive(OnUdpMessageReceive, null);
+			}
 
-			tcpClient = new TcpClient();
-			tcpClient.BeginConnect(ipAdress, PORT, OnTcpConnect, ipAdress);
+			if (setupTcp)
+			{
+				tcpClient = new TcpClient();
+				tcpClient.BeginConnect(ipAdress, PORT, OnTcpConnect, ipAdress);
+			}
 		}
+
+		protected void CloseAll()
+		{
+			tcpListener?.Stop();
+			tcpClient?.Close();
+
+			udpClient?.Close();
+
+
+			tickTimer?.Dispose();
+
+			destroyIssued = true;
+		}
+
+		protected abstract void OnTimerTick(object obj);
 
 		#region TCP
 		private void OnTcpClientAccept(IAsyncResult ar)
@@ -184,6 +264,8 @@ namespace Networking
 				ConnectionState connection = (ConnectionState)ar.AsyncState;
 				connection.Stream.EndRead(ar);
 
+				if (destroyIssued) connection.Stream.Dispose();
+
 				// callback
 				TcpMessageReceived(connection.Stream, connection.Message);
 
@@ -217,9 +299,9 @@ namespace Networking
 			stream.BeginWrite(message, 0, message.Length, OnTcpMessageSend, stream);
 		}
 
-		protected virtual void TcpConnectionEstablished(NetworkStream stream) { }
+		protected abstract void TcpConnectionEstablished(NetworkStream stream);
 
-		protected virtual void TcpMessageReceived(NetworkStream sender, byte[] message) { }
+		protected abstract void TcpMessageReceived(NetworkStream sender, byte[] message);
 		#endregion
 
 		#region UDP
@@ -255,7 +337,7 @@ namespace Networking
 			udpClient.BeginSend(message, message.Length, target, OnUdpMessageSend, null);
 		}
 
-		protected virtual void UdpMessageReceived(IPEndPoint sender, byte[] message) { }
+		protected abstract void UdpMessageReceived(IPEndPoint sender, byte[] message);
 		#endregion
 	}
 }
