@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
-public enum MenuState { Local, Online, CharacterEditor, Profile, Exit }
+public enum MenuState { Local, Online , CharacterEditor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
 public class MenuSelectionManager : MenuManager
@@ -16,6 +16,7 @@ public class MenuSelectionManager : MenuManager
     [SerializeField] [Range(10f, 50f)] private float cameraSpeed = 1f;
     [SerializeField] [Range(0.5f, 0.1f)] private float buttonDelayAmount;
     [SerializeField] private LocalLobbyManager localLobbyManager;
+    [SerializeField] private RulesManager rulesManager;
     [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
     private MenuState currentState;
@@ -39,12 +40,12 @@ public class MenuSelectionManager : MenuManager
     {
         Vector3 Start = selector.position;
         float startTime = Time.time;
-        float lenght = Vector3.Distance(Start, selectorPoints[(int)CurrentState].position);
+        float length = Vector3.Distance(Start, selectorPoints[(int)CurrentState].position);
 
         while(selector.position != selectorPoints[(int)CurrentState].position)
         {
             float distance = (Time.time - startTime) * selectorSpeed * 10;
-            selector.position = Vector3.Lerp(Start, selectorPoints[(int)CurrentState].position,distance / lenght);
+            selector.position = Vector3.Lerp(Start, selectorPoints[(int)CurrentState].position,distance / length);
             yield return new WaitForEndOfFrame();
         }
     }
@@ -71,6 +72,20 @@ public class MenuSelectionManager : MenuManager
         {
             float distance = (Time.time - startTime) * cameraSpeed * 10f;
             mainCamera.position = Vector3.Lerp(start, finish, distance / 40);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    private IEnumerator ManageRules(bool open)
+    {
+        Vector3 start = open? new Vector3(0, -50, 0) : new Vector3(0, -20, 0);
+        Vector3 finish = open ? new Vector3(0, -20, 0) : new Vector3(0, -50, 0);
+        float startTime = Time.time;
+        float length = Vector3.Distance(start, finish);
+        while (rulesManager.transform.position != finish)
+        {
+            float distance = (Time.time - startTime) * rulesManager.RulesAppearSpeed * 10;
+            rulesManager.transform.position = Vector3.Lerp(start, finish, distance / length);
             yield return new WaitForEndOfFrame();
         }
     }
@@ -110,9 +125,18 @@ public class MenuSelectionManager : MenuManager
         switch (currentState)
         {
             case MenuState.Local:
-                StartCoroutine(CameraSubmenuMovement(!open));
-                currentActiveManager = open ? (MenuManager)localLobbyManager : this;
-                localLobbyManager.ToggleActivation(open);
+                if (localLobbyManager.Rules)
+                {
+                    StartCoroutine(ManageRules(open));
+                    currentActiveManager = open ? (MenuManager)rulesManager : (MenuManager)localLobbyManager;
+                    rulesManager.ToggleActivation(open);
+                }
+                else
+                {
+                    StartCoroutine(CameraSubmenuMovement(!open));
+                    currentActiveManager = open ? (MenuManager)localLobbyManager : this;
+                    localLobbyManager.ToggleActivation(open);
+                }
                 break;
             case MenuState.Online:
                 break;

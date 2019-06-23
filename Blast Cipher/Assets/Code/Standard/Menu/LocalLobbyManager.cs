@@ -18,8 +18,20 @@ public class LocalLobbyManager : MenuManager
 
     private InputDevice playerOne, playerTwo;
 
+    private bool rules;
+
     public LocalLobbyState CurrentLeftState { get => currentLeftState; private set => SetMaterials(currentLeftState,currentLeftState = value, true); }
     public LocalLobbyState CurrentRightState { get => currentRightState; private set => SetMaterials(currentRightState, currentRightState = value, false); }
+
+    public bool Rules { get => rules; set => rules = SetRule(value); }
+
+    private bool SetRule(bool rule)
+    {
+        if (rule)
+            rules = rule;
+        mainManager.ManageSubmenu(rule);
+        return rule;
+    }
 
     private void AssignedPlayerToggle(bool gained, InputAction.CallbackContext ctx)
     {
@@ -57,11 +69,13 @@ public class LocalLobbyManager : MenuManager
     {
         if (leftPlayer)
         {
+            CurrentLeftState = standartState;
             notJoinedBlinkerLeft.Enabled = firstPlayerToggleNode.gameObject.activeInHierarchy;
             firstPlayerToggleNode.gameObject.SetActive(!firstPlayerToggleNode.gameObject.activeInHierarchy);
         }
         else
         {
+            CurrentRightState = standartState;
             notJoinedBlinkerRight.Enabled = secondPlayerToggleNode.gameObject.activeInHierarchy;
             secondPlayerToggleNode.gameObject.SetActive(!secondPlayerToggleNode.gameObject.activeInHierarchy);
         }
@@ -117,7 +131,7 @@ public class LocalLobbyManager : MenuManager
 
     private void ManageConfirmation(bool leftSide)
     {
-        if(leftSide)
+        if (leftSide)
             switch (currentLeftState)
             {
                 case LocalLobbyState.Selection:
@@ -125,7 +139,7 @@ public class LocalLobbyManager : MenuManager
                 case LocalLobbyState.Ready:
                     break;
                 case LocalLobbyState.Start:
-                    StartLocalGame();
+                    Rules = true;
                     break;
                 default:
                     break;
@@ -144,18 +158,13 @@ public class LocalLobbyManager : MenuManager
             }
     }
 
-    private void StartLocalGame()
-    {
-		GameManager.Instance.LoadScene(1);
-		//SceneManager.LoadScene(1, LoadSceneMode.Single);
-	}
-
     private void Start()
     {
         CurrentLeftState = standartState;
         CurrentRightState = standartState;
         firstPlayerToggleNode.gameObject.SetActive(false);
         secondPlayerToggleNode.gameObject.SetActive(false);
+        rules = false;
     }
 
     public override void OnDPadInput(InputAction.CallbackContext ctx)
