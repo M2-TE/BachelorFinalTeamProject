@@ -240,16 +240,16 @@ public class MenuSelectionManager : MenuManager
     {
         input.General.Start.performed += OnStartPressed;
         input.General.DPadInput.performed += OnDPadInput;
-        input.Player.Jump.performed += OnConfirmation;
-        input.Player.Decline.performed += OnDecline;
+        input.CEditor.SouthButton.performed += OnConfirmation;
+        input.CEditor.EastButton.performed += OnDecline;
     }
 
     private void UnregisterActions()
     {
         input.General.Start.performed -= OnStartPressed;
         input.General.DPadInput.performed -= OnDPadInput;
-        input.Player.Jump.performed -= OnConfirmation;
-        input.Player.Decline.performed -= OnDecline;
-    }
+		input.CEditor.SouthButton.performed -= OnConfirmation;
+		input.CEditor.EastButton.performed -= OnDecline;
+	}
 
 }

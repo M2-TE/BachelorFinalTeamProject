@@ -104,7 +104,7 @@ public class RulesManager : MenuManager
 
     private void StartLocalGame()
     {
-        GameManager.Instance.LoadScene(1);
+        GameManager.Instance.LoadScene(0);
         //SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 

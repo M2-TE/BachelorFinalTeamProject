@@ -19,6 +19,7 @@ public class ControllerAssignment : MonoBehaviour
 
 	private void DisplayAssignmentWindow(InputAction.CallbackContext ctx)
 	{
+		Debug.Log("fired");
 		if (currentAssigningDevice == null)
 		{
 			currentAssigningDevice = ctx.control.device;
