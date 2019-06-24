@@ -90,6 +90,7 @@ public class RulesManager : MenuManager
             case RulesState.Rounds:
                 break;
             case RulesState.Start:
+                GameManager.Instance.maxRounds = roundAmount;
                 StartLocalGame();
                 break;
         }

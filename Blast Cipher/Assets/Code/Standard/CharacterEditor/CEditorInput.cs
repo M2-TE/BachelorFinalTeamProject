@@ -5,26 +5,36 @@ using UnityEngine.Experimental.Input;
 
 public class CEditorInput
 {
-    public Vector2 Dpad, LeftStick, RightStick;
-    public bool LeftShoulder, RightShoulder, LeftStickPress, RightStickPress, LeftTrigger, RightTrigger, UpButton, DownButton, LeftButton, RightButton, Select, StartButton;
+    public Vector2 Dpad, LeftStick, RightStick = Vector2.zero;
+    public float LeftTrigger, RightTrigger = 0;
+    public bool LeftShoulder, RightShoulder, LeftStickPress, RightStickPress, UpButton, DownButton, LeftButton, RightButton, Select, StartButton;
 
     private InputMaster input;
 
     public void Start(InputMaster input)
     {
         this.input = input;
-        Dpad = new Vector2(0, 0);
-        LeftStick = Dpad;
-        RightStick = Dpad;
         input.CEditor.LeftStick.performed += LeftStickInput;
         input.CEditor.RightStick.performed += RightStickInput;
+        input.CEditor.LeftTrigger.performed += LeftTriggerInput;
+        input.CEditor.RightTrigger.performed += RightTriggerInput;
+        input.CEditor.LeftStickPress.performed += LeftStickPressInput;
+        input.CEditor.RightStickPress.performed += RightStickPressInput;
+
+        input.CEditor.Start.performed += BackToMenu;
     }
 
-    public void Update()
+    public void End()
     {
-        //Debug.Log(this.ToString());
-    }
+        input.CEditor.LeftStick.performed -= LeftStickInput;
+        input.CEditor.RightStick.performed -= RightStickInput;
+        input.CEditor.LeftTrigger.performed -= LeftTriggerInput;
+        input.CEditor.RightTrigger.performed -= RightTriggerInput;
+        input.CEditor.LeftStickPress.performed -= LeftStickPressInput;
+        input.CEditor.RightStickPress.performed -= RightStickPressInput;
 
+        input.CEditor.Start.performed -= BackToMenu;
+    }
 
     private void DpadInput(InputAction.CallbackContext ctx)
     {
@@ -38,14 +48,32 @@ public class CEditorInput
     {
         RightStick = ctx.ReadValue<Vector2>();
     }
-
-    private void LeftShoulderInput(InputAction.CallbackContext ctx)
+    private void LeftTriggerInput(InputAction.CallbackContext ctx)
     {
-        LeftShoulder = ctx.ReadValue<bool>();
+        LeftTrigger = ctx.ReadValue<float>() <= .9f ? 0 : ctx.ReadValue<float>();
+    }
+    private void RightTriggerInput(InputAction.CallbackContext ctx)
+    {
+        RightTrigger = ctx.ReadValue<float>() <= .9f ? 0 : ctx.ReadValue<float>();
+    }
+
+    private void LeftStickPressInput(InputAction.CallbackContext ctx)
+    {
+        LeftStickPress = !LeftStickPress;
+    }
+
+    private void RightStickPressInput(InputAction.CallbackContext ctx)
+    {
+        RightStickPress = !RightStickPress;
+    }
+
+    private void BackToMenu(InputAction.CallbackContext ctx)
+    {
+        GameManager.Instance.LoadScene(4);
     }
 
     public override string ToString()
     {
-        return "Dpad[" + Dpad.ToString() + "] | LeftStick[" + LeftStick + "] | RightStick[" + RightStick + "] | LeftShoulder[" + (LeftShoulder ? "true" : "false") + "] | RightShoulder[" + (RightShoulder ? "true" : "false") + "] | LeftStickPress[" + (RightStickPress ? "true" : "false") + "] | RightStickPress[" + (RightStickPress ? "true" : "false") + "] | LeftTrigger[" + (LeftTrigger ? "true" : "false") + "] | RightTrigger[" + (RightTrigger ? "true" : "false") + "] | UpButton[" + (UpButton ? "true" : "false") + "] | DownButton[" + (DownButton ? "true" : "false") + "] | LeftButton[" + (LeftButton ? "true" : "false") + "] | RightButton[" + (RightButton ? "true" : "false") + "] | Select[" + (Select ? "true" : "false") + "] | Start[" + (StartButton ? "true" : "false") + "]";
+        return "Dpad[" + Dpad.ToString() + "] | LeftStick[" + LeftStick + "] | RightStick[" + RightStick + "] | LeftShoulder[" + (LeftShoulder ? "true" : "false") + "] | RightShoulder[" + (RightShoulder ? "true" : "false") + "] | LeftStickPress[" + (RightStickPress ? "true" : "false") + "] | RightStickPress[" + (RightStickPress ? "true" : "false") + "] | LeftTrigger[" + LeftTrigger + "] | RightTrigger[" + RightTrigger  + "] | UpButton[" + (UpButton ? "true" : "false") + "] | DownButton[" + (DownButton ? "true" : "false") + "] | LeftButton[" + (LeftButton ? "true" : "false") + "] | RightButton[" + (RightButton ? "true" : "false") + "] | Select[" + (Select ? "true" : "false") + "] | Start[" + (StartButton ? "true" : "false") + "]";
     }
 }
