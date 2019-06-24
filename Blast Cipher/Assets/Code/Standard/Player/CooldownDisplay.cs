@@ -31,7 +31,9 @@ public class CooldownDisplay : MonoBehaviour
 		}
 		else
 		{
-			dashCooldownImage.transform.parent.gameObject.SetActive(false);
+			//dashCooldownImage.transform.parent.gameObject.SetActive(false);
+			dashCooldownImage.fillAmount = 0f;
+			parryCooldownImage.fillAmount = 0f;
 		}
     }
 }

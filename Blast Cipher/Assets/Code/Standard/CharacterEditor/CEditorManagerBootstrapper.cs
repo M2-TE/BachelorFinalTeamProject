@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CEditorManagerBootstrapper : Bootstrapper
 {
-    public InputMaster input;
+    public InputMaster Input;
 
-    [SerializeField] private CameraMovement cameraMovement;
-
+    public float Dimension = 30f;
+    [Range(0.1f, 0.5f)]
+    public float ButtonDelayAmount;
+    public CameraMovement CamMovement;
+    public TextMeshProUGUI CurrentWorkingPosition, LookDirection;
 
     private CEditorManager cEditorManager;
 

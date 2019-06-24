@@ -26,11 +26,11 @@ MonoBehaviour:
   PlayerDeathSounds:
   - {fileID: 8300000, guid: ea16928984e20fb47a0d889814dd117c, type: 3}
   PlayerDashSounds:
-  - {fileID: 8300000, guid: 4a098ceca12b99f4b85042e8935b984f, type: 3}
+  - {fileID: 8300000, guid: b8f9771cbd035c34881f025a929c3bb3, type: 3}
   PlayerStepSounds:
   - {fileID: 8300000, guid: 224303aa1b50ab346bc28ac8586868b4, type: 3}
   ShieldConstructionSounds:
-  - {fileID: 8300000, guid: 76db8f57010ff2e4fa9f4b78620bcba0, type: 3}
+  - {fileID: 8300000, guid: de665f7fb10580a4abe8fb1c8dfda489, type: 3}
   MovespeedMod: 8
   DashCooldown: 5
   DashDuration: 0.2

@@ -19,6 +19,7 @@ public sealed class GameManager
 
 	public readonly InputDevice[] inputDevices = new InputDevice[2];
 	public bool playerInputsActive = true;
+    public int maxRounds;
 
 	private int roundCount;
 	private bool nextRoundStarterInProgress = false;
@@ -135,6 +136,11 @@ public sealed class GameManager
 	{
 		if (!nextRoundStarterInProgress)
 		{
+            //if(roundCount >= maxRounds-1)
+            //{
+            //    BackToMenu();
+            //    return;
+            //}
 			nextRoundStarterInProgress = true;
 			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
 			{
@@ -149,6 +155,15 @@ public sealed class GameManager
 			roundCount++;
 		}
 	}
+
+    private void BackToMenu()
+    {
+        LoadScene(4);
+        roundCount = 0;
+        maxRounds = 0;
+        inputDevices[0] = null;
+        inputDevices[1] = null;
+    }
 
 	private IEnumerator TimeScalerOnRoundTransition()
 	{
