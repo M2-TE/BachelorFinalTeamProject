@@ -511,7 +511,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 
 		camShakeManager.ShakeMagnitude = Settings.DeathShakeMagnitude;
-		//OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
+		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
 		gameManager.StartNextRound();
 
 		gameObject.SetActive(false);
