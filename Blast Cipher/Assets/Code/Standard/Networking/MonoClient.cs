@@ -28,6 +28,7 @@ namespace Networking
 		private Vector2 aimInput;
 
 		private InputDataMessageUdp cachedUdpMessage;
+		private InputDataMessageUdpStruct cachedUdpMessageAlt;
 		private TcpMessage cachedTcpMessage;
 		//private NetworkStream stream;
 		private byte clientID = byte.MaxValue;
@@ -36,6 +37,7 @@ namespace Networking
 		private void Start()
 		{
 			cachedUdpMessage = new InputDataMessageUdp();
+			cachedUdpMessageAlt = new InputDataMessageUdpStruct();
 			cachedTcpMessage = new TcpMessage();
 
 			ConnectToServer(IPAddress.Parse(targetIP)); // DEBUG CALL
@@ -112,10 +114,11 @@ namespace Networking
 
 		protected override void OnTimerTick(object obj)
 		{
-			//cachedUdpMessage.DebugString = "client message!";
-			cachedUdpMessage.MovementInput = movementInput;
-			cachedUdpMessage.AimInput = aimInput;
-			SendUdpMessage(cachedUdpMessage.ToArray());
+			//cachedUdpMessage.MovementInput = movementInput;
+			//cachedUdpMessage.AimInput = aimInput;
+			//SendUdpMessage(cachedUdpMessage.ToArray());
+			cachedUdpMessageAlt.Write(movementInput.x, movementInput.y, aimInput.x, aimInput.y);
+			SendUdpMessage(cachedUdpMessageAlt.data);
 		}
 
 		protected override void UdpMessageReceived(IPEndPoint sender, byte[] messageBytes)

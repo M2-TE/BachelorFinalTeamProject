@@ -12,10 +12,13 @@ namespace Networking
 		private PlayerCharacter[] players;
 		private int connectedClients;
 		private bool gameStarted;
+		private InputDataMessageUdpStruct cachedUdpMessage;
 
 		private void Start()
 		{
 			SetupAsServer(true, true);
+
+			cachedUdpMessage = new InputDataMessageUdpStruct();
 		}
 
 		private void Update()
@@ -41,12 +44,10 @@ namespace Networking
 		{
 			if (!gameStarted) return;
 
-			InputDataMessageUdp message = NetworkMessage.Parse<InputDataMessageUdp>(messageBytes);
-
-			players[message.ClientID].MovementInput = message.MovementInput;
-			players[message.ClientID].AimInput = message.AimInput;
-
-			//SendUdpMessage(sender, messageToSend.ToArray());
+			//InputDataMessageUdp message = NetworkMessage.Parse<InputDataMessageUdp>(messageBytes);
+			//var floats = cachedUdpMessage.Read(messageBytes);
+			//players[0].MovementInput = new Vector2(floats[0], floats[1]);
+			//players[0].AimInput = new Vector2(floats[2], floats[3]);
 		}
 
 		#region TCP

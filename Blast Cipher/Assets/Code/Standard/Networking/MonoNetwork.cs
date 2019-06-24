@@ -106,6 +106,25 @@ namespace Networking
 		}
 
 		[Serializable]
+		protected struct InputDataMessageUdpStruct
+		{
+			internal byte[] data;
+
+			internal void Write(float xMove, float yMove, float xLook, float yLook)
+			{
+				data = new byte[4 * 4];
+				Buffer.BlockCopy(new float[] { xMove, yMove, xLook, yLook }, 0, data, 0, data.Length);
+			}
+
+			internal float[] Read(byte[] bytes)
+			{
+				float[] floats = new float[4];
+				Buffer.BlockCopy(bytes, 0, floats, 0, bytes.Length);
+				return floats;
+			}
+		}
+
+		[Serializable]
 		protected class BoardDataMessage : NetworkMessage
 		{
 			private int playerCount;
@@ -140,7 +159,7 @@ namespace Networking
 
 		[SerializeField] private int PORT = 18_000;
 		[SerializeField] protected double tickrateMS;
-		private const int TCP_DATAGRAM_SIZE_MAX = 2048;
+		private const int TCP_DATAGRAM_SIZE_MAX = 512;
 
 		private Stopwatch stopwatch;
 		protected int GetTime { get => stopwatch.Elapsed.Milliseconds; }
@@ -330,6 +349,7 @@ namespace Networking
 		protected void SendUdpMessage(byte[] message)
 		{
 			udpClient.BeginSend(message, message.Length, OnUdpMessageSend, null);
+			//udpClient.Send
 		}
 
 		protected void SendUdpMessage(IPEndPoint target, byte[] message)
