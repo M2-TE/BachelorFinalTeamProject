@@ -40,11 +40,13 @@ public class LocalLobbyManager : MenuManager
             if(playerOne == null && playerTwo != ctx.control.device)
             {
                 playerOne = ctx.control.device;
+                GameManager.Instance.inputDevices[0] = ctx.control.device;
                 TogglePlayerJoinedTransform(true);
             }
             else if(playerTwo == null && playerOne != ctx.control.device)
             {
                 playerTwo = ctx.control.device;
+                GameManager.Instance.inputDevices[1] = ctx.control.device;
                 TogglePlayerJoinedTransform(false);
             }
         }
@@ -53,11 +55,13 @@ public class LocalLobbyManager : MenuManager
             if (playerTwo == ctx.control.device)
             {
                 playerTwo = null;
+                GameManager.Instance.inputDevices[0] = null;
                 TogglePlayerJoinedTransform(false);
             }
             else if (playerOne == ctx.control.device)
             {
                 playerOne = null;
+                GameManager.Instance.inputDevices[1] = null;
                 TogglePlayerJoinedTransform(true);
             }
             else if(playerOne == null && playerTwo == null)
@@ -139,7 +143,8 @@ public class LocalLobbyManager : MenuManager
                 case LocalLobbyState.Ready:
                     break;
                 case LocalLobbyState.Start:
-                    Rules = true;
+                    if (playerOne != null && playerTwo != null)
+                        Rules = true;
                     break;
                 default:
                     break;
