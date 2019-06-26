@@ -2,12 +2,12 @@
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
-public enum MenuState { Local, Online , CharacterEditor, Profile, Exit }
+public enum MenuState { Local, Online , Editor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
 public class MenuSelectionManager : MenuManager
 {
-    [SerializeField] private MaterialsHolder localGame, onlineGame, characterEditor, profile, exit;
+    [SerializeField] private MaterialsHolder localGame, onlineGame, editors, profile, exit;
     [SerializeField] private MenuState standartState = 0;
     [SerializeField] private Transform[] selectorPoints;
     [SerializeField] private Transform selector;
@@ -107,8 +107,8 @@ public class MenuSelectionManager : MenuManager
             case MenuState.Online:
                 onlineGame.SetMaterials(mat);
                 break;
-            case MenuState.CharacterEditor:
-                characterEditor.SetMaterials(mat);
+            case MenuState.Editor:
+                editors.SetMaterials(mat);
                 break;
             case MenuState.Profile:
                 profile.SetMaterials(mat);
@@ -144,7 +144,7 @@ public class MenuSelectionManager : MenuManager
                 currentActiveManager = open ? (MenuManager)onlineLobbyManager : this;
                 onlineLobbyManager.ToggleActivation(open);
                 break;
-            case MenuState.CharacterEditor:
+            case MenuState.Editor:
                 GameManager.Instance.LoadScene(3);
                 break;
             case MenuState.Profile:
