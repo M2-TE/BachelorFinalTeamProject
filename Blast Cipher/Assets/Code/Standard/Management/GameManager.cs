@@ -25,6 +25,7 @@ public sealed class GameManager
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
+    private CScriptableHolder contentHolder;
 	#endregion
 
 	public delegate void ExtendedUpdate();
