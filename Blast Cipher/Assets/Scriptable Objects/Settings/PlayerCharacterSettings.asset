@@ -26,7 +26,7 @@ MonoBehaviour:
   PlayerDeathSounds:
   - {fileID: 8300000, guid: ea16928984e20fb47a0d889814dd117c, type: 3}
   PlayerDashSounds:
-  - {fileID: 8300000, guid: b8f9771cbd035c34881f025a929c3bb3, type: 3}
+  - {fileID: 8300000, guid: b2b871370e4bd484da1f425d3f63abc3, type: 3}
   PlayerStepSounds:
   - {fileID: 8300000, guid: 224303aa1b50ab346bc28ac8586868b4, type: 3}
   ShieldConstructionSounds:
