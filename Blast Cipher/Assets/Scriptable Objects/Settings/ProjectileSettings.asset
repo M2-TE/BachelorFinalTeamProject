@@ -15,13 +15,14 @@ MonoBehaviour:
   ExplosionPrefab: {fileID: 5205195383275880991, guid: d34b149c596d4594eb48456c3e47f629,
     type: 3}
   wallBounceSounds:
-  - {fileID: 8300000, guid: b8c2b83f31967f5408b2d61e847fccc0, type: 3}
+  - {fileID: 8300000, guid: 2e2de0bfc051ed14890face3f4231ed6, type: 3}
   wallHitSounds:
-  - {fileID: 8300000, guid: 972e5facc6cd3cc4ea7ea2f3c798aeff, type: 3}
+  - {fileID: 8300000, guid: 94b8639a059139c49bb09c4edeeea298, type: 3}
   explosionSounds:
-  - {fileID: 8300000, guid: 62994c4327304b041b1e73872ab58dd7, type: 3}
+  - {fileID: 8300000, guid: 08c9602f919c4734d806f6dc9f54c4f6, type: 3}
   PlayerTag: Player
   WallTag: Wall
+  OuterWallTag: OuterWall
   ShieldWallTag: ParryShield
   MaxRadiansOnAutoTarget: 3
   VelocityChangeOnWallHit: 0.1
