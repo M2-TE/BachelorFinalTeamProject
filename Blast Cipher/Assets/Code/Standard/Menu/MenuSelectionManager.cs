@@ -225,6 +225,7 @@ public class MenuSelectionManager : MenuManager
         CurrentState = standartState;
         currentActiveManager = this;
         inTitleScreen = true;
+        GameManager.Instance.CheckForStandardContent();
     }
 
     private void Update()

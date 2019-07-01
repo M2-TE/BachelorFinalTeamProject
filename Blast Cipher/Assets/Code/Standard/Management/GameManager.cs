@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 using UnityEngine.Rendering.PostProcessing;
@@ -8,7 +9,11 @@ using UnityEngine.SceneManagement;
 public sealed class GameManager
 {
 	#region Singleton Implementation
-	private GameManager() { }
+	private GameManager()
+    {
+        ContentHolder = CScriptableHolder.Instance;
+        LoadStreamingAssets();
+    }
 	private static GameManager instance;
 	public static GameManager Instance { get => instance ?? (instance = new GameManager()); }
 	#endregion
@@ -17,6 +22,7 @@ public sealed class GameManager
 	private GameManagerBootstrapper _bootstrapper;
 	private GameManagerBootstrapper bootstrapper;
 
+    public CScriptableHolder ContentHolder;
 	public readonly InputDevice[] inputDevices = new InputDevice[2];
 	public bool playerInputsActive = true;
     public int maxRounds;
@@ -25,7 +31,6 @@ public sealed class GameManager
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
-    private CScriptableHolder contentHolder;
 	#endregion
 
 	public delegate void ExtendedUpdate();
@@ -33,6 +38,9 @@ public sealed class GameManager
 	public readonly List<GameObject> temporaryObjects = new List<GameObject>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
+
+    private CScriptableCharacter[] StandardCharacters => bootstrapper.StandardCharacters;
+    private CScriptableMap[] StandardMaps => bootstrapper.StandardMaps;
 
 	#region Mono Registrations
 	internal void RegisterBootstrapper(GameManagerBootstrapper bootstrapper)
@@ -89,6 +97,45 @@ public sealed class GameManager
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
 	}
 	#endregion
+
+    internal void LoadStreamingAssets()
+    {
+        string path = Application.streamingAssetsPath + "/ContentHolder.json";
+        if (File.Exists(path))
+        {
+            string jsonString = File.ReadAllText(path);
+            Debug.Log("Load: "+ jsonString);
+            JsonUtility.FromJsonOverwrite(jsonString,ContentHolder);
+        }
+        else
+        {
+            SaveStreamingAssets();
+        }
+    }
+
+    internal void SaveStreamingAssets()
+    {
+        string path = Application.streamingAssetsPath + "/ContentHolder.json";
+        string aboutToBeJsonString = JsonUtility.ToJson(ContentHolder);
+        Debug.Log("Save: "+ aboutToBeJsonString);
+        File.WriteAllText(path, aboutToBeJsonString);
+    }
+
+    internal void CheckForStandardContent()
+    {
+        if (CScriptableHolder.Empty)
+        {
+            foreach (var character in StandardCharacters)
+            {
+                ContentHolder.AddCharacter(character);
+            }
+            foreach (var map in StandardMaps)
+            {
+                ContentHolder.AddMap(map);
+            }
+            SaveStreamingAssets();
+        }
+    }
 
 	internal void TriggerExtendedUpdates()
 	{

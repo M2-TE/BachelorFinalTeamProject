@@ -12,6 +12,9 @@ public class GameManagerBootstrapper : Bootstrapper
 	public float ShakeMagnitude;
 	public float ShakeRoughness;
 
+    public CScriptableMap[] StandardMaps;
+    public CScriptableCharacter[] StandardCharacters;
+
 	[SerializeField] private float shakeMagnitudeDecline;
 	private GameManager gameManager;
 

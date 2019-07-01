@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "NewCScriptableMap", order = 0)]
 public class CScriptableMap : ScriptableObject
 {
     public int MapID;

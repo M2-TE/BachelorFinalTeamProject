@@ -1098,6 +1098,9 @@ MonoBehaviour:
       type: 3}
   ShakeMagnitude: 0.4
   ShakeRoughness: 3
+  StandartMaps: []
+  StandartCharacters:
+  - {fileID: 11400000, guid: 27cf12b6e48957848b801bea8ad08e81, type: 2}
   shakeMagnitudeDecline: 1
 --- !u!1 &1113234640
 GameObject:
