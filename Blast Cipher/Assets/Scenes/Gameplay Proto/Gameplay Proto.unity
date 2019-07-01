@@ -2051,7 +2051,7 @@ PrefabInstance:
     - target: {fileID: 4422398640955214215, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}
       propertyPath: DebugKBControlsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4422398640955214209, guid: 28b748acebf998c44a1cd0aff10207e7,
         type: 3}
