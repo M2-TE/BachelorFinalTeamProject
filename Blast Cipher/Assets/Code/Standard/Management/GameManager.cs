@@ -106,6 +106,10 @@ public sealed class GameManager
             string jsonString = File.ReadAllText(path);
             Debug.Log("Load: "+ jsonString);
             JsonUtility.FromJsonOverwrite(jsonString,ContentHolder);
+            foreach (var item in ContentHolder.Characters)
+            {
+                Debug.Log("Character: " + item.CharacterID);
+            }
         }
         else
         {

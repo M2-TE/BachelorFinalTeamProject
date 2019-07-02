@@ -32,6 +32,7 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed += IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed += AddCube;
         bootstrapper.Input.CEditor.EastButton.performed += RemoveCube;
+        bootstrapper.Input.CEditor.Start.performed += SaveCharacter;
         CEditorStart();
     }
     internal void UnregisterBootstrapper()
@@ -42,6 +43,7 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed -= IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed -= AddCube;
         bootstrapper.Input.CEditor.EastButton.performed -= RemoveCube;
+        bootstrapper.Input.CEditor.Start.performed -= SaveCharacter;
         cEditorInput = null;
         bootstrapper = null;
     }
@@ -154,6 +156,15 @@ public class CEditorManager
         }
         else
             Debug.Log("Nothing to Remove");
+    }
+
+    private void SaveCharacter(InputAction.CallbackContext ctx)
+    {
+        CScriptableCharacter character = ScriptableObject.CreateInstance<CScriptableCharacter>();
+        character.CharacterScaling = 1;
+        character.CubePositions = cPositions.ToArray();
+        GameManager.Instance.ContentHolder.AddCharacter(character);
+        GameManager.Instance.SaveStreamingAssets();
     }
 
     #region LineDrawingMethods
