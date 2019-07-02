@@ -123,18 +123,17 @@ public sealed class GameManager
 
     internal void CheckForStandardContent()
     {
-        if (CScriptableHolder.Empty)
+        if(ContentHolder.Characters.Count <= 0)
+        foreach (var character in StandardCharacters)
         {
-            foreach (var character in StandardCharacters)
-            {
-                ContentHolder.AddCharacter(character);
-            }
-            foreach (var map in StandardMaps)
-            {
-                ContentHolder.AddMap(map);
-            }
-            SaveStreamingAssets();
+            ContentHolder.AddCharacter(character);
         }
+        if(ContentHolder.Maps.Count <= 0)
+        foreach (var map in StandardMaps)
+        {
+            ContentHolder.AddMap(map);
+        }
+        SaveStreamingAssets();
     }
 
 	internal void TriggerExtendedUpdates()

@@ -7,8 +7,6 @@ public class CScriptableHolder : ScriptableObject
     private static CScriptableHolder instance;
     public static CScriptableHolder Instance { get => instance ?? (instance = ScriptableObject.CreateInstance<CScriptableHolder>()); }
 
-    public static bool Empty = Instance.Characters.Count == 0 && Instance.Maps.Count == 0;
-
     public List<CScriptableCharacter> Characters = new List<CScriptableCharacter>();
     public List<CScriptableMap> Maps = new List<CScriptableMap>();
 
