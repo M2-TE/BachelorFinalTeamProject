@@ -104,11 +104,22 @@ public sealed class GameManager
         if (File.Exists(path))
         {
             string jsonString = File.ReadAllText(path);
-            Debug.Log("Load: "+ jsonString);
             JsonUtility.FromJsonOverwrite(jsonString,ContentHolder);
-            foreach (var item in ContentHolder.Characters)
+            for (int i = 0; i < ContentHolder.CharacterPaths.Count; i++)
             {
-                Debug.Log("Character: " + item.CharacterID);
+                jsonString = File.ReadAllText(Application.streamingAssetsPath + ContentHolder.CharacterPaths[i]);
+                CScriptableCharacter character = ScriptableObject.CreateInstance<CScriptableCharacter>();
+                JsonUtility.FromJsonOverwrite(jsonString, character);
+                ContentHolder.Characters.Add(character);
+                Debug.Log("Load: " + ContentHolder.Characters[i].CharacterID);
+            }
+            for (int i = 0; i < ContentHolder.MapPaths.Count; i++)
+            {
+                jsonString = File.ReadAllText(Application.streamingAssetsPath + ContentHolder.MapPaths[i]);
+                CScriptableMap map = ScriptableObject.CreateInstance<CScriptableMap>();
+                JsonUtility.FromJsonOverwrite(jsonString, map);
+                ContentHolder.Maps.Add(map);
+                Debug.Log("Load: " + ContentHolder.Maps[i].MapID);
             }
         }
         else
@@ -119,10 +130,20 @@ public sealed class GameManager
 
     internal void SaveStreamingAssets()
     {
-        string path = Application.streamingAssetsPath + "/ContentHolder.json";
         string aboutToBeJsonString = JsonUtility.ToJson(ContentHolder);
-        Debug.Log("Save: "+ aboutToBeJsonString);
-        File.WriteAllText(path, aboutToBeJsonString);
+        File.WriteAllText(Application.streamingAssetsPath + "/ContentHolder.json", aboutToBeJsonString);
+        for (int i = 0; i < ContentHolder.CharacterPaths.Count; i++)
+        {
+            aboutToBeJsonString = JsonUtility.ToJson(ContentHolder.Characters[i]);
+            File.WriteAllText(Application.streamingAssetsPath + ContentHolder.CharacterPaths[i], aboutToBeJsonString);
+            Debug.Log("Save: " + ContentHolder.Characters[i].CharacterID);
+        }
+        for (int i = 0; i < ContentHolder.MapPaths.Count; i++)
+        {
+            aboutToBeJsonString = JsonUtility.ToJson(ContentHolder.Maps[i]);
+            File.WriteAllText(Application.streamingAssetsPath + ContentHolder.MapPaths[i], aboutToBeJsonString);
+            Debug.Log("Save: " + ContentHolder.Maps[i].MapID);
+        }
     }
 
     internal void CheckForStandardContent()
