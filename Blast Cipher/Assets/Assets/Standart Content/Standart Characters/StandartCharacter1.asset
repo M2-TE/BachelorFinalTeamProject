@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d0279660d5508d4ab56dedd7801282e, type: 3}
   m_Name: StandartCharacter1
   m_EditorClassIdentifier: 
-  CharacterID: 0
+  CharacterID: fdf1eea0-8522-40da-aa74-e95fd4f4c61c
   CharacterScaling: 1
   CubePositions:
   - {x: 0, y: 0, z: 0}

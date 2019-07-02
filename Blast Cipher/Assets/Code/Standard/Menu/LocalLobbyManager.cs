@@ -5,6 +5,7 @@ using UnityEngine.Experimental.Input;
 using UnityEngine.SceneManagement;
 
 public enum LocalLobbyState { Selection, Ready, Start}
+public enum SelectorState {  Right, Front, Left, Back }
 
 public class LocalLobbyManager : MenuManager
 {
@@ -12,11 +13,16 @@ public class LocalLobbyManager : MenuManager
     [SerializeField] private LocalLobbyState standartState = 0;
     [SerializeField] private Transform toggleNode, firstPlayerToggleNode, secondPlayerToggleNode;
     [SerializeField] private PressStartBlinker notJoinedBlinkerLeft, notJoinedBlinkerRight;
+    [SerializeField] private MeshFilter selectionBodyRight, selectionBodyFront, selectionBodyLeft, selectionBodyBack, secondSelectionBodyRight, secondSelectionBodyFront, secondSelectionBodyLeft, secondSelectionBodyBack;
 
     private LocalLobbyState currentLeftState;
     private LocalLobbyState currentRightState;
 
     private InputDevice playerOne, playerTwo;
+
+    private SelectorState visibleSelection;
+    private int currentCharacter = 0;
+    private int maxCharacter = 0;
 
     private bool rules;
 
@@ -163,6 +169,73 @@ public class LocalLobbyManager : MenuManager
             }
     }
 
+    private void SetCharacterSelection()
+    {
+        maxCharacter = GameManager.Instance.ContentHolder.Characters.Count - 1;
+        visibleSelection = SelectorState.Right;
+        SetCharacterMesh(SelectorState.Right, GameManager.Instance.ContentHolder.Characters[currentCharacter], true);
+        SetCharacterMesh(SelectorState.Front, GameManager.Instance.ContentHolder.Characters[maxCharacter],true);
+        SetCharacterMesh(SelectorState.Back, GameManager.Instance.ContentHolder.Characters[currentCharacter+1 > maxCharacter ? maxCharacter : currentCharacter +1], true);
+        SetCharacterMesh(SelectorState.Left, GameManager.Instance.ContentHolder.Characters[currentCharacter + 2 > maxCharacter ? maxCharacter : currentCharacter + 2], true);
+    }
+
+    private void SetCharacterMesh(SelectorState position, CScriptableCharacter character, bool playerOne)
+    {
+        switch (position)
+        {
+            case SelectorState.Right:
+                if (playerOne)
+                {
+                    selectionBodyRight.mesh.Clear();
+                    selectionBodyRight.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                else
+                {
+                    secondSelectionBodyRight.mesh.Clear();
+                    secondSelectionBodyRight.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                break;
+            case SelectorState.Front:
+                if (playerOne)
+                {
+                    selectionBodyFront.mesh.Clear();
+                    selectionBodyFront.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                else
+                {
+                    secondSelectionBodyFront.mesh.Clear();
+                    secondSelectionBodyFront.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                break;
+            case SelectorState.Left:
+                if (playerOne)
+                {
+                    selectionBodyLeft.mesh.Clear();
+                    selectionBodyLeft.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                else
+                {
+                    secondSelectionBodyLeft.mesh.Clear();
+                    secondSelectionBodyLeft.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                break;
+            case SelectorState.Back:
+                if (playerOne)
+                {
+                    selectionBodyBack.mesh.Clear();
+                    selectionBodyBack.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                else
+                {
+                    secondSelectionBodyBack.mesh.Clear();
+                    secondSelectionBodyBack.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
     private void Start()
     {
         CurrentLeftState = standartState;
@@ -171,6 +244,7 @@ public class LocalLobbyManager : MenuManager
         secondPlayerToggleNode.gameObject.SetActive(false);
         rules = false;
         ToggleActivation(false);
+        SetCharacterSelection();
     }
 
     public override void OnDPadInput(InputAction.CallbackContext ctx)

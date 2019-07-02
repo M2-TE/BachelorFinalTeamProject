@@ -32,7 +32,7 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed += IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed += AddCube;
         bootstrapper.Input.CEditor.EastButton.performed += RemoveCube;
-        bootstrapper.Input.CEditor.Start.performed += SaveCharacter;
+        bootstrapper.Input.CEditor.NorthButton.performed += SaveCharacter;
         CEditorStart();
     }
     internal void UnregisterBootstrapper()
@@ -43,7 +43,7 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed -= IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed -= AddCube;
         bootstrapper.Input.CEditor.EastButton.performed -= RemoveCube;
-        bootstrapper.Input.CEditor.Start.performed -= SaveCharacter;
+        bootstrapper.Input.CEditor.NorthButton.performed -= SaveCharacter;
         cEditorInput = null;
         bootstrapper = null;
     }
@@ -161,10 +161,34 @@ public class CEditorManager
     private void SaveCharacter(InputAction.CallbackContext ctx)
     {
         CScriptableCharacter character = ScriptableObject.CreateInstance<CScriptableCharacter>();
-        character.CharacterScaling = 1;
+        character.CharacterScaling = GetCharacterScaling();
         character.CubePositions = cPositions.ToArray();
+        character.GenerateNewGuid();
         GameManager.Instance.ContentHolder.AddCharacter(character);
         GameManager.Instance.SaveStreamingAssets();
+    }
+
+    private int GetCharacterScaling()
+    {
+        int negY = 0, posY = 0, negX = 0, posX = 0, negZ = 0, posZ = 0;
+        foreach (var item in cPositions)
+        {
+            negY = negY > item.y ? item.y : negY;
+            posY = posY < item.y ? item.y : posY;
+            negX = negX > item.x ? item.x : negX;
+            posX = posX < item.x ? item.x : posX;
+            negZ = negZ > item.z ? item.z : negZ;
+            posZ = posZ < item.z ? item.z : posZ;
+        }
+        int y = posY - negY + 1;
+        int x = posX - negX + 1;
+        int z = posZ - negZ + 1;
+        Debug.Log("XDiff: " + x + " | YDiff: " + y + " | ZDiff: " + z);
+        y = (y + (y % 2)) / 2;
+        int scaling = y;
+        scaling = scaling < x ? x : scaling;
+        scaling = scaling < z ? z : scaling;
+        return scaling;
     }
 
     #region LineDrawingMethods
