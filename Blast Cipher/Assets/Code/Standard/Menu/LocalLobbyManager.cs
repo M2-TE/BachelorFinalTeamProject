@@ -13,6 +13,8 @@ public class LocalLobbyManager : MenuManager
     [SerializeField] private LocalLobbyState standartState = 0;
     [SerializeField] private Transform toggleNode, firstPlayerToggleNode, secondPlayerToggleNode;
     [SerializeField] private PressStartBlinker notJoinedBlinkerLeft, notJoinedBlinkerRight;
+    [SerializeField] private Transform leftSelectionWheel, rightSelectionWheel;
+    [SerializeField] [Range(10f, 50f)] private float selectionWheelSpeed = 30f;
     [SerializeField] private MeshFilter selectionBodyRight, selectionBodyFront, selectionBodyLeft, selectionBodyBack, secondSelectionBodyRight, secondSelectionBodyFront, secondSelectionBodyLeft, secondSelectionBodyBack;
 
     private LocalLobbyState currentLeftState;
@@ -21,7 +23,8 @@ public class LocalLobbyManager : MenuManager
     private InputDevice playerOne, playerTwo;
 
     private SelectorState visibleSelection;
-    private int currentCharacter = 0;
+    private int currentLeftCharacter = 0;
+    private int currentRightCharacter = 0;
     private int maxCharacter = 0;
 
     private bool rules;
@@ -109,6 +112,36 @@ public class LocalLobbyManager : MenuManager
         }
     }
 
+    private void ChangeCharacter(bool increment, bool leftSide)
+    {
+        StartCoroutine(RotateSelectionWheel(increment, leftSide));
+        if (increment)
+        {
+            if (leftSide)
+            {
+
+            }
+        }
+        else
+        {
+
+        }
+    }
+
+    private IEnumerator RotateSelectionWheel(bool increment, bool leftSide)
+    {
+        float start = leftSide ? leftSelectionWheel.rotation.eulerAngles.z : rightSelectionWheel.rotation.eulerAngles.z;
+        float finish = increment ? (Mathf.RoundToInt(start/90) - 1f)*90f : (Mathf.RoundToInt(start / 90) + 1f) * 90f;
+        float startTime = Time.time;
+        while((leftSide ? leftSelectionWheel.rotation != Quaternion.Euler(0f,0f,finish) : rightSelectionWheel.rotation != Quaternion.Euler(0f, 0f, finish)))
+        {
+            float distance = (Time.time - startTime) * selectionWheelSpeed * 10f;
+            if (leftSide)
+                leftSelectionWheel.rotation = Quaternion.Lerp(Quaternion.Euler(0f, 0f, start), Quaternion.Euler(0f, 0f, finish), distance / 90f);
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     private void SetMaterials(LocalLobbyState defaultMatState, LocalLobbyState highlightedMatState, bool leftSide)
     {
         SetMaterial(defaultMatState, defaultMat,leftSide);
@@ -173,10 +206,10 @@ public class LocalLobbyManager : MenuManager
     {
         maxCharacter = GameManager.Instance.ContentHolder.Characters.Count - 1;
         visibleSelection = SelectorState.Right;
-        SetCharacterMesh(SelectorState.Right, GameManager.Instance.ContentHolder.Characters[currentCharacter], true);
+        SetCharacterMesh(SelectorState.Right, GameManager.Instance.ContentHolder.Characters[currentLeftCharacter], true);
         SetCharacterMesh(SelectorState.Front, GameManager.Instance.ContentHolder.Characters[maxCharacter],true);
-        SetCharacterMesh(SelectorState.Back, GameManager.Instance.ContentHolder.Characters[currentCharacter+1 > maxCharacter ? maxCharacter : currentCharacter +1], true);
-        SetCharacterMesh(SelectorState.Left, GameManager.Instance.ContentHolder.Characters[currentCharacter + 2 > maxCharacter ? maxCharacter : currentCharacter + 2], true);
+        SetCharacterMesh(SelectorState.Back, GameManager.Instance.ContentHolder.Characters[currentLeftCharacter+1 > maxCharacter ? maxCharacter : currentLeftCharacter +1], true);
+        SetCharacterMesh(SelectorState.Left, GameManager.Instance.ContentHolder.Characters[currentLeftCharacter + 2 > maxCharacter ? maxCharacter : currentLeftCharacter + 2], true);
     }
 
     private void SetCharacterMesh(SelectorState position, CScriptableCharacter character, bool playerOne)
@@ -257,8 +290,10 @@ public class LocalLobbyManager : MenuManager
                 ChangeState(false, true);
             else if (inputValue.y < 0f)
                 ChangeState(true, true);
-
-            // Sideways
+            else if (inputValue.x > 0f && currentLeftState.Equals(LocalLobbyState.Selection))
+                ChangeCharacter(false, true);
+            else if (inputValue.x < 0f && currentLeftState.Equals(LocalLobbyState.Selection))
+                ChangeCharacter(true, true);
         }
         else if (ctx.control.device == playerTwo)
         {
@@ -266,8 +301,10 @@ public class LocalLobbyManager : MenuManager
                 ChangeState(false, false);
             else if (inputValue.y < 0f)
                 ChangeState(true, false);
-
-            // Sideways
+            else if (inputValue.x > 0f && currentRightState.Equals(LocalLobbyState.Selection))
+                ChangeCharacter(false, false);
+            else if (inputValue.x < 0f && currentRightState.Equals(LocalLobbyState.Selection))
+                ChangeCharacter(true, false);
         }
     }
 

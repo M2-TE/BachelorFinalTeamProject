@@ -145,7 +145,7 @@ public class MenuSelectionManager : MenuManager
                 onlineLobbyManager.ToggleActivation(open);
                 break;
             case MenuState.Editor:
-                GameManager.Instance.LoadScene(3);
+                GameManager.Instance.LoadScene(2);
                 break;
             case MenuState.Profile:
                 StartCoroutine(CameraSubmenuMovement(!open));
