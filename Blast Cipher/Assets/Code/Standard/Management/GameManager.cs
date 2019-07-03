@@ -31,6 +31,8 @@ public sealed class GameManager
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
+
+    private Mesh playerOneMesh, playerTwoMesh;
 	#endregion
 
 	public delegate void ExtendedUpdate();
@@ -227,6 +229,12 @@ public sealed class GameManager
 			roundCount++;
 		}
 	}
+
+    public void AssignPlayerMeshes(Mesh playerOne, Mesh playerTwo)
+    {
+        playerOneMesh = playerOne;
+        playerTwoMesh = playerTwo;
+    }
 
     private void BackToMenu()
     {

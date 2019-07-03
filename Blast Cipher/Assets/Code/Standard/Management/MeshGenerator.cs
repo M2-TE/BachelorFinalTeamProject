@@ -22,7 +22,7 @@ public class MeshGenerator
             mesh.Clear();
             mesh.vertices = vertices;
             mesh.triangles = triangles;
-            mesh.RecalculateNormals();
+            mesh = RecalculateNormals(mesh);
         }
         return mesh;
     }
@@ -90,6 +90,13 @@ public class MeshGenerator
                 return true;
         }
         return false;
+    }
+
+    private static Mesh RecalculateNormals(Mesh mesh)
+    {
+        mesh.RecalculateNormals();
+        // I don't fucking know how...
+        return mesh;
     }
 
     private static int PositionOfItemInArray<T>(T[] array, T item)
