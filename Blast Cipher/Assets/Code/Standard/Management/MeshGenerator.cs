@@ -6,6 +6,7 @@ public class MeshGenerator
 {
     public static Mesh GenerateMeshFromScriptableObject(CScriptableCharacter character)
     {
+
         return null;
     }
 }
