@@ -236,6 +236,14 @@ public sealed class GameManager
         playerTwoMesh = playerTwo;
     }
 
+    public Mesh GetMeshByPlayerID(int id)
+    {
+        Mesh m = id == 0 ? playerOneMesh : playerTwoMesh;
+        if (m == null)
+            m = MeshGenerator.GenerateMeshFromScriptableObject(ContentHolder.Characters[0]);
+        return m;
+    }
+
     private void BackToMenu()
     {
         LoadScene(4);
