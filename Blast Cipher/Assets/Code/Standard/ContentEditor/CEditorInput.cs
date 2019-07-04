@@ -21,7 +21,8 @@ public class CEditorInput
         input.CEditor.LeftStickPress.performed += LeftStickPressInput;
         input.CEditor.RightStickPress.performed += RightStickPressInput;
 
-        input.CEditor.Start.performed += BackToMenu;
+        input.CEditor.Start.performed += BackToMainMenu;
+        input.CEditor.WestButton.performed += OpenMenu;
     }
 
     public void End()
@@ -33,7 +34,8 @@ public class CEditorInput
         input.CEditor.LeftStickPress.performed -= LeftStickPressInput;
         input.CEditor.RightStickPress.performed -= RightStickPressInput;
 
-        input.CEditor.Start.performed -= BackToMenu;
+        input.CEditor.Start.performed -= BackToMainMenu;
+        input.CEditor.WestButton.performed -= OpenMenu;
     }
 
     private void DpadInput(InputAction.CallbackContext ctx)
@@ -67,13 +69,13 @@ public class CEditorInput
         RightStickPress = !RightStickPress;
     }
 
-    private void BackToMenu(InputAction.CallbackContext ctx)
+    private void OpenMenu(InputAction.CallbackContext ctx)
     {
-        GameManager.Instance.LoadScene(4);
+        LeftButton = !LeftButton;
     }
 
-    public override string ToString()
+    private void BackToMainMenu(InputAction.CallbackContext ctx)
     {
-        return "Dpad[" + Dpad.ToString() + "] | LeftStick[" + LeftStick + "] | RightStick[" + RightStick + "] | LeftShoulder[" + (LeftShoulder ? "true" : "false") + "] | RightShoulder[" + (RightShoulder ? "true" : "false") + "] | LeftStickPress[" + (RightStickPress ? "true" : "false") + "] | RightStickPress[" + (RightStickPress ? "true" : "false") + "] | LeftTrigger[" + LeftTrigger + "] | RightTrigger[" + RightTrigger  + "] | UpButton[" + (UpButton ? "true" : "false") + "] | DownButton[" + (DownButton ? "true" : "false") + "] | LeftButton[" + (LeftButton ? "true" : "false") + "] | RightButton[" + (RightButton ? "true" : "false") + "] | Select[" + (Select ? "true" : "false") + "] | Start[" + (StartButton ? "true" : "false") + "]";
+        GameManager.Instance.LoadScene(0);
     }
 }

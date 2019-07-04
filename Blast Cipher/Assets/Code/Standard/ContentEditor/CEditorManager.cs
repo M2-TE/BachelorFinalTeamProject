@@ -10,7 +10,7 @@ public class CEditorManager
     public static CEditorManager Instance { get => instance ?? (instance = new CEditorManager()); }
 
     private CEditorManagerBootstrapper bootstrapper;
-    public CEditorInput cEditorInput { get; private set; }
+    public CEditorInput EditorInput { get; private set; }
 
     private List<Vector3Int> cPositions = new List<Vector3Int>();
     private List<GameObject> cCubes = new List<GameObject>();
@@ -25,8 +25,8 @@ public class CEditorManager
     internal void RegisterBootstrapper(CEditorManagerBootstrapper bootstrapper)
     {
         this.bootstrapper = bootstrapper;
-        cEditorInput = new CEditorInput();
-        cEditorInput.Start(this.bootstrapper.Input);
+        EditorInput = new CEditorInput();
+        EditorInput.Start(this.bootstrapper.Input);
         bootstrapper.Input.General.DPadInput.performed += ChangeOperatingPosition;
         bootstrapper.Input.CEditor.LeftShoulder.performed += DecreaseOperationHeight;
         bootstrapper.Input.CEditor.RightShoulder.performed += IncreaseOperatingHeight;
@@ -37,14 +37,14 @@ public class CEditorManager
     }
     internal void UnregisterBootstrapper()
     {
-        cEditorInput.End();
+        EditorInput.End();
         bootstrapper.Input.General.DPadInput.performed -= ChangeOperatingPosition;
         bootstrapper.Input.CEditor.LeftShoulder.performed -= DecreaseOperationHeight;
         bootstrapper.Input.CEditor.RightShoulder.performed -= IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed -= AddCube;
         bootstrapper.Input.CEditor.EastButton.performed -= RemoveCube;
         bootstrapper.Input.CEditor.NorthButton.performed -= SaveCharacter;
-        cEditorInput = null;
+        EditorInput = null;
         bootstrapper = null;
     }
 
@@ -61,6 +61,11 @@ public class CEditorManager
         bootstrapper.LookDirection.text = bootstrapper.CamMovement.LookingAt.ToString();
     }
 
+    private void OpenMenu(InputAction.CallbackContext ctx)
+    {
+
+    }
+
     private void ChangeOperatingHeight(float newHeight)
     {
         ClearDrawings();
@@ -70,7 +75,7 @@ public class CEditorManager
 
     private void IncreaseOperatingHeight(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (buttonDelay > 0 || CEditorManager.Instance.EditorInput.LeftButton)
             return;
         else
             buttonDelay = bootstrapper.ButtonDelayAmount;
@@ -79,7 +84,7 @@ public class CEditorManager
 
     private void DecreaseOperationHeight(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (buttonDelay > 0 ||  CEditorManager.Instance.EditorInput.LeftButton)
             return;
         else
             buttonDelay = bootstrapper.ButtonDelayAmount;
@@ -96,7 +101,7 @@ public class CEditorManager
 
     private void ChangeOperatingPosition(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (buttonDelay > 0 || CEditorManager.Instance.EditorInput.LeftButton)
             return;
         else
             buttonDelay = bootstrapper.ButtonDelayAmount;
@@ -133,6 +138,8 @@ public class CEditorManager
 
     private void AddCube(InputAction.CallbackContext ctx)
     {
+        if (CEditorManager.Instance.EditorInput.LeftButton)
+            return;
         if (!cPositions.Contains(ConvertVec(currentOperatingPosition)))
         {
             cPositions.Add(ConvertVec(currentOperatingPosition));
