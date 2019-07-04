@@ -52,6 +52,7 @@ public class CEditorManager
     {
         DrawGutter(currentOperatingHeight, bootstrapper.Dimension,bootstrapper.Dimension);
         DrawWireframe(currentOperatingPosition);
+        ManageMenu();
     }
 
     internal void CEditorUpdate()
@@ -61,9 +62,9 @@ public class CEditorManager
         bootstrapper.LookDirection.text = bootstrapper.CamMovement.LookingAt.ToString();
     }
 
-    private void OpenMenu(InputAction.CallbackContext ctx)
+    internal void ManageMenu()
     {
-
+        bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
     }
 
     private void ChangeOperatingHeight(float newHeight)
@@ -75,7 +76,7 @@ public class CEditorManager
 
     private void IncreaseOperatingHeight(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0 || CEditorManager.Instance.EditorInput.LeftButton)
+        if (buttonDelay > 0 || EditorInput.LeftButton)
             return;
         else
             buttonDelay = bootstrapper.ButtonDelayAmount;
@@ -84,7 +85,7 @@ public class CEditorManager
 
     private void DecreaseOperationHeight(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0 ||  CEditorManager.Instance.EditorInput.LeftButton)
+        if (buttonDelay > 0 ||  EditorInput.LeftButton)
             return;
         else
             buttonDelay = bootstrapper.ButtonDelayAmount;
@@ -101,14 +102,23 @@ public class CEditorManager
 
     private void ChangeOperatingPosition(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0 || CEditorManager.Instance.EditorInput.LeftButton)
+        if (buttonDelay > 0)
             return;
         else
             buttonDelay = bootstrapper.ButtonDelayAmount;
-        Vector2 input = ctx.ReadValue<Vector2>();
 
+        Vector2 input = ctx.ReadValue<Vector2>();
         int y = 0;
         int x = 0;
+
+        if (EditorInput.LeftButton)
+        {
+            y = (int)input.y;
+            if (y != 0)
+                bootstrapper.EditorMenu.MenuPosition = y < 0 ? (int)(Mathf.Max(bootstrapper.EditorMenu.MenuPosition - 1, 0)) : (int)(Mathf.Min(bootstrapper.EditorMenu.MenuOptions.Length - 1, bootstrapper.EditorMenu.MenuPosition + 1));
+            return;
+        }
+
 
         switch (bootstrapper.CamMovement.LookingAt)
         {
