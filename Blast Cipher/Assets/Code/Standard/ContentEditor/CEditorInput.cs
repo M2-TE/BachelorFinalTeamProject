@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
@@ -21,7 +22,6 @@ public class CEditorInput
         input.CEditor.LeftStickPress.performed += LeftStickPressInput;
         input.CEditor.RightStickPress.performed += RightStickPressInput;
 
-        input.CEditor.Start.performed += BackToMainMenu;
         input.CEditor.WestButton.performed += OpenMenu;
     }
 
@@ -34,7 +34,6 @@ public class CEditorInput
         input.CEditor.LeftStickPress.performed -= LeftStickPressInput;
         input.CEditor.RightStickPress.performed -= RightStickPressInput;
 
-        input.CEditor.Start.performed -= BackToMainMenu;
         input.CEditor.WestButton.performed -= OpenMenu;
     }
 
@@ -75,7 +74,13 @@ public class CEditorInput
         CEditorManager.Instance.ManageMenu();
     }
 
-    private void BackToMainMenu(InputAction.CallbackContext ctx)
+    public void OpenMenu()
+    {
+        LeftButton = !LeftButton;
+        CEditorManager.Instance.ManageMenu();
+    }
+
+    public void BackToMainMenu()
     {
         GameManager.Instance.LoadScene(0);
     }

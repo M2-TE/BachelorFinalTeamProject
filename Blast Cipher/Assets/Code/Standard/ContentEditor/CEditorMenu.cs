@@ -44,4 +44,30 @@ public class CEditorMenu : MonoBehaviour
         MenuOptions[current].color = HighlightedColor;
     }
 
+    public void Confirm(CEditorManager manager)
+    {
+        switch (MenuPosition)
+        {
+            case 0:
+                manager.EditorInput.OpenMenu();
+                break;
+            case 1:
+                manager.ReloadScene();
+                break;
+            case 3:
+                manager.SaveCharacter();
+                break;
+            case 6:
+                manager.SaveCharacter();
+                manager.EditorInput.BackToMainMenu();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void Decline(CEditorManager manager)
+    {
+        manager.EditorInput.OpenMenu();
+    }
 }

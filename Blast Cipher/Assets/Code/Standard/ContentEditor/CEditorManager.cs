@@ -32,9 +32,9 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed += IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed += AddCube;
         bootstrapper.Input.CEditor.EastButton.performed += RemoveCube;
-        bootstrapper.Input.CEditor.NorthButton.performed += SaveCharacter;
         CEditorStart();
     }
+
     internal void UnregisterBootstrapper()
     {
         EditorInput.End();
@@ -43,7 +43,6 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed -= IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed -= AddCube;
         bootstrapper.Input.CEditor.EastButton.performed -= RemoveCube;
-        bootstrapper.Input.CEditor.NorthButton.performed -= SaveCharacter;
         EditorInput = null;
         bootstrapper = null;
     }
@@ -65,6 +64,21 @@ public class CEditorManager
     internal void ManageMenu()
     {
         bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
+    }
+
+    internal void SaveCharacter()
+    {
+        CScriptableCharacter character = ScriptableObject.CreateInstance<CScriptableCharacter>();
+        character.CharacterScaling = GetCharacterScaling();
+        character.CubePositions = cPositions.ToArray();
+        character.GenerateNewGuid();
+        GameManager.Instance.ContentHolder.AddCharacter(character);
+        GameManager.Instance.SaveStreamingAssets();
+    }
+
+    internal void ReloadScene()
+    {
+        GameManager.Instance.LoadScene(2);
     }
 
     private void ChangeOperatingHeight(float newHeight)
@@ -115,7 +129,7 @@ public class CEditorManager
         {
             y = (int)input.y;
             if (y != 0)
-                bootstrapper.EditorMenu.MenuPosition = y < 0 ? (int)(Mathf.Max(bootstrapper.EditorMenu.MenuPosition - 1, 0)) : (int)(Mathf.Min(bootstrapper.EditorMenu.MenuOptions.Length - 1, bootstrapper.EditorMenu.MenuPosition + 1));
+                bootstrapper.EditorMenu.MenuPosition = y < 0 ? (int)(Mathf.Min(bootstrapper.EditorMenu.MenuOptions.Length - 1, bootstrapper.EditorMenu.MenuPosition + 1)) : (int)(Mathf.Max(bootstrapper.EditorMenu.MenuPosition - 1, 0));
             return;
         }
 
@@ -149,7 +163,10 @@ public class CEditorManager
     private void AddCube(InputAction.CallbackContext ctx)
     {
         if (CEditorManager.Instance.EditorInput.LeftButton)
+        {
+            bootstrapper.EditorMenu.Confirm(this);
             return;
+        }
         if (!cPositions.Contains(ConvertVec(currentOperatingPosition)))
         {
             cPositions.Add(ConvertVec(currentOperatingPosition));
@@ -163,6 +180,11 @@ public class CEditorManager
 
     private void RemoveCube(InputAction.CallbackContext ctx)
     {
+        if (CEditorManager.Instance.EditorInput.LeftButton)
+        {
+            bootstrapper.EditorMenu.Decline(this);
+            return;
+        }
         if (cPositions.Contains(ConvertVec(currentOperatingPosition)))
         {
             int index = cPositions.IndexOf(ConvertVec(currentOperatingPosition));
@@ -173,16 +195,6 @@ public class CEditorManager
         }
         else
             Debug.Log("Nothing to Remove");
-    }
-
-    private void SaveCharacter(InputAction.CallbackContext ctx)
-    {
-        CScriptableCharacter character = ScriptableObject.CreateInstance<CScriptableCharacter>();
-        character.CharacterScaling = GetCharacterScaling();
-        character.CubePositions = cPositions.ToArray();
-        character.GenerateNewGuid();
-        GameManager.Instance.ContentHolder.AddCharacter(character);
-        GameManager.Instance.SaveStreamingAssets();
     }
 
     private int GetCharacterScaling()
