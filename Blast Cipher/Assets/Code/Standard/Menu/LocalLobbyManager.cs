@@ -300,8 +300,6 @@ public class LocalLobbyManager : MenuManager
 
         SelectorState PreemptiveState = (int)(next + characterChange) > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? next - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (int)(next + characterChange) < 0 ? next + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (next + characterChange);
 
-
-        Debug.Log("CharacterChanged to: " + nextCharacter + " At " + PreemptiveState.ToString() + " Wheeldirection: "+ characterChange);
         SetCharacterMesh(PreemptiveState, nextCharacter, leftSide);
     }
 

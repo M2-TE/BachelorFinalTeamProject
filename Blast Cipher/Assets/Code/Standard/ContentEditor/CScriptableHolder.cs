@@ -15,8 +15,31 @@ public class CScriptableHolder : ScriptableObject
 
     public void AddCharacter(CScriptableCharacter character)
     {
+        bool existingChar = false;
+        foreach (var c in Characters)
+        {
+            if (c.CharacterID.Equals(character.CharacterID))
+            {
+                existingChar = true;
+                Characters.Remove(c);
+            }
+        }
         Characters.Add(character);
-        CharacterPaths.Add("/Characters/" + character.CharacterID + ".json");
+        if (!existingChar)
+            CharacterPaths.Add("/Characters/" + character.CharacterID + ".json");
+
+    }
+
+    public void RemoveCharacter(CScriptableCharacter character)
+    {
+        foreach (var c in Characters)
+        {
+            if (c.CharacterID.Equals(character.CharacterID))
+            {
+                Characters.Remove(c);
+                CharacterPaths.Remove("/Characters/" + c.CharacterID + ".json");
+            }
+        }
     }
 
     public void AddMap(CScriptableMap map)

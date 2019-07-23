@@ -54,11 +54,17 @@ public class CEditorMenu : MonoBehaviour
             case 1:
                 manager.ReloadScene();
                 break;
+            case 2:
+                manager.CopyCharacter();
+                break;
             case 3:
                 manager.SaveCharacter();
                 break;
+            case 4:
+                manager.DeleteCharacter();
+                break;
+            case 5:
             case 6:
-                manager.SaveCharacter();
                 manager.EditorInput.BackToMainMenu();
                 break;
             default:

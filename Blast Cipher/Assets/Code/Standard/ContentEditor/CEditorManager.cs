@@ -12,6 +12,8 @@ public class CEditorManager
     private CEditorManagerBootstrapper bootstrapper;
     public CEditorInput EditorInput { get; private set; }
 
+    private CScriptableCharacter character;
+
     private List<Vector3Int> cPositions = new List<Vector3Int>();
     private List<GameObject> cCubes = new List<GameObject>();
 
@@ -52,6 +54,8 @@ public class CEditorManager
         DrawGutter(currentOperatingHeight, bootstrapper.Dimension,bootstrapper.Dimension);
         DrawWireframe(currentOperatingPosition);
         ManageMenu();
+        character = ScriptableObject.CreateInstance<CScriptableCharacter>();
+        character.GenerateNewGuid();
     }
 
     internal void CEditorUpdate()
@@ -68,12 +72,25 @@ public class CEditorManager
 
     internal void SaveCharacter()
     {
-        CScriptableCharacter character = ScriptableObject.CreateInstance<CScriptableCharacter>();
-        character.CharacterScaling = GetCharacterScaling();
-        character.CubePositions = cPositions.ToArray();
+        if(cPositions.Count > 0)
+        {
+            character.CharacterScaling = GetCharacterScaling();
+            character.Offset = GetCharacterOffset();
+            character.CubePositions = cPositions.ToArray();
+            GameManager.Instance.ContentHolder.AddCharacter(character);
+            GameManager.Instance.SaveStreamingAssets();
+        }
+    }
+
+    internal void DeleteCharacter()
+    {
+        GameManager.Instance.ContentHolder.RemoveCharacter(character);
+    }
+
+    internal void CopyCharacter()
+    {
+        SaveCharacter();
         character.GenerateNewGuid();
-        GameManager.Instance.ContentHolder.AddCharacter(character);
-        GameManager.Instance.SaveStreamingAssets();
     }
 
     internal void ReloadScene()
@@ -199,7 +216,7 @@ public class CEditorManager
 
     private int GetCharacterScaling()
     {
-        int negY = 0, posY = 0, negX = 0, posX = 0, negZ = 0, posZ = 0;
+        int negY = cPositions[0].y, posY = cPositions[0].y, negX = cPositions[0].x, posX = cPositions[0].x, negZ = cPositions[0].z, posZ = cPositions[0].z;
         foreach (var item in cPositions)
         {
             negY = negY > item.y ? item.y : negY;
@@ -218,6 +235,24 @@ public class CEditorManager
         scaling = scaling < x ? x : scaling;
         scaling = scaling < z ? z : scaling;
         return scaling;
+    }
+
+    private Vector3 GetCharacterOffset()
+    {
+        int negY = cPositions[0].y, negX = cPositions[0].x, posX = cPositions[0].x, negZ = cPositions[0].z, posZ = cPositions[0].z;
+        foreach (var item in cPositions)
+        {
+            negY = negY > item.y ? item.y : negY;
+            negX = negX > item.x ? item.x : negX;
+            posX = posX < item.x ? item.x : posX;
+            negZ = negZ > item.z ? item.z : negZ;
+            posZ = posZ < item.z ? item.z : posZ;
+        }
+        int x = posX - negX + 1;
+        int z = posZ - negZ + 1;
+        float xOff = x!= 1 ? (negX + ((x-1f) / 2f)) : 0f;
+        float zOff = z!= 1 ? (negZ + ((z-1f) / 2f)) : 0f;
+        return new Vector3(xOff,negY, zOff);
     }
 
     #region LineDrawingMethods

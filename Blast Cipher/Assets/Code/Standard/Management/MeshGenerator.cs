@@ -17,7 +17,7 @@ public class MeshGenerator
         }
         if (cubesMesh != null)
         {
-            vertices = ExtractVerticesFromCubicMesh(cubesMesh, character.CharacterScaling);
+            vertices = ExtractVerticesFromCubicMesh(cubesMesh, character.CharacterScaling, character.Offset);
             triangles = ExtractTrianglesFromCubicMesh(cubesMesh, character, vertices);
             mesh.Clear();
             mesh.vertices = vertices;
@@ -27,14 +27,14 @@ public class MeshGenerator
         return mesh;
     }
 
-    private static Vector3[] ExtractVerticesFromCubicMesh(CCubeMesh[] cubesMesh, int scaling)
+    private static Vector3[] ExtractVerticesFromCubicMesh(CCubeMesh[] cubesMesh, int scaling, Vector3 offset)
     {
         List<Vector3> verts = new List<Vector3>();
         for (int amount = 0; amount < cubesMesh.Length; amount++)
         {
             for (int pos = 0; pos < 8; pos++)
             {
-                Vector3 vec = ScaleVector3((cubesMesh[amount].Vertices[pos]),scaling);
+                Vector3 vec = ScaleVector3((cubesMesh[amount].Vertices[pos]-offset),scaling);
                 if (!verts.Contains(vec))
                     verts.Add(vec);
             }
@@ -52,7 +52,7 @@ public class MeshGenerator
                 for (int pos = 0; pos < 6; pos++, position++)
                 {
                     if (!HasNeighbor(direction, character.CubePositions[amount],character))
-                        tris.Add(PositionOfItemInArray(vertices, ScaleVector3(cubesMesh[amount].Vertices[cubesMesh[amount].Triangles[position]], character.CharacterScaling)));
+                        tris.Add(PositionOfItemInArray(vertices, ScaleVector3(cubesMesh[amount].Vertices[cubesMesh[amount].Triangles[position]] - character.Offset, character.CharacterScaling)));
                 }
             }
         }
