@@ -59,23 +59,26 @@ public sealed class GameManager
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
+		// TODO start scene transition
+
 		// unload all unwanted scenes
 		Scene scene;
 		for (int i = 0; i < SceneManager.sceneCount; i++)
 		{
 			scene = SceneManager.GetSceneAt(i);
+			SceneManager.UnloadSceneAsync(scene.buildIndex, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
 
-			if (scene.buildIndex == asyncEssentials.buildIndex)
-			{
-				// clean up leftover projectiles that, for some fucking reason, end up in this scene sometimes
-				var objects = scene.GetRootGameObjects();
-				for (int k = 0; k < objects.Length; k++)
-				{
-					if (objects[k].CompareTag("Projectile")) MonoBehaviour.Destroy(objects[k]);
-				}
-				continue;
-			}
-			else SceneManager.UnloadSceneAsync(scene.buildIndex, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+			//if (scene.buildIndex == asyncEssentials.buildIndex)
+			//{
+			//	// clean up leftover projectiles that, for some fucking reason, end up in this scene sometimes
+			//	var objects = scene.GetRootGameObjects();
+			//	for (int k = 0; k < objects.Length; k++)
+			//	{
+			//		if (objects[k].CompareTag("Projectile")) MonoBehaviour.Destroy(objects[k]);
+			//	}
+			//	continue;
+			//}
+			//else 
 		}
 
 		// load new scene
@@ -83,6 +86,8 @@ public sealed class GameManager
 
 		// wait until new scene is fully loaded
 		while (!operation.isDone) yield return null;
+
+		// TODO end scene transition
 
 		// set new scene active after single frame delay
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
@@ -112,35 +117,16 @@ public sealed class GameManager
 		return go;
 	}
 
-	//public void StartNextRound()
-	//{
-	//	if (!nextRoundStarterInProgress)
-	//	{
-	//		nextRoundStarterInProgress = true;
-	//		//playerInputsActive = false;
-	//		if(roundCount != 0 && roundCount % 3 == 0)
-	//		{
-	//			MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
-	//		}
-	//		else
-	//		{
-	//			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar);
-	//		}
-	//		bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
-
-	//		roundCount++;
-	//	}
-	//}
-
 	public void StartNextRound()
 	{
 		if (!nextRoundStarterInProgress)
 		{
-            //if(roundCount >= maxRounds-1)
+            //if(roundCount >= maxRounds - 1)
             //{
             //    BackToMenu();
             //    return;
             //}
+
 			nextRoundStarterInProgress = true;
 			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
 			{

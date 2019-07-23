@@ -50,7 +50,7 @@ public class ServerBehaviour : MonoBehaviour
 
 		// AcceptNewConnections
 		NetworkConnection c;
-		while ((c = m_Driver.Accept()) != default(NetworkConnection))
+		while ((c = m_Driver.Accept()) != default)
 		{
 			m_Connections.Add(c);
 			Debug.Log("Accepted a connection");
@@ -83,7 +83,7 @@ public class ServerBehaviour : MonoBehaviour
 				else if (cmd == NetworkEvent.Type.Disconnect)
 				{
 					Debug.Log("Client disconnected from server");
-					m_Connections[i] = default(NetworkConnection);
+					m_Connections[i] = default;
 				}
 			}
 		}

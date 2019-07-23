@@ -179,7 +179,6 @@ public sealed class MusicManager : Manager<MusicManager>
 		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
 		if (transitionIntensity)
 		{
-
 			snapshot.TransitionTo(standardInDuration);
 		}
 		
