@@ -103,6 +103,7 @@ public class CEditorManager
 
     internal void ReloadScene()
     {
+        EditorInput.OpenMenu();
         GameManager.Instance.LoadScene(2);
     }
 
