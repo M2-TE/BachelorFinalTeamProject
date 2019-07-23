@@ -25,37 +25,37 @@ public class CCubeMesh
                   0,2,3,}),
         new CQuadMesh(new Vector3[] //Left
         {
-            vertices[2],
-            vertices[3],
-            vertices[6],
-            vertices[7]
+            vertices[10],
+            vertices[11],
+            vertices[14],
+            vertices[15]
         },
         new int[]{0,2,1,
                   1,2,3,}),
         new CQuadMesh(new Vector3[] // Right
         {
-            vertices[0],
-            vertices[1],
-            vertices[4],
-            vertices[5]
+            vertices[8],
+            vertices[9],
+            vertices[12],
+            vertices[13]
         },
         new int[]{1,2,0,
                   1,3,2,}),
         new CQuadMesh(new Vector3[] //UP
         {
-            vertices[4],
-            vertices[5],
-            vertices[6],
-            vertices[7]
+            vertices[20],
+            vertices[21],
+            vertices[22],
+            vertices[23]
         },
         new int[]{0,1,2,
                   3,2,1,}),
         new CQuadMesh(new Vector3[] //Down
         {
-            vertices[0],
-            vertices[1],
-            vertices[2],
-            vertices[3]
+            vertices[16],
+            vertices[17],
+            vertices[18],
+            vertices[19]
         },
         new int[]{2,1,0,
                   1,2,3,})
@@ -69,6 +69,22 @@ public class CCubeMesh
             new Vector3(-0.5f,1f,0.5f),
             new Vector3(0.5f,1f,-0.5f),
             new Vector3(0.5f,1f,0.5f),
+            new Vector3(-0.5f,0,-0.5f),
+            new Vector3(-0.5f,0,0.5f),
+            new Vector3(0.5f,0,-0.5f),
+            new Vector3(0.5f,0,0.5f),
+            new Vector3(-0.5f,1f,-0.5f),
+            new Vector3(-0.5f,1f,0.5f),
+            new Vector3(0.5f,1f,-0.5f),
+            new Vector3(0.5f,1f,0.5f),
+            new Vector3(-0.5f,0,-0.5f),
+            new Vector3(-0.5f,0,0.5f),
+            new Vector3(0.5f,0,-0.5f),
+            new Vector3(0.5f,0,0.5f),
+            new Vector3(-0.5f,1f,-0.5f),
+            new Vector3(-0.5f,1f,0.5f),
+            new Vector3(0.5f,1f,-0.5f),
+            new Vector3(0.5f,1f,0.5f)
         };
     private Vector3 position;
 
@@ -85,7 +101,7 @@ public class CCubeMesh
     {
         get
         {
-            Vector3[] verts = new Vector3[8];
+            Vector3[] verts = new Vector3[24];
 
             for (int pos = 0; pos < vertices.Length; pos++)
             {

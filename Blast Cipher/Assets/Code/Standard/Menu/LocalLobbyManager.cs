@@ -48,10 +48,14 @@ public class LocalLobbyManager : MenuManager
         if (rule)
         {
             rules = rule;
-            GameManager.Instance.AssignPlayerMeshes(MeshGenerator.GenerateMeshFromScriptableObject(GameManager.Instance.ContentHolder.Characters[currentLeftCharacter]), MeshGenerator.GenerateMeshFromScriptableObject(GameManager.Instance.ContentHolder.Characters[currentRightCharacter]));
+            GameManager.Instance.AssignPlayerMeshes(MeshGenerator.GenerateMeshFromScriptableObject(GameManager.Instance.ContentHolder.Characters[currentLeftCharacter]), MeshGenerator.GenerateMeshFromScriptableObject(GameManager.Instance.ContentHolder.Characters[currentRightCharacter]),null,null);
+            GameManager.Instance.AssignPlayerColors(GameManager.Instance.ContentHolder.Characters[currentLeftCharacter].CharacterColor, GameManager.Instance.ContentHolder.Characters[currentRightCharacter].CharacterColor, 0, 0);
         }
         else
-            GameManager.Instance.AssignPlayerMeshes(null, null);
+        {
+            GameManager.Instance.AssignPlayerMeshes(null, null,null,null);
+            GameManager.Instance.AssignPlayerColors(0, 0, 0, 0);
+        }
        mainManager.ManageSubmenu(rule);
         return rule;
     }
@@ -313,11 +317,13 @@ public class LocalLobbyManager : MenuManager
                 {
                     selectionBodyRight.mesh.Clear();
                     selectionBodyRight.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    selectionBodyRight.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 else
                 {
                     secondSelectionBodyRight.mesh.Clear();
                     secondSelectionBodyRight.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    secondSelectionBodyRight.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 break;
             case SelectorState.Front:
@@ -325,11 +331,13 @@ public class LocalLobbyManager : MenuManager
                 {
                     selectionBodyFront.mesh.Clear();
                     selectionBodyFront.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    selectionBodyFront.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 else
                 {
                     secondSelectionBodyFront.mesh.Clear();
                     secondSelectionBodyFront.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    secondSelectionBodyFront.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 break;
             case SelectorState.Left:
@@ -337,11 +345,13 @@ public class LocalLobbyManager : MenuManager
                 {
                     selectionBodyLeft.mesh.Clear();
                     selectionBodyLeft.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    selectionBodyLeft.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 else
                 {
                     secondSelectionBodyLeft.mesh.Clear();
                     secondSelectionBodyLeft.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    secondSelectionBodyLeft.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 break;
             case SelectorState.Back:
@@ -349,11 +359,13 @@ public class LocalLobbyManager : MenuManager
                 {
                     selectionBodyBack.mesh.Clear();
                     selectionBodyBack.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    selectionBodyBack.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 else
                 {
                     secondSelectionBodyBack.mesh.Clear();
                     secondSelectionBodyBack.mesh = MeshGenerator.GenerateMeshFromScriptableObject(character);
+                    secondSelectionBodyBack.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[character.CharacterColor];
                 }
                 break;
             default:

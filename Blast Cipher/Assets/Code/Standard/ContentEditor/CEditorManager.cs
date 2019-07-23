@@ -82,6 +82,7 @@ public class CEditorManager
         if(cPositions.Count > 0)
         {
             character.CharacterScaling = GetCharacterScaling();
+            character.CharacterColor = currentCharColor;
             character.Offset = GetCharacterOffset();
             character.CubePositions = cPositions.ToArray();
             GameManager.Instance.ContentHolder.AddCharacter(character);
@@ -186,12 +187,25 @@ public class CEditorManager
 
     private void IncreaseColor(InputAction.CallbackContext ctx)
     {
-
+        currentCharColor++;
+        currentCharColor = currentCharColor >= GameManager.Instance.CharacterMaterials.Length ? 0 : currentCharColor;
+        ChangeColor();
     }
 
     private void DecreaseColor(InputAction.CallbackContext ctx)
     {
+        currentCharColor--;
+        currentCharColor = currentCharColor < 0 ? GameManager.Instance.CharacterMaterials.Length - 1 : currentCharColor;
+        ChangeColor();
+    }
 
+    private void ChangeColor()
+    {
+        Material nextMaterial = GameManager.Instance.CharacterMaterials[currentCharColor];
+        foreach (var cube in cCubes)
+        {
+            cube.GetComponent<MeshRenderer>().material = nextMaterial;
+        }
     }
     
     private void AddCube(InputAction.CallbackContext ctx)
@@ -206,6 +220,7 @@ public class CEditorManager
             cPositions.Add(ConvertVec(currentOperatingPosition));
             var primCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             primCube.transform.position = CurrentOperatingPosition;
+            primCube.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[currentCharColor];
             cCubes.Add(primCube);
         }
         else

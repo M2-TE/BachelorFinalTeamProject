@@ -7,7 +7,7 @@ using UnityEngine;
 public class CScriptableCharacter : ScriptableObject
 {
     public string CharacterID;
-    public int CharacterScaling;
+    public int CharacterScaling, CharacterColor;
     public Vector3 Offset;
     public Vector3Int[] CubePositions;
 

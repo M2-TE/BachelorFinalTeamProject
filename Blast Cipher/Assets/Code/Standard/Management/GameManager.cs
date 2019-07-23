@@ -32,7 +32,8 @@ public sealed class GameManager
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
-    private Mesh playerOneMesh, playerTwoMesh;
+    private Mesh playerOneMesh, playerTwoMesh, playerThreeMesh, playerFourMesh;
+    private int playerOneColor, playerTwoColor, playerThreeColor, playerFourColor;
 	#endregion
 
 	public delegate void ExtendedUpdate();
@@ -231,17 +232,69 @@ public sealed class GameManager
 		}
 	}
 
-    public void AssignPlayerMeshes(Mesh playerOne, Mesh playerTwo)
+    public void AssignPlayerMeshes(Mesh playerOne, Mesh playerTwo, Mesh playerThree, Mesh playerFour)
     {
         playerOneMesh = playerOne;
         playerTwoMesh = playerTwo;
+        playerThreeMesh = playerThree;
+        playerFourMesh = playerFour;
+    }
+
+    public void AssignPlayerColors(int colorOne, int colorTwo, int colorThree, int colorFour)
+    {
+        this.playerOneColor = colorOne;
+        this.playerTwoColor = colorTwo;
+        this.playerThreeColor = colorThree;
+        this.playerFourColor = colorFour;
     }
 
     public Mesh GetMeshByPlayerID(int id)
     {
-        Mesh m = id == 0 ? playerOneMesh : playerTwoMesh;
+        Mesh m = null;
+        switch (id)
+        {
+            case 0:
+                m = playerOneMesh;
+                break;
+            case 1:
+                m = playerTwoMesh;
+                break;
+            case 2:
+                m = playerThreeMesh;
+                break;
+            case 3:
+                m = playerFourMesh;
+                break;
+            default:
+                break;
+        }
         if (m == null)
             m = MeshGenerator.GenerateMeshFromScriptableObject(ContentHolder.Characters[0]);
+        return m;
+    }
+
+    public Material GetMaterialByPlayerID(int id)
+    {
+        Material m = null;
+        switch (id)
+        {
+            case 0:
+                m = CharacterMaterials[playerOneColor];
+                break;
+            case 1:
+                m = CharacterMaterials[playerTwoColor];
+                break;
+            case 2:
+                m = CharacterMaterials[playerThreeColor];
+                break;
+            case 3:
+                m = CharacterMaterials[playerFourColor];
+                break;
+            default:
+                break;
+        }
+        if (m == null)
+            m = CharacterMaterials[0];
         return m;
     }
 
