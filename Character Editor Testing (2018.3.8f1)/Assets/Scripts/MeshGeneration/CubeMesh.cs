@@ -61,14 +61,14 @@ public class CubeMesh
                   1,2,3,})
     };
     private static Vector3[] vertices = {
-            new Vector3(-0.5f,-0.5f,-0.5f),
-            new Vector3(-0.5f,-0.5f,0.5f),
-            new Vector3(0.5f,-0.5f,-0.5f),
-            new Vector3(0.5f,-0.5f,0.5f),
-            new Vector3(-0.5f,0.5f,-0.5f),
-            new Vector3(-0.5f,0.5f,0.5f),
-            new Vector3(0.5f,0.5f,-0.5f),
-            new Vector3(0.5f,0.5f,0.5f),
+            new Vector3(-0.5f,0,-0.5f),
+            new Vector3(-0.5f,0,0.5f),
+            new Vector3(0.5f,0,-0.5f),
+            new Vector3(0.5f,0,0.5f),
+            new Vector3(-0.5f,1f,-0.5f),
+            new Vector3(-0.5f,1f,0.5f),
+            new Vector3(0.5f,1f,-0.5f),
+            new Vector3(0.5f,1f,0.5f),
         };
     private Vector3 position;
 

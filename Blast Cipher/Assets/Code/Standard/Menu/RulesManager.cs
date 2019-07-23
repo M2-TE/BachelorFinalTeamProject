@@ -105,7 +105,7 @@ public class RulesManager : MenuManager
 
     private void StartLocalGame()
     {
-        GameManager.Instance.LoadScene(1);
+        GameManager.Instance.LoadScene(3);
     }
 
     public override void OnConfirmation(InputAction.CallbackContext ctx)

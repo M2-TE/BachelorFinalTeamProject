@@ -35,6 +35,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private GameObject projectilePrefab;
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
+    [SerializeField] private MeshFilter bodyMesh;
 
 	[NonSerialized] public CharacterController CharController;
 	[NonSerialized] public Vector2 MovementInput;
@@ -76,6 +77,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		camShakeManager = CamShakeManager.Instance;
 		gameManager = GameManager.Instance;
 		playerID = gameManager.RegisterPlayerCharacter(this);
+        bodyMesh.mesh = gameManager.GetMeshByPlayerID(playerID);
 		
 		CharController = GetComponent<CharacterController>();
 	}
