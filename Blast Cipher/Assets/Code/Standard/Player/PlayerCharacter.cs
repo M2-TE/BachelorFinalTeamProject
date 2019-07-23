@@ -182,6 +182,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
 			currentParryCooldown = Settings.ParryCooldown;
+
+			OneShotAudioManager.PlayOneShotAudio(Settings.ShieldConstructionSounds, transform.position);
 		}
 
 		if (Input.GetKeyDown(KeyCode.R))

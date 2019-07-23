@@ -5,6 +5,7 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class GameManagerBootstrapper : Bootstrapper
 {
+	public AudioListener EmergencyListener;
 	public MonoServer Server;
 	public MonoClient Client;
 	public PostProcessVolume PostProcessing;
@@ -28,6 +29,7 @@ public class GameManagerBootstrapper : Bootstrapper
 		//Cursor.visible = false;
 		InputMaster.Enable();
 		gameManager = GameManager.Instance;
+		EmergencyListener.enabled = false;
 	}
 
 	private void Update() => gameManager.TriggerExtendedUpdates();

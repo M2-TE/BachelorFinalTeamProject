@@ -68,37 +68,53 @@ public sealed class GameManager
 	#endregion
 
 	#region Scene Loader
-	public void LoadScene(string sceneName) => bootstrapper.StartCoroutine(LoadSceneCo(SceneManager.GetSceneByName(sceneName).buildIndex));
+	//public void LoadScene(string sceneName) => bootstrapper.StartCoroutine(LoadSceneCo(SceneManager.GetSceneByName(sceneName).buildIndex));
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
+		SceneManager.SetActiveScene(asyncEssentials);
+
+		var token = new LoadingScreenHandler.LoadingScreenProgressToken();
+		LoadingScreenHandler.ShowLoadingScreen(token);
+
+		while(!token.ScreenFullyShown) { yield return null; }
+
 		// unload all unwanted scenes
 		Scene scene;
+		List<int> scenesToUnload = new List<int>();
 		for (int i = 0; i < SceneManager.sceneCount; i++)
 		{
 			scene = SceneManager.GetSceneAt(i);
 
-			if (scene.buildIndex == asyncEssentials.buildIndex)
-			{
-				// clean up leftover projectiles that, for some fucking reason, end up in this scene sometimes
-				var objects = scene.GetRootGameObjects();
-				for (int k = 0; k < objects.Length; k++)
-				{
-					if (objects[k].CompareTag("Projectile")) MonoBehaviour.Destroy(objects[k]);
-				}
-				continue;
-			}
-			else SceneManager.UnloadSceneAsync(scene.buildIndex, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+			if (scene.buildIndex == asyncEssentials.buildIndex) continue;
+			else scenesToUnload.Add(scene.buildIndex);
 		}
 
+		// unload old scenes
+		for (int i = 0; i < scenesToUnload.Count; i++)
+		{
+			SceneManager.UnloadSceneAsync(scenesToUnload[i], UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+		}
+		bootstrapper.EmergencyListener.enabled = true;
+
 		// load new scene
-		var operation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
+		var loadOperation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
+		loadOperation.allowSceneActivation = false;
+
+		while (!token.TransitionComplete) { yield return null; } // wait until loading is starting the transition into new scene
+		loadOperation.allowSceneActivation = true; // now allow to complete loading of level
 
 		// wait until new scene is fully loaded
-		while (!operation.isDone) yield return null;
+		while (!loadOperation.isDone) { yield return null; }
+		bootstrapper.EmergencyListener.enabled = false;
 
-		// set new scene active after single frame delay
+
+		// set new scene active
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
+
+		// another smol hacc to refresh the post processing volume
+		bootstrapper.PostProcessing.gameObject.SetActive(false);
+		bootstrapper.PostProcessing.gameObject.SetActive(true);
 	}
 	#endregion
 
@@ -188,35 +204,16 @@ public sealed class GameManager
 		return go;
 	}
 
-	//public void StartNextRound()
-	//{
-	//	if (!nextRoundStarterInProgress)
-	//	{
-	//		nextRoundStarterInProgress = true;
-	//		//playerInputsActive = false;
-	//		if(roundCount != 0 && roundCount % 3 == 0)
-	//		{
-	//			MusicManager.Instance.TransitionToNextIntensity(OnNextMusicBar);
-	//		}
-	//		else
-	//		{
-	//			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar);
-	//		}
-	//		bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
-
-	//		roundCount++;
-	//	}
-	//}
-
 	public void StartNextRound()
 	{
 		if (!nextRoundStarterInProgress)
 		{
-            //if(roundCount >= maxRounds-1)
-            //{
-            //    BackToMenu();
-            //    return;
-            //}
+			if (roundCount >= maxRounds - 1)
+			{
+				BackToMenu();
+				return;
+			}
+
 			nextRoundStarterInProgress = true;
 			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
 			{
@@ -300,7 +297,7 @@ public sealed class GameManager
 
     private void BackToMenu()
     {
-        LoadScene(4);
+        LoadScene(0);
         roundCount = 0;
         maxRounds = 0;
         inputDevices[0] = null;

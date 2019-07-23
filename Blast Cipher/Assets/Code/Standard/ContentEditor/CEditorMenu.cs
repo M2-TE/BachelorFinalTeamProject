@@ -66,6 +66,7 @@ public class CEditorMenu : MonoBehaviour
             case 5:
             case 6:
                 manager.EditorInput.BackToMainMenu();
+				transform.root.gameObject.SetActive(false); // smol hack for the loading screen
                 break;
             default:
                 break;

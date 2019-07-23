@@ -20,17 +20,17 @@ MonoBehaviour:
   PortalPrefab: {fileID: 4510281192056092049, guid: 75371f8f3c1c2d9448af6747bd9be059,
     type: 3}
   ProjectileShotSounds:
-  - {fileID: 8300000, guid: 7d8a95ac94df5b64fa7aef13a9836dc4, type: 3}
-  - {fileID: 8300000, guid: 7b2b9d37cf6bcd944afd88344c2a278e, type: 3}
-  - {fileID: 8300000, guid: 56535d4100b61fa4ebdfefa69afd60a8, type: 3}
+  - {fileID: 8300000, guid: cc3816773c5162f43ac4ba5da8890e79, type: 3}
+  - {fileID: 8300000, guid: 7d1c2f3ae26af1146937f688bdc0a221, type: 3}
+  - {fileID: 8300000, guid: 6fce8d838cfd5f44a8d8fa504659d672, type: 3}
   PlayerDeathSounds:
-  - {fileID: 8300000, guid: ea16928984e20fb47a0d889814dd117c, type: 3}
+  - {fileID: 8300000, guid: 021c295203f565d4bb9af510cb45f343, type: 3}
   PlayerDashSounds:
-  - {fileID: 8300000, guid: b8f9771cbd035c34881f025a929c3bb3, type: 3}
+  - {fileID: 8300000, guid: 4848a6118093d5e41bb0333071234972, type: 3}
   PlayerStepSounds:
-  - {fileID: 8300000, guid: 224303aa1b50ab346bc28ac8586868b4, type: 3}
+  - {fileID: 8300000, guid: 43c2dd2c2b0957847a35111aa1d47fa3, type: 3}
   ShieldConstructionSounds:
-  - {fileID: 8300000, guid: de665f7fb10580a4abe8fb1c8dfda489, type: 3}
+  - {fileID: 8300000, guid: 85497abf58b42104bbcd012abe7d3e07, type: 3}
   MovespeedMod: 8
   DashCooldown: 5
   DashDuration: 0.2
