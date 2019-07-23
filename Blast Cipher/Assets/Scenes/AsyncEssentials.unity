@@ -1102,6 +1102,14 @@ MonoBehaviour:
   StandardCharacters:
   - {fileID: 11400000, guid: 27cf12b6e48957848b801bea8ad08e81, type: 2}
   - {fileID: 11400000, guid: 5a0dc3c3ef8d0f54ba0980e99037f0bd, type: 2}
+  CharacterMaterials:
+  - {fileID: 2100000, guid: 6bcc8a4887762414bbf08b3cbdff938e, type: 2}
+  - {fileID: 2100000, guid: 8157e8085a939604bb666588ad1437f1, type: 2}
+  - {fileID: 2100000, guid: 8a574c04525ec174fbca28a2f6b90d60, type: 2}
+  - {fileID: 2100000, guid: 9609f3dce9ebbba4db204dc5b822d378, type: 2}
+  - {fileID: 2100000, guid: 356d69ab4d0286442a6664d6b97ee10d, type: 2}
+  - {fileID: 2100000, guid: b97241f2f525dd04abff23646aca49d2, type: 2}
+  - {fileID: 2100000, guid: 6f92fe79c2bbef143836abc5ae750dcc, type: 2}
   shakeMagnitudeDecline: 1
 --- !u!1 &1113234640
 GameObject:

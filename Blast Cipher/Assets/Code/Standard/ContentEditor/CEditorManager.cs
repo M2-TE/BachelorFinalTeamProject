@@ -21,6 +21,8 @@ public class CEditorManager
     private Vector3 currentOperatingPosition = new Vector3(0f, 0f, 0f);
     private float buttonDelay = 0f;
 
+    private int currentCharColor = 0;
+
     public float CurrentOperatingHeight { get => currentOperatingHeight; private set => ChangeOperatingHeight(currentOperatingHeight = value); }
     public Vector3 CurrentOperatingPosition { get => currentOperatingPosition; private set => ChangeOperatingPosition(currentOperatingPosition = value); }
 
@@ -34,6 +36,8 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed += IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed += AddCube;
         bootstrapper.Input.CEditor.EastButton.performed += RemoveCube;
+        bootstrapper.Input.CEditor.WestButton.performed += DecreaseColor;
+        bootstrapper.Input.CEditor.NorthButton.performed += IncreaseColor;
         CEditorStart();
     }
 
@@ -45,6 +49,8 @@ public class CEditorManager
         bootstrapper.Input.CEditor.RightShoulder.performed -= IncreaseOperatingHeight;
         bootstrapper.Input.CEditor.SouthButton.performed -= AddCube;
         bootstrapper.Input.CEditor.EastButton.performed -= RemoveCube;
+        bootstrapper.Input.CEditor.WestButton.performed -= DecreaseColor;
+        bootstrapper.Input.CEditor.NorthButton.performed -= IncreaseColor;
         EditorInput = null;
         bootstrapper = null;
     }
@@ -53,6 +59,7 @@ public class CEditorManager
     {
         DrawGutter(currentOperatingHeight, bootstrapper.Dimension,bootstrapper.Dimension);
         DrawWireframe(currentOperatingPosition);
+        currentCharColor = 0;
         ManageMenu();
         character = ScriptableObject.CreateInstance<CScriptableCharacter>();
         character.GenerateNewGuid();
@@ -177,6 +184,16 @@ public class CEditorManager
         CurrentOperatingPosition = new Vector3(currentOperatingPosition.x + x, currentOperatingHeight, currentOperatingPosition.z + y);
     }
 
+    private void IncreaseColor(InputAction.CallbackContext ctx)
+    {
+
+    }
+
+    private void DecreaseColor(InputAction.CallbackContext ctx)
+    {
+
+    }
+    
     private void AddCube(InputAction.CallbackContext ctx)
     {
         if (CEditorManager.Instance.EditorInput.LeftButton)
@@ -254,6 +271,7 @@ public class CEditorManager
         float zOff = z!= 1 ? (negZ + ((z-1f) / 2f)) : 0f;
         return new Vector3(xOff,negY, zOff);
     }
+
 
     #region LineDrawingMethods
 

@@ -22,7 +22,7 @@ public class CEditorInput
         input.CEditor.LeftStickPress.performed += LeftStickPressInput;
         input.CEditor.RightStickPress.performed += RightStickPressInput;
 
-        input.CEditor.WestButton.performed += OpenMenu;
+        input.CEditor.Start.performed += OpenMenu;
     }
 
     public void End()
@@ -34,7 +34,7 @@ public class CEditorInput
         input.CEditor.LeftStickPress.performed -= LeftStickPressInput;
         input.CEditor.RightStickPress.performed -= RightStickPressInput;
 
-        input.CEditor.WestButton.performed -= OpenMenu;
+        input.CEditor.Start.performed -= OpenMenu;
     }
 
     private void DpadInput(InputAction.CallbackContext ctx)

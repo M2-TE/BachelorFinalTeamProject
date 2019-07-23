@@ -41,6 +41,7 @@ public sealed class GameManager
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
 
+    public Material[] CharacterMaterials => bootstrapper.CharacterMaterials;
     private CScriptableCharacter[] StandardCharacters => bootstrapper.StandardCharacters;
     private CScriptableMap[] StandardMaps => bootstrapper.StandardMaps;
 
