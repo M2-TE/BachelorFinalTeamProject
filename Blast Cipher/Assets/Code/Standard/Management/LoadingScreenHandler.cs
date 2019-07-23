@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class LoadingScreenHandler : MonoBehaviour
 {
+	public class LoadingScreenProgressToken
+	{
+		public bool ScreenFullyShown;
+	}
+
 	private static LoadingScreenHandler Instance;
 
 	[SerializeField] private Image[] miscImages;
@@ -14,12 +19,9 @@ public class LoadingScreenHandler : MonoBehaviour
 	[SerializeField] private float transitionMainDuration;
 	[SerializeField] private float transitionOutDuration;
 
+	private float startHeightY;
 	private float startPosX;
 	[SerializeField] private float endPosX;
-
-	private float startHeightY;
-
-	private bool loadingScreenEndBuffered;
 
 	private void Awake()
 	{
@@ -29,23 +31,18 @@ public class LoadingScreenHandler : MonoBehaviour
 		SetOpacities(0f);
 	}
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-			ShowLoadingScreen();
-		}
-	}
+	//private void Update()
+	//{
+	//	if (Input.GetKeyDown(KeyCode.Space))
+	//	{
+	//		ShowLoadingScreen();
+	//	}
+	//}
 
-	public static void ShowLoadingScreen()
+	public static void ShowLoadingScreen(LoadingScreenProgressToken token)
 	{
-		Instance.StartCoroutine(Instance.HandleLoadingScreen());
+		Instance.StartCoroutine(Instance.HandleLoadingScreen(token));
 		Instance.StartCoroutine(Instance.TextMover());
-	}
-
-	public static void BufferLoadingScreenEnd()
-	{
-		Instance.loadingScreenEndBuffered = true;
 	}
 
 	private IEnumerator TextMover()
@@ -68,7 +65,7 @@ public class LoadingScreenHandler : MonoBehaviour
 		}
 	}
 
-	private IEnumerator HandleLoadingScreen()
+	private IEnumerator HandleLoadingScreen(LoadingScreenProgressToken token)
 	{
 		float timer = 0f;
 		while(timer < transitionInDuration)
@@ -80,6 +77,7 @@ public class LoadingScreenHandler : MonoBehaviour
 		}
 
 		SetOpacities(1f);
+		token.ScreenFullyShown = true;
 
 		yield return new WaitForSeconds(transitionMainDuration);
 

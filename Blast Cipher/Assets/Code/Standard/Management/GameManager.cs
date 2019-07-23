@@ -55,30 +55,24 @@ public sealed class GameManager
 	#endregion
 
 	#region Scene Loader
-	public void LoadScene(string sceneName) => bootstrapper.StartCoroutine(LoadSceneCo(SceneManager.GetSceneByName(sceneName).buildIndex));
+	//public void LoadScene(string sceneName) => bootstrapper.StartCoroutine(LoadSceneCo(SceneManager.GetSceneByName(sceneName).buildIndex));
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
-		// TODO start scene transition
+		var token = new LoadingScreenHandler.LoadingScreenProgressToken();
+		LoadingScreenHandler.ShowLoadingScreen(token);
+
+		while(!token.ScreenFullyShown) { yield return null; }
 
 		// unload all unwanted scenes
 		Scene scene;
+		List<int> scenesToUnload = new List<int>();
 		for (int i = 0; i < SceneManager.sceneCount; i++)
 		{
 			scene = SceneManager.GetSceneAt(i);
-			SceneManager.UnloadSceneAsync(scene.buildIndex, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
 
-			//if (scene.buildIndex == asyncEssentials.buildIndex)
-			//{
-			//	// clean up leftover projectiles that, for some fucking reason, end up in this scene sometimes
-			//	var objects = scene.GetRootGameObjects();
-			//	for (int k = 0; k < objects.Length; k++)
-			//	{
-			//		if (objects[k].CompareTag("Projectile")) MonoBehaviour.Destroy(objects[k]);
-			//	}
-			//	continue;
-			//}
-			//else 
+			if (scene.buildIndex == asyncEssentials.buildIndex) continue;
+			else scenesToUnload.Add(scene.buildIndex);
 		}
 
 		// load new scene
@@ -87,7 +81,11 @@ public sealed class GameManager
 		// wait until new scene is fully loaded
 		while (!operation.isDone) yield return null;
 
-		// TODO end scene transition
+		// unload old scenes
+		for(int i = 0; i < scenesToUnload.Count; i++)
+		{
+			SceneManager.UnloadSceneAsync(scenesToUnload[i], UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+		}
 
 		// set new scene active after single frame delay
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
@@ -121,11 +119,11 @@ public sealed class GameManager
 	{
 		if (!nextRoundStarterInProgress)
 		{
-            //if(roundCount >= maxRounds - 1)
-            //{
-            //    BackToMenu();
-            //    return;
-            //}
+			if (roundCount >= maxRounds - 1)
+			{
+				BackToMenu();
+				return;
+			}
 
 			nextRoundStarterInProgress = true;
 			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
@@ -144,7 +142,7 @@ public sealed class GameManager
 
     private void BackToMenu()
     {
-        LoadScene(4);
+        LoadScene(0);
         roundCount = 0;
         maxRounds = 0;
         inputDevices[0] = null;
