@@ -9,6 +9,7 @@ public class LoadingScreenHandler : MonoBehaviour
 	{
 		public bool ScreenFullyShown;
 		public bool TransitionComplete;
+		public bool LoadingScreenGone;
 	}
 
 	private static LoadingScreenHandler Instance;
@@ -86,6 +87,7 @@ public class LoadingScreenHandler : MonoBehaviour
 		}
 
 		SetOpacities(0f);
+		token.LoadingScreenGone = true;
 	}
 
 	private void SetOpacities(float opacity)
