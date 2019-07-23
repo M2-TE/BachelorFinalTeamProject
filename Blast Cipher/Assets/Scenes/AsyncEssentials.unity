@@ -1188,6 +1188,7 @@ GameObject:
   m_Component:
   - component: {fileID: 965333596}
   - component: {fileID: 965333597}
+  - component: {fileID: 965333598}
   m_Layer: 0
   m_Name: Game Manager Bootstrapper
   m_TagString: GameController
@@ -1221,6 +1222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b45abff6ec48ac4397e24632d6bbf2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EmergencyListener: {fileID: 965333598}
   Server: {fileID: 0}
   Client: {fileID: 0}
   PostProcessing: {fileID: 447803166}
@@ -1242,6 +1244,14 @@ MonoBehaviour:
   - {fileID: 2100000, guid: b97241f2f525dd04abff23646aca49d2, type: 2}
   - {fileID: 2100000, guid: 6f92fe79c2bbef143836abc5ae750dcc, type: 2}
   shakeMagnitudeDecline: 1
+--- !u!81 &965333598
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965333595}
+  m_Enabled: 0
 --- !u!1 &1113234640
 GameObject:
   m_ObjectHideFlags: 0

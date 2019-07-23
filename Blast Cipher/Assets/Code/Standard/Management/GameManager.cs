@@ -71,6 +71,8 @@ public sealed class GameManager
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
+		SceneManager.SetActiveScene(asyncEssentials);
+
 		var token = new LoadingScreenHandler.LoadingScreenProgressToken();
 		LoadingScreenHandler.ShowLoadingScreen(token);
 
@@ -87,20 +89,31 @@ public sealed class GameManager
 			else scenesToUnload.Add(scene.buildIndex);
 		}
 
-		// load new scene
-		var operation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
-
-		// wait until new scene is fully loaded
-		while (!operation.isDone) yield return null;
-
 		// unload old scenes
-		for(int i = 0; i < scenesToUnload.Count; i++)
+		for (int i = 0; i < scenesToUnload.Count; i++)
 		{
 			SceneManager.UnloadSceneAsync(scenesToUnload[i], UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
 		}
+		bootstrapper.EmergencyListener.enabled = true;
 
-		// set new scene active after single frame delay
+		// load new scene
+		var loadOperation = SceneManager.LoadSceneAsync(buildIndex, LoadSceneMode.Additive);
+		loadOperation.allowSceneActivation = false;
+
+		while (!token.TransitionComplete) { yield return null; } // wait until loading is starting the transition into new scene
+		loadOperation.allowSceneActivation = true; // now allow to complete loading of level
+
+		// wait until new scene is fully loaded
+		while (!loadOperation.isDone) { yield return null; }
+		bootstrapper.EmergencyListener.enabled = false;
+
+
+		// set new scene active
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
+
+		// another smol hacc to refresh the post processing volume
+		bootstrapper.PostProcessing.gameObject.SetActive(false);
+		bootstrapper.PostProcessing.gameObject.SetActive(true);
 	}
 	#endregion
 

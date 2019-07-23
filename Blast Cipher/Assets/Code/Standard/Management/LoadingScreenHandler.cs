@@ -8,6 +8,7 @@ public class LoadingScreenHandler : MonoBehaviour
 	public class LoadingScreenProgressToken
 	{
 		public bool ScreenFullyShown;
+		public bool TransitionComplete;
 	}
 
 	private static LoadingScreenHandler Instance;
@@ -30,14 +31,6 @@ public class LoadingScreenHandler : MonoBehaviour
 		startHeightY = miscImages[0].rectTransform.sizeDelta.y;
 		SetOpacities(0f);
 	}
-
-	//private void Update()
-	//{
-	//	if (Input.GetKeyDown(KeyCode.Space))
-	//	{
-	//		ShowLoadingScreen();
-	//	}
-	//}
 
 	public static void ShowLoadingScreen(LoadingScreenProgressToken token)
 	{
@@ -77,9 +70,11 @@ public class LoadingScreenHandler : MonoBehaviour
 		}
 
 		SetOpacities(1f);
-		token.ScreenFullyShown = true;
 
-		yield return new WaitForSeconds(transitionMainDuration);
+		yield return new WaitForSeconds(transitionMainDuration * .5f);
+		token.ScreenFullyShown = true;
+		yield return new WaitForSeconds(transitionMainDuration * .5f);
+		token.TransitionComplete = true;
 
 		timer = 0f;
 		while (timer < transitionOutDuration)
