@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Input;
 using UnityEngine.SceneManagement;
 
-public enum LocalLobbyState { Selection, Team, Ready}
+public enum LocalLobbyState { Selection, Ready, Team}
 public enum SelectorState {  Right, Back , Left, Front }
 
 public class LocalLobbyManager : MenuManager
@@ -17,11 +17,11 @@ public class LocalLobbyManager : MenuManager
     [SerializeField] [Range(10f, 50f)] private readonly float selectionWheelSpeed = 30f;
     [SerializeField] private MeshFilter[] selectionBodyFront, selectionBodyBack, selectionBodyLeft, selectionBodyRight;
 
-    private LocalLobbyState[] currentState;
+    private LocalLobbyState[] currentState = new LocalLobbyState[] { LocalLobbyState.Selection, LocalLobbyState.Selection, LocalLobbyState.Selection, LocalLobbyState.Selection };
 
-    private InputDevice[] players;
+    private InputDevice[] players = new InputDevice[] { null, null, null, null };
 
-    private SelectorState[] visibleSelection;
+    private SelectorState[] visibleSelection = new SelectorState[] { SelectorState.Right,SelectorState.Left,SelectorState.Right,SelectorState.Left};
     private int[] currentCharacter = new int[]{0,0,0,0}, currentTeam = new int[] { 0, 1, 2, 3 };
     private int maxCharacter = 0;
 
@@ -144,13 +144,15 @@ public class LocalLobbyManager : MenuManager
 
     private void ChangeState(bool increment, int playerID)
     {
+        if (isReady[playerID])
+            return;
         if (increment)
         {
             SetCurrentState(playerID,((int)GetCurrentState(playerID)) + 1 >= System.Enum.GetValues(typeof(LocalLobbyState)).Length ? GetCurrentState(playerID) : GetCurrentState(playerID) + 1);
         }
         else
         {
-            SetCurrentState(playerID, ((int)GetCurrentState(playerID)) - 1 < (isReady[playerID] ? 1 : 0) ? GetCurrentState(playerID) : GetCurrentState(playerID) - 1);
+            SetCurrentState(playerID, ((int)GetCurrentState(playerID)) - 1 < 0 ? GetCurrentState(playerID) : GetCurrentState(playerID) - 1);
         }
     }
 
