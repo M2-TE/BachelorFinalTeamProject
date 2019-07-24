@@ -82,6 +82,7 @@ public class CEditorInput
 
     public void BackToMainMenu()
     {
+        CEditorManager.Instance.PlayEditorSound(EditorEffectSound.CONFIRM);
         GameManager.Instance.LoadScene(0);
     }
 }

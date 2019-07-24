@@ -1063,6 +1063,31 @@ MonoBehaviour:
   EditorMenu: {fileID: 452113190}
   CurrentWorkingPosition: {fileID: 1592710518}
   LookDirection: {fileID: 1047504543}
+  AddCube:
+  - {fileID: 8300000, guid: 2b7690d38c441aa44b7b5771a79d3e4a, type: 3}
+  - {fileID: 8300000, guid: f234036dcf5d96041a9ffcce03e904cf, type: 3}
+  RemoveCube:
+  - {fileID: 8300000, guid: c3fcb480a77fd704c9af94540fecb6c3, type: 3}
+  Error:
+  - {fileID: 8300000, guid: b606e7a3f5c95314391a8309f7aa6237, type: 3}
+  Swipe:
+  - {fileID: 8300000, guid: e89ea38dd5ce812449a26e735a424c7a, type: 3}
+  Confirm:
+  - {fileID: 8300000, guid: 8ea1b9b8bae974b4084c4e7c4afa9c57, type: 3}
+  - {fileID: 8300000, guid: 8028688148721e34a80a6629b3a9d6c0, type: 3}
+  - {fileID: 8300000, guid: 260efa6f8f7bf704880c1c9eb701333e, type: 3}
+  - {fileID: 8300000, guid: 37e7962cc72d40345a2166587b1df956, type: 3}
+  OpenMenu:
+  - {fileID: 8300000, guid: 4d5672c0258b2ee4989b3e03125c29f6, type: 3}
+  CloseMenu:
+  - {fileID: 8300000, guid: 8901a304655879648b540e391b0a0d51, type: 3}
+  Save:
+  - {fileID: 8300000, guid: 37e3c47038ecb4445a55876c7e0e68a5, type: 3}
+  - {fileID: 8300000, guid: 17e60851dde33d64b843a9a22e72c900, type: 3}
+  SwipeError:
+  - {fileID: 8300000, guid: 67a0d8ac26416d6469e6f69bfe707857, type: 3}
+  ChangeColor:
+  - {fileID: 8300000, guid: b3542d3fba77edf4782ac8db5082e14a, type: 3}
 --- !u!1 &773433814
 GameObject:
   m_ObjectHideFlags: 0

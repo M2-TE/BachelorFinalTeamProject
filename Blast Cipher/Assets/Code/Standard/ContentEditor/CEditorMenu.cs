@@ -77,4 +77,5 @@ public class CEditorMenu : MonoBehaviour
     {
         manager.EditorInput.OpenMenu();
     }
+
 }
