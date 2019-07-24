@@ -23,7 +23,7 @@ public sealed class GameManager
 	private GameManagerBootstrapper bootstrapper;
 
     public CScriptableHolder ContentHolder;
-	public readonly InputDevice[] inputDevices = new InputDevice[2];
+	public readonly InputDevice[] inputDevices = new InputDevice[4];
 	public bool playerInputsActive = true;
     public int maxRounds;
 
@@ -32,8 +32,9 @@ public sealed class GameManager
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
-    private Mesh playerOneMesh, playerTwoMesh, playerThreeMesh, playerFourMesh;
-    private int playerOneColor, playerTwoColor, playerThreeColor, playerFourColor;
+    private Mesh[] playerMeshes;
+    private int[] playerColors;
+    private int[] playerTeams;
 	#endregion
 
 	public delegate void ExtendedUpdate();
@@ -229,42 +230,24 @@ public sealed class GameManager
 		}
 	}
 
-    public void AssignPlayerMeshes(Mesh playerOne, Mesh playerTwo, Mesh playerThree, Mesh playerFour)
+    public void AssignPlayerMeshes(Mesh[] playerMeshes)
     {
-        playerOneMesh = playerOne;
-        playerTwoMesh = playerTwo;
-        playerThreeMesh = playerThree;
-        playerFourMesh = playerFour;
+        this.playerMeshes = playerMeshes;
     }
 
-    public void AssignPlayerColors(int colorOne, int colorTwo, int colorThree, int colorFour)
+    public void AssignPlayerColors(int[] playerColors)
     {
-        this.playerOneColor = colorOne;
-        this.playerTwoColor = colorTwo;
-        this.playerThreeColor = colorThree;
-        this.playerFourColor = colorFour;
+        this.playerColors = playerColors;
+    }
+
+    public void AssignPlayerTeams(int[] playerTeams)
+    {
+        this.playerTeams = playerTeams;
     }
 
     public Mesh GetMeshByPlayerID(int id)
     {
-        Mesh m = null;
-        switch (id)
-        {
-            case 0:
-                m = playerOneMesh;
-                break;
-            case 1:
-                m = playerTwoMesh;
-                break;
-            case 2:
-                m = playerThreeMesh;
-                break;
-            case 3:
-                m = playerFourMesh;
-                break;
-            default:
-                break;
-        }
+        Mesh m = playerMeshes[id];
         if (m == null)
             m = MeshGenerator.GenerateMeshFromScriptableObject(ContentHolder.Characters[0]);
         return m;
@@ -272,27 +255,16 @@ public sealed class GameManager
 
     public Material GetMaterialByPlayerID(int id)
     {
-        Material m = null;
-        switch (id)
-        {
-            case 0:
-                m = CharacterMaterials[playerOneColor];
-                break;
-            case 1:
-                m = CharacterMaterials[playerTwoColor];
-                break;
-            case 2:
-                m = CharacterMaterials[playerThreeColor];
-                break;
-            case 3:
-                m = CharacterMaterials[playerFourColor];
-                break;
-            default:
-                break;
-        }
+        Material m = CharacterMaterials[playerColors[id]];
+        
         if (m == null)
             m = CharacterMaterials[0];
         return m;
+    }
+
+    public int GetTeamByPlayerID(int id)
+    {
+        return playerTeams[id];
     }
 
     private void BackToMenu()
@@ -300,8 +272,10 @@ public sealed class GameManager
         LoadScene(0);
         roundCount = 0;
         maxRounds = 0;
-        inputDevices[0] = null;
-        inputDevices[1] = null;
+        for (int i = 0; i < inputDevices.Length; i++)
+        {
+            inputDevices[i] = null;
+        }
     }
 
 	private IEnumerator TimeScalerOnRoundTransition()
