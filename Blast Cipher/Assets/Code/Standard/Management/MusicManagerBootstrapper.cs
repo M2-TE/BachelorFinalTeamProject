@@ -26,11 +26,6 @@ public class MusicManagerBootstrapper : Bootstrapper
 		//manager.RegisterCallOnNextBeat(DEBUGCALL, 2, true);
 		//manager.RegisterCallOnNextBeat(DEBUGCALL, 12);
 
-		manager.PlayMusic(cont);
-	}
-
-	private void DEBUGCALL()
-	{
-		Debug.Log("Called");
+		//manager.PlayMusic(cont);
 	}
 }

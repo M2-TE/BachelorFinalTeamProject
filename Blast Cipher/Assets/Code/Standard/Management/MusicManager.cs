@@ -197,33 +197,11 @@ public sealed class MusicManager : Manager<MusicManager>
 		FadeOutCalls(1f);
 	}
 
-	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
+	public void LoadingScreenTransitionEffect(float duration, bool inTransition)
 	{
-		// waiter until next bar with a minimum wait time of a 4 beats/1 bar
-		float timeUntilNextBar = GetTimeUntilNextBar();
-		timeUntilNextBar += 4f * timeBetweenBeats;
-
-		if(timeUntilNextBar < 5f * timeBetweenBeats)
-		{
-			timeUntilNextBar += 4f * timeBetweenBeats;
-			Debug.Log("lengthened");
-		}
-		else if(timeUntilNextBar > 11f * timeBetweenBeats)
-		{
-			timeUntilNextBar -= 4f * timeBetweenBeats;
-			Debug.Log("shortened");
-		}
-
-		// set target vignette
-		FadeInCalls(timeUntilNextBar);
-
-		// in smoothing
-		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
-		snapshot.TransitionTo(timeUntilNextBar * .9f);
-
-		// buffer switch to next intensity for the music handler
-		yield return new WaitForSecondsRealtime(timeUntilNextBar - 2f * timeBetweenBeats);
-		bufferedTransitionCall = onTransitionCallback;
+		string snapshotString = inTransition ? "LoadingScreen" : "Main";
+		var snapshot = bootstrapper.musicMixer.FindSnapshot(snapshotString);
+		snapshot.TransitionTo(duration);
 	}
 
 	private void FadeInCalls(float duration)

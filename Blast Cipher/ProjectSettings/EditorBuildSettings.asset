@@ -11,15 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AsyncEssentials.unity
     guid: bb0be9d6a20952541b4c0960691c9753
-  - enabled: 0
-    path: Assets/Scenes/Gameplay Proto/Network Proto.unity
-    guid: ff45e0a7e04f72f42a8150bfc006f4e2
-  - enabled: 0
-    path: Assets/Scenes/Server.unity
-    guid: 76eec3b4fd5f9584bb41aaef92ad6391
-  - enabled: 0
-    path: Assets/Scenes/Gameplay Proto/Network Proto Deprecated.unity
-    guid: 7e23a75fa8312c54c81846df1664bb07
   - enabled: 1
     path: Assets/Scenes/Editor Proto.unity
     guid: 380b42da052fe3b4fa8efb9adf8d9f3b

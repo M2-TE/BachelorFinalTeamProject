@@ -1222,9 +1222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b45abff6ec48ac4397e24632d6bbf2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  musicDict: {fileID: 11400000, guid: ff42a3fb473fded4fac8e7c2b23ba114, type: 2}
   EmergencyListener: {fileID: 965333598}
-  Server: {fileID: 0}
-  Client: {fileID: 0}
   PostProcessing: {fileID: 447803166}
   InputMaster:
     m_Asset: {fileID: -944628639613478452, guid: 798775c046f8d1544915d9e792273ab8,

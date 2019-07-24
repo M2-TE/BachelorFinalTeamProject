@@ -1,13 +1,10 @@
-﻿using EZCameraShake;
-using Networking;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
 public class GameManagerBootstrapper : Bootstrapper
 {
+	public MusicDictionary musicDict;
 	public AudioListener EmergencyListener;
-	public MonoServer Server;
-	public MonoClient Client;
 	public PostProcessVolume PostProcessing;
 	public InputMaster InputMaster;
 	public float ShakeMagnitude;
@@ -30,6 +27,12 @@ public class GameManagerBootstrapper : Bootstrapper
 		InputMaster.Enable();
 		gameManager = GameManager.Instance;
 		EmergencyListener.enabled = false;
+	}
+
+	private void Start()
+	{
+		var musicPlayer = MusicManager.Instance;
+		musicPlayer.PlayMusic(musicDict.MusicDict[0].Audio);
 	}
 
 	private void Update() => gameManager.TriggerExtendedUpdates();
