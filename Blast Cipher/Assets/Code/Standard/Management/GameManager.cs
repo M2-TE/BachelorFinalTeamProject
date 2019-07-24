@@ -210,11 +210,11 @@ public sealed class GameManager
 	{
 		if (!nextRoundStarterInProgress)
 		{
-			if (roundCount >= maxRounds - 1)
-			{
-				BackToMenu();
-				return;
-			}
+			//if (roundCount >= maxRounds - 1)
+			//{
+			//	BackToMenu();
+			//	return;
+			//}
 
 			nextRoundStarterInProgress = true;
 			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)

@@ -10,6 +10,7 @@ namespace ECS.AudioVisualization.Components
 		public Entity PrefabEntity;
 		public float3 Size;
 		public float3 PrefabSize;
+		public int3 Spacing;
 		public int SpawnMode;
 		public int LockedScaling;
 	}
@@ -17,10 +18,11 @@ namespace ECS.AudioVisualization.Components
 	[DisallowMultipleComponent] [RequireComponent(typeof(ConvertToEntity))]
 	public class AudioVisualizationSpawnerProxy : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 	{
-		public enum Mode { Standard, CircularCentered, CubeTower }
+		public enum Mode { Standard, CircularCentered }
 		public GameObject PrefabGO;
 		public int3 Size;
 		public float3 PrefabSize;
+		public int3 Spacing;
 		public bool LockedScaling;
 		public Mode SpawnMode;
 
@@ -35,6 +37,7 @@ namespace ECS.AudioVisualization.Components
 			{
 				PrefabEntity = conversionSystem.GetPrimaryEntity(PrefabGO),
 				Size = Size,
+				Spacing = Spacing,
 				PrefabSize = PrefabSize,
 				SpawnMode = (int)SpawnMode,
 				LockedScaling = LockedScaling ? 1 : 0

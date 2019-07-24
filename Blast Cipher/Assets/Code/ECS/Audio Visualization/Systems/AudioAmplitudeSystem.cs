@@ -27,9 +27,9 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override void OnCreate()
 		{
-			audioSource = Object.FindObjectOfType<AudioSource>();
+			audioSource = MusicManager.Instance.Source;
 			sampleCount = 8192;
-			visualizerGroupCount = 10;
+			visualizerGroupCount = 30;
 			CalculateSampleGroups();
 
 			audioEntities = GetEntityQuery(
@@ -108,6 +108,12 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
+			if (audioSource == null)
+			{
+				audioSource = MusicManager.Instance.Source;
+				return inputDeps;
+			}
+
 			audioSource.GetSpectrumData(samples, 0, FFTWindow.Blackman);
 			sampleArr.CopyFrom(samples);
 			totalAmplitude[0] = 0f;

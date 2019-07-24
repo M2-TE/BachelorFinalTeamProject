@@ -60,11 +60,11 @@ namespace ECS.AudioVisualization.Systems
 					case 1: // circular centered
 						float2 centerPos = new float2(spawner.Size.x * .5f, spawner.Size.z * .5f);
 						float2 currentPos;
-						for (var x = 0; x < spawner.Size.x; x++)
+						for (var x = 0; x < spawner.Size.x + 1; x += spawner.Spacing.x)
 						{
-							for (var y = 0; y < spawner.Size.y; y++)
+							for (var y = 0; y < spawner.Size.y + 1; y += spawner.Spacing.y)
 							{
-								for (var z = 0; z < spawner.Size.z; z++)
+								for (var z = 0; z < spawner.Size.z + 1; z += spawner.Spacing.z)
 								{
 									currentPos = new float2(x, z);
 									float dst = math.distance(currentPos, centerPos);
@@ -75,7 +75,7 @@ namespace ECS.AudioVisualization.Systems
 									Buffer.AddComponent(instance, new AudioSampleIndex { Value = (int)dst });
 									Buffer.AddComponent(instance, new AudioAmplitude());
 
-									var position = translation.Value + new float3(x, y, z);
+									var position = translation.Value + new float3(x - centerPos.x, y, z - centerPos.y);
 									//var rotation = quaternion.identity;
 									var scale = spawner.PrefabSize;
 
