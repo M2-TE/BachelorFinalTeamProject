@@ -15,7 +15,7 @@ namespace ECS.AudioVisualization.Components
 		public int LockedScaling;
 	}
 
-	[DisallowMultipleComponent] [RequireComponent(typeof(ConvertToEntity))]
+	[DisallowMultipleComponent, RequireComponent(typeof(ConvertToEntity))]
 	public class AudioVisualizationSpawnerProxy : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 	{
 		public enum Mode { Standard, CircularCentered }

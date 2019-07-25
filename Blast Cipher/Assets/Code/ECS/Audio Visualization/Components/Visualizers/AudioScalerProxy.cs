@@ -11,6 +11,6 @@ namespace ECS.AudioVisualization.Components
 		public float3 ScaleModifiers;
 	}
 
-	//[RequireComponent(typeof(ConvertToEntity))]
+	[RequireComponent(typeof(ConvertToEntity))]
 	public class AudioScalerProxy : ComponentDataProxy<AudioScaler> { }
 }
