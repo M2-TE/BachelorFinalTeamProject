@@ -23,7 +23,7 @@ public sealed class GameManager
 	private GameManagerBootstrapper bootstrapper;
 
     public CScriptableHolder ContentHolder;
-	public readonly InputDevice[] inputDevices = new InputDevice[2];
+	public readonly InputDevice[] inputDevices = new InputDevice[4];
 	public bool playerInputsActive = true;
     public int maxRounds;
 
@@ -32,7 +32,9 @@ public sealed class GameManager
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
-    private Mesh playerOneMesh, playerTwoMesh;
+    private Mesh[] playerMeshes;
+    private int[] playerColors;
+    private int[] playerTeams;
 	#endregion
 
 	public delegate void ExtendedUpdate();
@@ -231,18 +233,41 @@ public sealed class GameManager
 		}
 	}
 
-    public void AssignPlayerMeshes(Mesh playerOne, Mesh playerTwo)
+    public void AssignPlayerMeshes(Mesh[] playerMeshes)
     {
-        playerOneMesh = playerOne;
-        playerTwoMesh = playerTwo;
+        this.playerMeshes = playerMeshes;
+    }
+
+    public void AssignPlayerColors(int[] playerColors)
+    {
+        this.playerColors = playerColors;
+    }
+
+    public void AssignPlayerTeams(int[] playerTeams)
+    {
+        this.playerTeams = playerTeams;
     }
 
     public Mesh GetMeshByPlayerID(int id)
     {
-        Mesh m = id == 0 ? playerOneMesh : playerTwoMesh;
+        Mesh m = playerMeshes[id];
         if (m == null)
             m = MeshGenerator.GenerateMeshFromScriptableObject(ContentHolder.Characters[0]);
         return m;
+    }
+
+    public Material GetMaterialByPlayerID(int id)
+    {
+        Material m = CharacterMaterials[playerColors[id]];
+        
+        if (m == null)
+            m = CharacterMaterials[0];
+        return m;
+    }
+
+    public int GetTeamByPlayerID(int id)
+    {
+        return playerTeams[id];
     }
 
     private void BackToMenu()
@@ -250,8 +275,10 @@ public sealed class GameManager
         LoadScene(0);
         roundCount = 0;
         maxRounds = 0;
-        inputDevices[0] = null;
-        inputDevices[1] = null;
+        for (int i = 0; i < inputDevices.Length; i++)
+        {
+            inputDevices[i] = null;
+        }
     }
 
 	private IEnumerator TimeScalerOnRoundTransition()

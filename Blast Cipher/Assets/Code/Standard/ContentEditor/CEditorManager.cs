@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
+public enum EditorEffectSound { ADD, REMOVE, OPENMENU, CLOSEMENU, ERROR, CONFIRM, SAVE, SWIPE, SWIPEERROR, CHANGECOLOR }
+
 public class CEditorManager
 {
     private CEditorManager() { }
@@ -22,6 +24,8 @@ public class CEditorManager
     private float buttonDelay = 0f;
 
     private int currentCharColor = 0;
+
+    private bool changesSinceLastSave = false;
 
     public float CurrentOperatingHeight { get => currentOperatingHeight; private set => ChangeOperatingHeight(currentOperatingHeight = value); }
     public Vector3 CurrentOperatingPosition { get => currentOperatingPosition; private set => ChangeOperatingPosition(currentOperatingPosition = value); }
@@ -60,7 +64,7 @@ public class CEditorManager
         DrawGutter(currentOperatingHeight, bootstrapper.Dimension,bootstrapper.Dimension);
         DrawWireframe(currentOperatingPosition);
         currentCharColor = 0;
-        ManageMenu();
+        bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
         character = ScriptableObject.CreateInstance<CScriptableCharacter>();
         character.GenerateNewGuid();
     }
@@ -75,33 +79,50 @@ public class CEditorManager
     internal void ManageMenu()
     {
         bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
+        PlayEditorSound(EditorInput.LeftButton ? EditorEffectSound.OPENMENU : EditorEffectSound.CLOSEMENU);
     }
 
     internal void SaveCharacter()
     {
-        if(cPositions.Count > 0)
+        if (cPositions.Count > 0 && changesSinceLastSave)
         {
             character.CharacterScaling = GetCharacterScaling();
+            character.CharacterColor = currentCharColor;
             character.Offset = GetCharacterOffset();
             character.CubePositions = cPositions.ToArray();
             GameManager.Instance.ContentHolder.AddCharacter(character);
             GameManager.Instance.SaveStreamingAssets();
+            PlayEditorSound(EditorEffectSound.SAVE);
         }
+        else
+            PlayEditorSound(EditorEffectSound.ERROR);
     }
 
     internal void DeleteCharacter()
     {
         GameManager.Instance.ContentHolder.RemoveCharacter(character);
+        currentCharColor = 0;
+        foreach (var cube in cCubes)
+        {
+            GameObject.Destroy(cube);
+        }
+        character.GenerateNewGuid();
+        cPositions = new List<Vector3Int>();
+        cCubes = new List<GameObject>();
+        PlayEditorSound(EditorEffectSound.CONFIRM);
     }
 
     internal void CopyCharacter()
     {
         SaveCharacter();
         character.GenerateNewGuid();
+        PlayEditorSound(EditorEffectSound.CONFIRM);
     }
 
     internal void ReloadScene()
     {
+        PlayEditorSound(EditorEffectSound.CONFIRM);
+        bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
         GameManager.Instance.LoadScene(2);
     }
 
@@ -152,8 +173,13 @@ public class CEditorManager
         if (EditorInput.LeftButton)
         {
             y = (int)input.y;
+            int pos = bootstrapper.EditorMenu.MenuPosition;
             if (y != 0)
                 bootstrapper.EditorMenu.MenuPosition = y < 0 ? (int)(Mathf.Min(bootstrapper.EditorMenu.MenuOptions.Length - 1, bootstrapper.EditorMenu.MenuPosition + 1)) : (int)(Mathf.Max(bootstrapper.EditorMenu.MenuPosition - 1, 0));
+            if (pos == bootstrapper.EditorMenu.MenuPosition)
+                PlayEditorSound(EditorEffectSound.SWIPEERROR);
+            else
+                PlayEditorSound(EditorEffectSound.SWIPE);
             return;
         }
 
@@ -186,12 +212,29 @@ public class CEditorManager
 
     private void IncreaseColor(InputAction.CallbackContext ctx)
     {
-
+        currentCharColor++;
+        currentCharColor = currentCharColor >= GameManager.Instance.CharacterMaterials.Length ? 0 : currentCharColor;
+        PlayEditorSound(EditorEffectSound.CHANGECOLOR);
+        ChangeColor();
+        changesSinceLastSave = true;
     }
 
     private void DecreaseColor(InputAction.CallbackContext ctx)
     {
+        currentCharColor--;
+        currentCharColor = currentCharColor < 0 ? GameManager.Instance.CharacterMaterials.Length - 1 : currentCharColor;
+        PlayEditorSound(EditorEffectSound.CHANGECOLOR);
+        ChangeColor();
+        changesSinceLastSave = true;
+    }
 
+    private void ChangeColor()
+    {
+        Material nextMaterial = GameManager.Instance.CharacterMaterials[currentCharColor];
+        foreach (var cube in cCubes)
+        {
+            cube.GetComponent<MeshRenderer>().material = nextMaterial;
+        }
     }
     
     private void AddCube(InputAction.CallbackContext ctx)
@@ -203,13 +246,16 @@ public class CEditorManager
         }
         if (!cPositions.Contains(ConvertVec(currentOperatingPosition)))
         {
+            PlayEditorSound(EditorEffectSound.ADD);
             cPositions.Add(ConvertVec(currentOperatingPosition));
             var primCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             primCube.transform.position = CurrentOperatingPosition;
+            primCube.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[currentCharColor];
             cCubes.Add(primCube);
+            changesSinceLastSave = true;
         }
         else
-            Debug.Log("Already Exists");
+            PlayEditorSound(EditorEffectSound.ERROR);
     }
 
     private void RemoveCube(InputAction.CallbackContext ctx)
@@ -221,14 +267,16 @@ public class CEditorManager
         }
         if (cPositions.Contains(ConvertVec(currentOperatingPosition)))
         {
+            PlayEditorSound(EditorEffectSound.REMOVE);
             int index = cPositions.IndexOf(ConvertVec(currentOperatingPosition));
             cPositions.RemoveAt(index);
             GameObject primCube = cCubes[index];
             cCubes.RemoveAt(index);
             GameObject.Destroy(primCube);
+            changesSinceLastSave = true;
         }
         else
-            Debug.Log("Nothing to Remove");
+            PlayEditorSound(EditorEffectSound.ERROR);
     }
 
     private int GetCharacterScaling()
@@ -271,7 +319,6 @@ public class CEditorManager
         float zOff = z!= 1 ? (negZ + ((z-1f) / 2f)) : 0f;
         return new Vector3(xOff,negY, zOff);
     }
-
 
     #region LineDrawingMethods
 
@@ -328,5 +375,49 @@ public class CEditorManager
     private static Vector3Int ConvertVec(Vector3 vector)
     {
         return new Vector3Int((int)vector.x, (int)vector.y, (int)vector.z);
+    }
+
+    public void PlayEditorSound(EditorEffectSound sound)
+    {
+        AudioClip clip = bootstrapper.Error[0];
+        Vector3 position = Vector3.zero;
+        switch (sound)
+        {
+            case EditorEffectSound.ADD:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.AddCube);
+                position = currentOperatingPosition;
+                break;
+            case EditorEffectSound.REMOVE:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.RemoveCube);
+                position = currentOperatingPosition;
+                break;
+            case EditorEffectSound.OPENMENU:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.OpenMenu);
+                break;
+            case EditorEffectSound.CLOSEMENU:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.CloseMenu);
+                break;
+            case EditorEffectSound.ERROR:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.Error);
+                break;
+            case EditorEffectSound.CONFIRM:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.Confirm);
+                break;
+            case EditorEffectSound.SAVE:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.Save);
+                break;
+            case EditorEffectSound.SWIPE:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.Swipe);
+                break;
+            case EditorEffectSound.SWIPEERROR:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.SwipeError);
+                break;
+            case EditorEffectSound.CHANGECOLOR:
+                clip = Utilities.PickAtRandom<AudioClip>(bootstrapper.ChangeColor);
+                break;
+            default:
+                break;
+        }
+        OneShotAudioManager.PlayOneShotAudio(clip, position,1);
     }
 }

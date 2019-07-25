@@ -78,6 +78,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		gameManager = GameManager.Instance;
 		playerID = gameManager.RegisterPlayerCharacter(this);
         bodyMesh.mesh = gameManager.GetMeshByPlayerID(playerID);
+        GetComponent<MeshRenderer>().material = gameManager.GetMaterialByPlayerID(playerID);
 		
 		CharController = GetComponent<CharacterController>();
 	}

@@ -2,21 +2,20 @@
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
-public enum MenuState { Local, Online , Editor, Profile, Exit }
+public enum MenuState { Local, Settings , Editor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
 public class MenuSelectionManager : MenuManager
 {
-    [SerializeField] private MaterialsHolder localGame, onlineGame, editors, profile, exit;
-    [SerializeField] private MenuState standartState = 0;
-    [SerializeField] private Transform[] selectorPoints;
+    [SerializeField] private MaterialsHolder localGame, settings, editors, profile, exit;
+    [SerializeField] private readonly MenuState standartState = 0;
+    [SerializeField] private readonly Transform[] selectorPoints;
     [SerializeField] private Transform selector;
     [SerializeField] [Range(10f,20f)] private float selectorSpeed = 10f;
     [SerializeField] private Transform mainCamera;
     [SerializeField] [Range(10f, 50f)] private float cameraSpeed = 1f;
     [SerializeField] [Range(0.5f, 0.1f)] private float buttonDelayAmount;
     [SerializeField] private LocalLobbyManager localLobbyManager;
-    [SerializeField] private OnlineLobbyManager onlineLobbyManager;
     [SerializeField] private RulesManager rulesManager;
     [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
@@ -104,8 +103,8 @@ public class MenuSelectionManager : MenuManager
             case MenuState.Local:
                 localGame.SetMaterials(mat);
                 break;
-            case MenuState.Online:
-                onlineGame.SetMaterials(mat);
+            case MenuState.Settings:
+                settings.SetMaterials(mat);
                 break;
             case MenuState.Editor:
                 editors.SetMaterials(mat);
@@ -139,10 +138,8 @@ public class MenuSelectionManager : MenuManager
                     localLobbyManager.ToggleActivation(open);
                 }
                 break;
-            case MenuState.Online:
-                StartCoroutine(CameraSubmenuMovement(!open));
-                currentActiveManager = open ? (MenuManager)onlineLobbyManager : this;
-                onlineLobbyManager.ToggleActivation(open);
+            case MenuState.Settings:
+                // Settings
                 break;
             case MenuState.Editor:
                 GameManager.Instance.LoadScene(2);

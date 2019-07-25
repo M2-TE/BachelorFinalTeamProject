@@ -7,12 +7,12 @@ public abstract class MenuManager : MonoBehaviour
 {
     [SerializeField] protected MenuSelectionManager mainManager;
     [SerializeField] protected InputMaster input;
-    [SerializeField] protected Transform ToggleNode;
+    [SerializeField] protected Transform toggleNode;
     [SerializeField] protected Material defaultMat, highlightedMat;
 
     public virtual void ToggleActivation(bool setActive)
     {
-        ToggleNode.gameObject.SetActive(setActive);
+        toggleNode.gameObject.SetActive(setActive);
     }
 
     public abstract void OnDPadInput(InputAction.CallbackContext ctx);
