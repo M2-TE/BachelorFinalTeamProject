@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Input;
 using UnityEngine.SceneManagement;
 
-public enum LocalLobbyState { Selection, Ready, Team}
+public enum LocalLobbyState { Selection, Team, Ready }
 public enum SelectorState {  Right, Back , Left, Front }
 
 public class LocalLobbyManager : MenuManager
@@ -138,7 +138,7 @@ public class LocalLobbyManager : MenuManager
     private void TogglePlayerJoinedTransform(int playerID)
     {
         SetCurrentState(playerID,standartState);
-        notJoinedBlinker[playerID].Enabled = notJoinedBlinker[playerID].gameObject.activeInHierarchy;
+        notJoinedBlinker[playerID].Enabled = toggleNodes[playerID].gameObject.activeInHierarchy;
         toggleNodes[playerID].gameObject.SetActive(!toggleNodes[playerID].gameObject.activeInHierarchy);
     }
 
@@ -159,18 +159,18 @@ public class LocalLobbyManager : MenuManager
     private void ChangeCharacter(bool increment, int playerID)
     {
         StartCoroutine(RotateSelectionWheel(increment, playerID));
-
+            
         if (increment)
         {
             inRotation[playerID] = true;
             currentCharacter[playerID] = (currentCharacter[playerID] - 1 < 0) ? maxCharacter : currentCharacter[playerID] - 1;
-            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID))-1 < 0 ? GetVisibleSelection(playerID) + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) - 1);
+            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) - 1 < 0 ? GetVisibleSelection(playerID) + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) - 1);
         }
         else
         {
             inRotation[playerID] = true;
             currentCharacter[playerID] = (currentCharacter[playerID] + 1 > maxCharacter) ? 0 : currentCharacter[playerID] + 1;
-            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) + 1 > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? GetVisibleSelection(playerID) - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) + 1 );
+            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) + 1 > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? GetVisibleSelection(playerID) - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) + 1);
         }
     }
 
@@ -204,9 +204,9 @@ public class LocalLobbyManager : MenuManager
     private void SetTeam(int playerID, int team)
     {
         teamOne[playerID].gameObject.SetActive(team == 0 ? true : false);
-        teamTwo[playerID].gameObject.SetActive(team == 2 ? true : false); 
-        teamThree[playerID].gameObject.SetActive(team == 3 ? true : false);
-        teamFour[playerID].gameObject.SetActive(team == 4 ? true : false);
+        teamTwo[playerID].gameObject.SetActive(team == 1 ? true : false); 
+        teamThree[playerID].gameObject.SetActive(team == 2 ? true : false);
+        teamFour[playerID].gameObject.SetActive(team == 3 ? true : false);
     }
 
     private void SetMaterials(LocalLobbyState defaultMatState, LocalLobbyState highlightedMatState, int playerID)
@@ -223,7 +223,7 @@ public class LocalLobbyManager : MenuManager
                 selectors[playerID].SetMaterials(mat);
                 break;
             case LocalLobbyState.Ready:
-                selectors[playerID].SetMaterials(mat);
+                ready[playerID].SetMaterials(mat);
                 break;
             case LocalLobbyState.Team:
                 team[playerID].SetMaterials(mat);
@@ -260,11 +260,11 @@ public class LocalLobbyManager : MenuManager
         maxCharacter = GameManager.Instance.ContentHolder.Characters.Count - 1;
         for (int playerID = 0; playerID < maxPlayers; playerID++)
         {
-            SetVisibleSelection(playerID, playerID % 2 > 0 ? SelectorState.Right : SelectorState.Left);
-            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Right : SelectorState.Left, currentCharacter[playerID], playerID);
-            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Front : SelectorState.Back, maxCharacter, playerID);
-            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Back : SelectorState.Front, currentCharacter[playerID] + 1 > maxCharacter ? maxCharacter : currentCharacter[playerID] + 1, playerID);
-            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Left : SelectorState.Right, currentCharacter[playerID] + 2 > maxCharacter ? maxCharacter : currentCharacter[playerID] + 2, playerID);
+            SetVisibleSelection(playerID, playerID % 2 > 0 ? SelectorState.Left : SelectorState.Right);
+            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Left : SelectorState.Right, currentCharacter[playerID], playerID);
+            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Back : SelectorState.Front, maxCharacter, playerID);
+            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Front : SelectorState.Back, currentCharacter[playerID] + 1 > maxCharacter ? maxCharacter : currentCharacter[playerID] + 1, playerID);
+            SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Right : SelectorState.Left, currentCharacter[playerID] + 2 > maxCharacter ? maxCharacter : currentCharacter[playerID] + 2, playerID);
         }
     }
 
@@ -278,6 +278,7 @@ public class LocalLobbyManager : MenuManager
         SelectorState PreemptiveState = (int)(next + characterChange) > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? next - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (int)(next + characterChange) < 0 ? next + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (next + characterChange);
 
         SetCharacterMesh(PreemptiveState, nextCharacter, playerID);
+        Debug.Log("SetMesh at : " + PreemptiveState.ToString() + " with characterID :" + nextCharacter + " for player " + playerID + 1);
     }
 
     private void SetCharacterMesh(SelectorState position, int characterPosition, int playerID)
@@ -340,9 +341,9 @@ public class LocalLobbyManager : MenuManager
                 else if (inputValue.x < 0f && GetCurrentState(playerID).Equals(LocalLobbyState.Selection) && !inRotation[playerID])
                     ChangeCharacter(true, playerID);
                 else if (inputValue.x > 0f && GetCurrentState(playerID).Equals(LocalLobbyState.Team))
-                    ChangeTeam(false, playerID);
-                else if (inputValue.x < 0f && GetCurrentState(playerID).Equals(LocalLobbyState.Team))
                     ChangeTeam(true, playerID);
+                else if (inputValue.x < 0f && GetCurrentState(playerID).Equals(LocalLobbyState.Team))
+                    ChangeTeam(false, playerID);
 
                 return;
             }

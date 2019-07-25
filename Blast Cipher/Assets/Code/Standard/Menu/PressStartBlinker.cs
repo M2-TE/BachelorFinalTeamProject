@@ -32,6 +32,6 @@ public class PressStartBlinker: MonoBehaviour
 
     private void SetDefaultState(bool enabled)
     {
-        pressStart.gameObject.SetActive(enabled ? !defaultState : defaultState);
+        pressStart.gameObject.SetActive(enabled);
     }
 }
