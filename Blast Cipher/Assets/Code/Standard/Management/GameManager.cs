@@ -73,13 +73,14 @@ public sealed class GameManager
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
+		// remove user control from currently unloading scene
 		SceneManager.SetActiveScene(asyncEssentials);
 
 		var token = new LoadingScreenHandler.LoadingScreenProgressToken();
 		LoadingScreenHandler.ShowLoadingScreen(token);
 
 		while(!token.ScreenFullyShown) { yield return null; }
-
+		
 		// unload all unwanted scenes
 		Scene scene;
 		List<int> scenesToUnload = new List<int>();
@@ -104,6 +105,8 @@ public sealed class GameManager
 
 		while (!token.TransitionComplete) { yield return null; } // wait until loading is starting the transition into new scene
 		loadOperation.allowSceneActivation = true; // now allow to complete loading of level
+
+		MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[buildIndex].Audio);
 
 		// wait until new scene is fully loaded
 		while (!loadOperation.isDone) { yield return null; }
@@ -209,11 +212,11 @@ public sealed class GameManager
 	{
 		if (!nextRoundStarterInProgress)
 		{
-			if (roundCount >= maxRounds - 1)
-			{
-				BackToMenu();
-				return;
-			}
+			//if (roundCount >= maxRounds - 1)
+			//{
+			//	BackToMenu();
+			//	return;
+			//}
 
 			nextRoundStarterInProgress = true;
 			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)

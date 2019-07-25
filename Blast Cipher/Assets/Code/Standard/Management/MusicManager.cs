@@ -6,8 +6,8 @@ public sealed class MusicManager : Manager<MusicManager>
 {
 	public delegate void OnBeatCallback();
 	
+	public AudioSource Source;
 	private MusicManagerBootstrapper bootstrapper;
-	private AudioSource source;
 	private AudioContainer trackContainer;
 
 	private readonly LinkedList<OnBeatCallback> onBeatCallbacks = new LinkedList<OnBeatCallback>();
@@ -21,7 +21,7 @@ public sealed class MusicManager : Manager<MusicManager>
 	internal void RegisterBootstrapper(MusicManagerBootstrapper bootstrapper)
 	{
 		this.bootstrapper = bootstrapper;
-		source = bootstrapper.GetComponent<AudioSource>();
+		Source = bootstrapper.GetComponent<AudioSource>();
 	}
 
 	private IEnumerator MusicHandler()
@@ -31,8 +31,8 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		var clip = trackContainer.tracks[currentActiveTrack];
 
-		source.clip = clip;
-		source.Play();
+		Source.clip = clip;
+		Source.Play();
 
 		while (true)
 		{
@@ -118,28 +118,28 @@ public sealed class MusicManager : Manager<MusicManager>
 			targetTime = timeBetweenBeats * (++currentBeat);
 
 			// handle music looping
-			if (source.time + (targetTime - source.time) > source.clip.length)
+			if (Source.time + (targetTime - Source.time) > Source.clip.length)
 			{
 				currentBeat = 1;
 				targetTime = timeBetweenBeats;
 			}
 
 			// wait until next beat
-			waiter = new WaitForSecondsRealtime(targetTime - source.time);
+			waiter = new WaitForSecondsRealtime(targetTime - Source.time);
 			yield return waiter;
 		}
 	}
 
 	private IEnumerator SmoothVolIn()
 	{
-		source.volume *= .5f;
-		float targetTime = source.time + .25f;
+		Source.volume *= .5f;
+		float targetTime = Source.time + .25f;
 		do
 		{
-			source.volume = Mathf.MoveTowards(source.volume, 1f, .1f);
+			Source.volume = Mathf.MoveTowards(Source.volume, 1f, .1f);
 			yield return null;
-		} while (source.time < targetTime);
-		source.volume = 1f;
+		} while (Source.time < targetTime);
+		Source.volume = 1f;
 	}
 
 	private float GetTimeUntilNextBeat()
@@ -149,7 +149,7 @@ public sealed class MusicManager : Manager<MusicManager>
 
 	private float GetTimeUntilNextBar()
 	{
-		return (currentBeat % 4) * timeBetweenBeats + targetTime - (source.time/* - 0.01f float precision smoothing */);
+		return (currentBeat % 4) * timeBetweenBeats + targetTime - (Source.time/* - 0.01f float precision smoothing */);
 	}
 
 	public void PlayMusic(AudioContainer tracks)
@@ -172,7 +172,7 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		if (transitionIntensity)
 		{
-			source.PlayOneShot(bootstrapper.cont.TransitionTrack[0], 2f);
+			Source.PlayOneShot(bootstrapper.cont.TransitionTrack[0], 2f);
 			currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
 		}
 
@@ -187,8 +187,8 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		if (transitionIntensity)
 		{
-			source.clip = bootstrapper.cont.tracks[currentActiveTrack];
-			source.Play();
+			Source.clip = bootstrapper.cont.tracks[currentActiveTrack];
+			Source.Play();
 		}
 
 		snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
@@ -197,33 +197,11 @@ public sealed class MusicManager : Manager<MusicManager>
 		FadeOutCalls(1f);
 	}
 
-	private IEnumerator TransitionEffect(OnBeatCallback onTransitionCallback)
+	public void LoadingScreenTransitionEffect(float duration, bool inTransition)
 	{
-		// waiter until next bar with a minimum wait time of a 4 beats/1 bar
-		float timeUntilNextBar = GetTimeUntilNextBar();
-		timeUntilNextBar += 4f * timeBetweenBeats;
-
-		if(timeUntilNextBar < 5f * timeBetweenBeats)
-		{
-			timeUntilNextBar += 4f * timeBetweenBeats;
-			Debug.Log("lengthened");
-		}
-		else if(timeUntilNextBar > 11f * timeBetweenBeats)
-		{
-			timeUntilNextBar -= 4f * timeBetweenBeats;
-			Debug.Log("shortened");
-		}
-
-		// set target vignette
-		FadeInCalls(timeUntilNextBar);
-
-		// in smoothing
-		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
-		snapshot.TransitionTo(timeUntilNextBar * .9f);
-
-		// buffer switch to next intensity for the music handler
-		yield return new WaitForSecondsRealtime(timeUntilNextBar - 2f * timeBetweenBeats);
-		bufferedTransitionCall = onTransitionCallback;
+		string snapshotString = inTransition ? "LoadingScreen" : "Main";
+		var snapshot = bootstrapper.musicMixer.FindSnapshot(snapshotString);
+		snapshot.TransitionTo(duration);
 	}
 
 	private void FadeInCalls(float duration)

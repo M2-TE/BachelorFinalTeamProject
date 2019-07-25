@@ -119,6 +119,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SerializedData:
     ScaleModifiers:
-      x: 0
-      y: 100
-      z: 0
+      x: 10
+      y: 0
+      z: 10

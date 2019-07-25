@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b784e6a532d3f2d4482c6e4304679c50, type: 3}
+  m_Name: Debug Audio Tracks
+  m_EditorClassIdentifier: 
+  TransitionTrack:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  tracks:
+  - {fileID: 8300000, guid: d9c1e5a58825b0142b5f0ed5931d4cee, type: 3}
+  - {fileID: 8300000, guid: 05b7e449261028544b7bd0a5ad4d8729, type: 3}
+  - {fileID: 8300000, guid: 2e90a79b3a389f24e8d1ec2dac2c1702, type: 3}
+  bpmValues:
+  - 128
+  - 138
+  - 150

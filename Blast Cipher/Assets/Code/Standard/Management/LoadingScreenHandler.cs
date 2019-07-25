@@ -61,6 +61,7 @@ public class LoadingScreenHandler : MonoBehaviour
 
 	private IEnumerator HandleLoadingScreen(LoadingScreenProgressToken token)
 	{
+		MusicManager.Instance.LoadingScreenTransitionEffect(transitionInDuration, true);
 		float timer = 0f;
 		while(timer < transitionInDuration)
 		{
@@ -77,6 +78,7 @@ public class LoadingScreenHandler : MonoBehaviour
 		yield return new WaitForSeconds(transitionMainDuration * .5f);
 		token.TransitionComplete = true;
 
+		MusicManager.Instance.LoadingScreenTransitionEffect(transitionOutDuration, false);
 		timer = 0f;
 		while (timer < transitionOutDuration)
 		{

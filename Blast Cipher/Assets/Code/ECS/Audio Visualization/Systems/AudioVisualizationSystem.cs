@@ -30,6 +30,7 @@ namespace ECS.AudioVisualization.Systems
 				ComponentType.ReadOnly<AudioVisualizationInit>(),
 				ComponentType.ReadOnly<AudioRotator>(),
 				ComponentType.ReadWrite<Rotation>());
+			
 
 			audioScalerGroup = GetEntityQuery(
 				ComponentType.ReadOnly<AudioAmplitude>(),
