@@ -32,12 +32,12 @@ public sealed class GameManager
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
-    private Mesh[] playerMeshes;
-    private int[] playerColors;
-    private int[] playerTeams;
-	#endregion
+    private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
+    private int[] playerColors = new int[4] { 0, 0, 0, 0};
+    private int[] playerTeams = new int[4] { 0, 1, 2, 3};
+#endregion
 
-	public delegate void ExtendedUpdate();
+public delegate void ExtendedUpdate();
 
 	public readonly List<GameObject> temporaryObjects = new List<GameObject>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();

@@ -51,6 +51,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private Hook networkHook;
 
 	private int playerID;
+    private int playerTeam;
 	private Vector3 startPos;
 	private Quaternion currentCoreRotation = Quaternion.identity;
 	private Quaternion coreRotationDelta = Quaternion.identity;
@@ -76,9 +77,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		camShakeManager = CamShakeManager.Instance;
 		gameManager = GameManager.Instance;
-		playerID = gameManager.RegisterPlayerCharacter(this);
-        bodyMesh.mesh = gameManager.GetMeshByPlayerID(playerID);
-        GetComponent<MeshRenderer>().material = gameManager.GetMaterialByPlayerID(playerID);
+		
+        // ist nun in setup --> hab außerdem playerTeam als private int hinzugefügt
 		
 		CharController = GetComponent<CharacterController>();
 	}
@@ -143,7 +143,12 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public void Initialize()
 	{
-		startPos = transform.position;
+        playerID = gameManager.RegisterPlayerCharacter(this);
+        playerTeam = gameManager.GetTeamByPlayerID(playerID);
+        bodyMesh.mesh = gameManager.GetMeshByPlayerID(playerID);
+        bodyMesh.gameObject.GetComponent<MeshRenderer>().material = gameManager.GetMaterialByPlayerID(playerID);
+
+        startPos = transform.position;
 
 		currentMovespeed = Settings.MovespeedMod;
 
