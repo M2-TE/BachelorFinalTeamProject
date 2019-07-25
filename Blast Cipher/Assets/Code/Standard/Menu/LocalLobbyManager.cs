@@ -77,6 +77,10 @@ public class LocalLobbyManager : MenuManager
             GameManager.Instance.AssignPlayerMeshes(new Mesh[] { null, null, null, null });
             GameManager.Instance.AssignPlayerColors(new int[] { 0, 0, 0, 0 });
             GameManager.Instance.AssignPlayerTeams(new int[] { 0, 1, 2, 3 });
+            for (int playerID = 0; playerID < maxPlayers; playerID++)
+            {
+                DisplayReady(playerID, false);
+            }
         }
         mainManager.ManageSubmenu(rule);
         return rule;
@@ -253,7 +257,7 @@ public class LocalLobbyManager : MenuManager
     {
         isReady[playerID] = ready;
         readyNode[playerID].gameObject.SetActive(ready);
-        if (CheckIfAllReady())
+        if (ready && CheckIfAllReady())
             Rules = true;
     }
 
