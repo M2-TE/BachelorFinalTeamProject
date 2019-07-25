@@ -253,6 +253,18 @@ public class LocalLobbyManager : MenuManager
     {
         isReady[playerID] = ready;
         readyNode[playerID].gameObject.SetActive(ready);
+        if (CheckIfAllReady())
+            Rules = true;
+    }
+
+    private bool CheckIfAllReady()
+    {
+        for (int playerID = 0; playerID < maxPlayers; playerID++)
+        {
+            if (!isReady[playerID] && players[playerID] != null)
+                return false;
+        }
+        return true;
     }
 
     private void SetCharacterSelection()
