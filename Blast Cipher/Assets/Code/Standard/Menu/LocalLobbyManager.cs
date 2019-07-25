@@ -10,11 +10,11 @@ public enum SelectorState {  Right, Back , Left, Front }
 public class LocalLobbyManager : MenuManager
 {
     [SerializeField] private int maxPlayers = 4;
+    [SerializeField] [Range(10f, 50f)] private float selectionWheelSpeed = 30f;
+    [SerializeField] private LocalLobbyState standartState = 0;
     [SerializeField] private MaterialsHolder[] selectors, ready, team;
-    [SerializeField] private readonly LocalLobbyState standartState = 0;
     [SerializeField] private PressStartBlinker[] notJoinedBlinker;
     [SerializeField] private Transform[] toggleNodes, readyNode, selectionWheel, teamOne, teamTwo, teamThree, teamFour;
-    [SerializeField] [Range(10f, 50f)] private readonly float selectionWheelSpeed = 30f;
     [SerializeField] private MeshFilter[] selectionBodyFront, selectionBodyBack, selectionBodyLeft, selectionBodyRight;
 
     private LocalLobbyState[] currentState = new LocalLobbyState[] { LocalLobbyState.Selection, LocalLobbyState.Selection, LocalLobbyState.Selection, LocalLobbyState.Selection };
@@ -88,7 +88,7 @@ public class LocalLobbyManager : MenuManager
         {
             for (int playerID = 0; playerID < maxPlayers; playerID++)
             {
-                if (players[playerID] != null) {
+                if (players[playerID] == null) {
                     players[playerID] = ctx.control.device;
                     GameManager.Instance.inputDevices[playerID] = players[playerID];
                     TogglePlayerJoinedTransform(playerID);

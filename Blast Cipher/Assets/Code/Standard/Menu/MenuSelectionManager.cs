@@ -8,8 +8,8 @@ public enum MenuState { Local, Settings , Editor, Profile, Exit }
 public class MenuSelectionManager : MenuManager
 {
     [SerializeField] private MaterialsHolder localGame, settings, editors, profile, exit;
-    [SerializeField] private readonly MenuState standartState = 0;
-    [SerializeField] private readonly Transform[] selectorPoints;
+    [SerializeField] private MenuState standartState = 0;
+    [SerializeField] private Transform[] selectorPoints;
     [SerializeField] private Transform selector;
     [SerializeField] [Range(10f,20f)] private float selectorSpeed = 10f;
     [SerializeField] private Transform mainCamera;
