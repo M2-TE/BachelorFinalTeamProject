@@ -60,11 +60,14 @@ namespace ECS.AudioVisualization.Systems
 					case 1: // circular centered
 						float2 centerPos = new float2(spawner.Size.x * .5f, spawner.Size.z * .5f);
 						float2 currentPos;
-						for (var x = 0; x < spawner.Size.x + 1; x += spawner.Spacing.x)
+						float xLimit = spawner.Size.x * spawner.Spacing.x + 1;
+						float yLimit = spawner.Size.y * spawner.Spacing.y + 1;
+						float zLimit = spawner.Size.z * spawner.Spacing.z + 1;
+						for (var x = 0; x < xLimit; x += spawner.Spacing.x)
 						{
-							for (var y = 0; y < spawner.Size.y + 1; y += spawner.Spacing.y)
+							for (var y = 0; y < yLimit; y += spawner.Spacing.y)
 							{
-								for (var z = 0; z < spawner.Size.z + 1; z += spawner.Spacing.z)
+								for (var z = 0; z < zLimit; z += spawner.Spacing.z)
 								{
 									currentPos = new float2(x, z);
 									float dst = math.distance(currentPos, centerPos);

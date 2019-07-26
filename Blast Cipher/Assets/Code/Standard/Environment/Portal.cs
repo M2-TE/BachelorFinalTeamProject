@@ -88,7 +88,8 @@ public class Portal : MonoBehaviour
 		// create line renderer connection
 		if (lineRenderer == null)
 		{
-			lineRenderer = Instantiate(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
+			
+			lineRenderer = GameManager.Instance.SpawnObject(portalSettings.portalConnectorPrefab).GetComponent<LineRenderer>();
 		}
 		opposingPortal.lineRenderer = lineRenderer;
 

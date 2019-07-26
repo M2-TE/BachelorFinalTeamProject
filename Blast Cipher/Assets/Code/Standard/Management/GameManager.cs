@@ -219,14 +219,14 @@ public delegate void ExtendedUpdate();
 			//}
 
 			nextRoundStarterInProgress = true;
-			if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
-			{
-				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
-			}
-			else
-			{
-				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, false);
-			}
+			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
+			//if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
+			//{
+			//}
+			//else
+			//{
+			//	MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, false);
+			//}
 			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
 
 			roundCount++;

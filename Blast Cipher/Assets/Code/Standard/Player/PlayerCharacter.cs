@@ -231,6 +231,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void TriggerShotControlled(InputAction.CallbackContext ctx)
 	{
+
 		if (IsAssignedDevice(ctx.control.device))
 		{
 			var inputVal = ctx.ReadValue<float>();
@@ -594,21 +595,37 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		
 		if (hit.collider.CompareTag(Settings.WallTag))
 		{
-			var bounds = hit.collider.bounds;
-			Vector3 inDir = hit.transform.position - hit.point;
-
-			float xPerc = inDir.x / (bounds.size.x * .5f);
-			float zPerc = inDir.z / (bounds.size.z * .5f);
-			if(Mathf.Abs(xPerc) > Mathf.Abs(zPerc))
+			Vector3 finalPos;
+			while (true)
 			{
-				inDir.z *= -1f;
-			}
-			else
-			{
-				inDir.x *= -1f;
+				var bounds = hit.collider.bounds;
+				Vector3 inDir = hit.transform.position - hit.point;
+
+				float xPerc = inDir.x / (bounds.size.x * .5f);
+				float zPerc = inDir.z / (bounds.size.z * .5f);
+				if (Mathf.Abs(xPerc) > Mathf.Abs(zPerc))
+				{
+					inDir.z *= -1f;
+				}
+				else
+				{
+					inDir.x *= -1f;
+				}
+
+				finalPos = hit.transform.position + inDir;
+
+				if (Physics.Raycast
+					(finalPos + (hit.point - finalPos) * .01f,
+					finalPos - hit.point,
+					out var secondHit, .1f,
+					Settings.TeleportCompatibleLayers))
+				{
+					hit = secondHit;
+				}
+				else break;
 			}
 
-			portalTwo.transform.position = hit.transform.position + inDir;
+			portalTwo.transform.position = finalPos;
 			portalTwo.transform.rotation = rotation;
 		}
 		else if(hit.collider.CompareTag(Settings.OuterWallTag))
