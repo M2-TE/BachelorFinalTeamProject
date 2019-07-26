@@ -35,9 +35,9 @@ public sealed class GameManager
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
     private int[] playerColors = new int[4] { 0, 0, 0, 0};
     private int[] playerTeams = new int[4] { 0, 1, 2, 3};
-#endregion
+	#endregion
 
-public delegate void ExtendedUpdate();
+	public delegate void ExtendedUpdate();
 
 	public readonly List<GameObject> temporaryObjects = new List<GameObject>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
@@ -188,6 +188,23 @@ public delegate void ExtendedUpdate();
 	internal void TriggerExtendedUpdates()
 	{
 		for (int i = 0; i < extendedUpdates.Count; i++) extendedUpdates[i]();
+
+		var cols = bootstrapper.GlobalMatRefs;
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			cols.GlobalMat.SetColor("_EmissionColor", cols.red);
+			cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimRed);
+		}
+		else if (Input.GetKeyDown(KeyCode.G))
+		{
+			cols.GlobalMat.SetColor("_EmissionColor", cols.green);
+			cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimGreen);
+		}
+		else if (Input.GetKeyDown(KeyCode.B))
+		{
+			cols.GlobalMat.SetColor("_EmissionColor", cols.blue);
+			cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimBlue);
+		}
 	}
 
 	internal void SetAsyncEssentialsScene(Scene scene)

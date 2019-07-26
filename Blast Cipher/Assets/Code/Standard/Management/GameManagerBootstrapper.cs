@@ -3,6 +3,7 @@ using UnityEngine.Rendering.PostProcessing;
 
 public class GameManagerBootstrapper : Bootstrapper
 {
+	public GlobalMatRefs GlobalMatRefs;
 	public MusicDictionary musicDict;
 	public AudioListener EmergencyListener;
 	public PostProcessVolume PostProcessing;

@@ -1222,6 +1222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b45abff6ec48ac4397e24632d6bbf2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GlobalMatRefs: {fileID: 11400000, guid: 08eddee4597fc51448b61cc4c274448a, type: 2}
   musicDict: {fileID: 11400000, guid: ff42a3fb473fded4fac8e7c2b23ba114, type: 2}
   EmergencyListener: {fileID: 965333598}
   PostProcessing: {fileID: 447803166}
