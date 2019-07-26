@@ -1063,6 +1063,7 @@ MonoBehaviour:
   EditorMenu: {fileID: 452113190}
   CurrentWorkingPosition: {fileID: 1592710518}
   LookDirection: {fileID: 1047504543}
+  mainCamera: {fileID: 947056278}
   AddCube:
   - {fileID: 8300000, guid: 2b7690d38c441aa44b7b5771a79d3e4a, type: 3}
   - {fileID: 8300000, guid: f234036dcf5d96041a9ffcce03e904cf, type: 3}
@@ -1078,7 +1079,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 260efa6f8f7bf704880c1c9eb701333e, type: 3}
   - {fileID: 8300000, guid: 37e7962cc72d40345a2166587b1df956, type: 3}
   OpenMenu:
-  - {fileID: 8300000, guid: 4d5672c0258b2ee4989b3e03125c29f6, type: 3}
+  - {fileID: 8300000, guid: c1726e8989e286a4fa33551e1f16f3da, type: 3}
   CloseMenu:
   - {fileID: 8300000, guid: 8901a304655879648b540e391b0a0d51, type: 3}
   Save:

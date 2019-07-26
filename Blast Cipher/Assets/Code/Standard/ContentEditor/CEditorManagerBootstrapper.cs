@@ -14,6 +14,8 @@ public class CEditorManagerBootstrapper : Bootstrapper
     public CEditorMenu EditorMenu;
     public TextMeshProUGUI CurrentWorkingPosition, LookDirection;
 
+    public Transform mainCamera;
+
     public AudioClip[] AddCube, RemoveCube, Error, Swipe, Confirm, OpenMenu, CloseMenu, Save, SwipeError, ChangeColor;
 
     private CEditorManager cEditorManager;

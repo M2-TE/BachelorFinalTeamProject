@@ -380,7 +380,7 @@ public class CEditorManager
     public void PlayEditorSound(EditorEffectSound sound)
     {
         AudioClip clip = bootstrapper.Error[0];
-        Vector3 position = Vector3.zero;
+        Vector3 position = bootstrapper.mainCamera.position + Vector3.forward;
         switch (sound)
         {
             case EditorEffectSound.ADD:

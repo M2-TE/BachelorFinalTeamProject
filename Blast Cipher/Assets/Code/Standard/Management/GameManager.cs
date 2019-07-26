@@ -32,6 +32,8 @@ public sealed class GameManager
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
+    public float MenuSoundsVolume = .2f;
+
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
     private int[] playerColors = new int[4] { 0, 0, 0, 0};
     private int[] playerTeams = new int[4] { 0, 1, 2, 3};
@@ -42,6 +44,8 @@ public delegate void ExtendedUpdate();
 	public readonly List<GameObject> temporaryObjects = new List<GameObject>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
+
+    public bool AllowOneControllerGameStart => bootstrapper.AllowOneControllerGameStart;
 
     public Material[] CharacterMaterials => bootstrapper.CharacterMaterials;
     private CScriptableCharacter[] StandardCharacters => bootstrapper.StandardCharacters;

@@ -32,18 +32,17 @@ public class LocalLobbyManager : MenuManager
 
     public SelectorState GetVisibleSelection(int playerID) => visibleSelection[playerID];
 
-    public void SetVisibleSelection(int playerID, SelectorState state)
+    public void SetVisibleSelection(int playerID, SelectorState state, int change)
     {
-        SetCharacterSelection(visibleSelection[playerID],state, playerID);
         visibleSelection[playerID] = state;
+        SetCharacterSelection(visibleSelection[playerID], change, playerID);
     }
 
     public LocalLobbyState GetCurrentState(int playerID) => currentState[playerID];
 
     public void SetCurrentState(int playerID, LocalLobbyState state)
     {
-        SetMaterials(currentState[playerID], state, playerID);
-        currentState[playerID] = state;
+        SetMaterials(currentState[playerID], currentState[playerID] = state, playerID);
     }
 
     public bool Rules { get => rules; set => rules = SetRule(value); }
@@ -168,13 +167,13 @@ public class LocalLobbyManager : MenuManager
         {
             inRotation[playerID] = true;
             currentCharacter[playerID] = (currentCharacter[playerID] - 1 < 0) ? maxCharacter : currentCharacter[playerID] - 1;
-            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) - 1 < 0 ? GetVisibleSelection(playerID) + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) - 1);
+            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) - 1 < 0 ? GetVisibleSelection(playerID) + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) - 1,-1);
         }
         else
         {
             inRotation[playerID] = true;
             currentCharacter[playerID] = (currentCharacter[playerID] + 1 > maxCharacter) ? 0 : currentCharacter[playerID] + 1;
-            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) + 1 > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? GetVisibleSelection(playerID) - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) + 1);
+            SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) + 1 > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? GetVisibleSelection(playerID) - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) + 1, 1);
         }
     }
 
@@ -263,20 +262,24 @@ public class LocalLobbyManager : MenuManager
 
     private bool CheckIfAllReady()
     {
+        int playersConnected = 0;
         for (int playerID = 0; playerID < maxPlayers; playerID++)
         {
+            if (players[playerID] != null)
+                playersConnected++;
             if (!isReady[playerID] && players[playerID] != null)
                 return false;
         }
+        if (!GameManager.Instance.AllowOneControllerGameStart && playersConnected < 1)
+            return false;
         return true;
     }
 
     private void SetCharacterSelection()
     {
-        maxCharacter = GameManager.Instance.ContentHolder.Characters.Count - 1;
+        maxCharacter = GameManager.Instance.ContentHolder.Characters.Count-1;
         for (int playerID = 0; playerID < maxPlayers; playerID++)
         {
-            SetVisibleSelection(playerID, playerID % 2 > 0 ? SelectorState.Left : SelectorState.Right);
             SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Left : SelectorState.Right, currentCharacter[playerID], playerID);
             SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Back : SelectorState.Front, maxCharacter, playerID);
             SetCharacterMesh(playerID % 2 > 0 ? SelectorState.Front : SelectorState.Back, currentCharacter[playerID] + 1 > maxCharacter ? maxCharacter : currentCharacter[playerID] + 1, playerID);
@@ -284,17 +287,13 @@ public class LocalLobbyManager : MenuManager
         }
     }
 
-    private void SetCharacterSelection(SelectorState previous, SelectorState next, int playerID)
-    { 
-        int characterChange = ((int)(next-previous));
-        characterChange = characterChange < -1 ? 1 : characterChange > 1 ? -1 : characterChange;
-        int nextCharacter = 0;
-        nextCharacter = (currentCharacter[playerID] + characterChange > maxCharacter) ? 0 : (currentCharacter[playerID] + characterChange < 0 ? maxCharacter : currentCharacter[playerID] + characterChange);
+    private void SetCharacterSelection(SelectorState current, int change, int playerID)
+    {
+        int nextCharacter = (currentCharacter[playerID] + change > maxCharacter) ? 0 : (currentCharacter[playerID] + change < 0 ? maxCharacter : currentCharacter[playerID] + change);
 
-        SelectorState PreemptiveState = (int)(next + characterChange) > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? next - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (int)(next + characterChange) < 0 ? next + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (next + characterChange);
+        SelectorState NextState = (int)(current + change) > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? current - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (int)(current + change) < 0 ? current + (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : (current + change);
 
-        SetCharacterMesh(PreemptiveState, nextCharacter, playerID);
-        Debug.Log("SetMesh at : " + PreemptiveState.ToString() + " with characterID :" + nextCharacter + " for player " + playerID + 1);
+        SetCharacterMesh(NextState, nextCharacter, playerID);
     }
 
     private void SetCharacterMesh(SelectorState position, int characterPosition, int playerID)
