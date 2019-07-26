@@ -1057,6 +1057,7 @@ MonoBehaviour:
   Input:
     m_Asset: {fileID: -944628639613478452, guid: 798775c046f8d1544915d9e792273ab8,
       type: 3}
+  Frame: {fileID: 2719344304112076719, guid: 6a4a27a3068010c498380589b4319a3f, type: 3}
   Dimension: 100
   ButtonDelayAmount: 0.15
   CamMovement: {fileID: 947056279}
@@ -1725,6 +1726,7 @@ GameObject:
   - component: {fileID: 1291097481}
   - component: {fileID: 1291097480}
   - component: {fileID: 1291097483}
+  - component: {fileID: 1291097484}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1750,7 +1752,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.40784317, g: 0.3803922, b: 0.36078432, a: 0}
+  m_BackGroundColor: {r: 0.34100214, g: 0.745283, b: 0.7334082, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1810,6 +1812,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+--- !u!114 &1291097484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291097479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76a5b189eafc8c4594e34444125fce2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 1.5
+  ColorCheckpoints:
+  - {r: 0.49019608, g: 1, b: 0, a: 1}
+  - {r: 1, g: 0.9642606, b: 0, a: 1}
+  - {r: 1, g: 0.5513562, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0.6843543, a: 1}
+  - {r: 0.25289202, g: 0, b: 1, a: 1}
+  - {r: 0.035294116, g: 0.5624076, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0.84305024, a: 1}
+  - {r: 0.07075471, g: 1, b: 0.49937934, a: 1}
 --- !u!1 &1322380476
 GameObject:
   m_ObjectHideFlags: 0

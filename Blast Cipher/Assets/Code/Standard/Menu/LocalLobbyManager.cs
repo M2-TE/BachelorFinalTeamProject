@@ -148,6 +148,10 @@ public class LocalLobbyManager : MenuManager
         SetCurrentState(playerID,standartState);
         notJoinedBlinker[playerID].Enabled = toggleNodes[playerID].gameObject.activeInHierarchy;
         toggleNodes[playerID].gameObject.SetActive(!toggleNodes[playerID].gameObject.activeInHierarchy);
+        if (players[playerID] != null)
+            playersHeaders[playerID].SetMaterials(GameManager.Instance.TeamMaterials[currentTeam[playerID]]);
+        else
+            playersHeaders[playerID].SetMaterials(defaultMat);
     }
 
     private void ChangeState(bool increment, int playerID)
@@ -279,16 +283,32 @@ public class LocalLobbyManager : MenuManager
     private bool CheckIfAllReady()
     {
         int playersConnected = 0;
+        bool[] team = new bool[4] { false, false, false, false };
         for (int playerID = 0; playerID < maxPlayers; playerID++)
         {
             if (players[playerID] != null)
+            {
                 playersConnected++;
+                team[currentTeam[playerID]] = true;
+            }
             if (!isReady[playerID] && players[playerID] != null)
                 return false;
         }
-        if (!GameManager.Instance.AllowOneControllerGameStart && playersConnected < 1)
+        if (!GameManager.Instance.AllowOneControllerGameStart && (playersConnected < 1 || CheckIfMoreThenOneTeams(team)))
             return false;
         return true;
+    }
+
+    private bool CheckIfMoreThenOneTeams(bool[] teams)
+    {
+        int differentTeams = 0;
+        for (int i = 0; i < teams.Length; i++)
+        {
+            if (teams[i])
+                differentTeams++;
+        }
+
+        return differentTeams > 1;
     }
 
     private void SetCharacterSelection()
@@ -350,6 +370,7 @@ public class LocalLobbyManager : MenuManager
             toggleNodes[playerID].gameObject.SetActive(false);
             DisplayReady(playerID, false);
             SetTeam(playerID, currentTeam[playerID]);
+            playersHeaders[playerID].SetMaterials(defaultMat);
         }
         rules = false;
         ToggleActivation(false);

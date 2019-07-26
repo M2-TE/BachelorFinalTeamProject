@@ -1,4 +1,4 @@
-In this folder all the maps and characters are saved.
+In this folder all the profiles, maps and characters are saved.
 
 DO NOT FIDDLE WITH FILES IN THIS FOLDER UNLESS YOU KNOW EXACTLY WHAT YOU ARE DOING!
 

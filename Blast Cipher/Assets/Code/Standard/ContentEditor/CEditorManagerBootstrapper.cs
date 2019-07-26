@@ -6,7 +6,7 @@ using UnityEngine;
 public class CEditorManagerBootstrapper : Bootstrapper
 {
     public InputMaster Input;
-
+    public GameObject Frame;
     public float Dimension = 30f;
     [Range(0.1f, 0.5f)]
     public float ButtonDelayAmount;

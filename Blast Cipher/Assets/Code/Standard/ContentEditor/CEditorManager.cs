@@ -250,7 +250,9 @@ public class CEditorManager
             cPositions.Add(ConvertVec(currentOperatingPosition));
             var primCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             primCube.transform.position = CurrentOperatingPosition;
+            primCube.transform.localScale = new Vector3(.96f, .96f, .96f);
             primCube.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[currentCharColor];
+            GameObject.Instantiate(bootstrapper.Frame, primCube.transform).transform.localScale = new Vector3(1.04f,1.04f,1.04f);
             cCubes.Add(primCube);
             changesSinceLastSave = true;
         }
