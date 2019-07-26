@@ -14,7 +14,8 @@ public class GameManagerBootstrapper : Bootstrapper
 
     public CScriptableMap[] StandardMaps = new CScriptableMap[0];
     public CScriptableCharacter[] StandardCharacters = new CScriptableCharacter[0];
-    public Material[] CharacterMaterials = new Material[0];
+    public Material[] CharacterMaterials = new Material[0], TeamMaterials = new Material[4];
+
 
 	[SerializeField] private float shakeMagnitudeDecline;
 	private GameManager gameManager;

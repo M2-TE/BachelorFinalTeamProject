@@ -27,7 +27,7 @@ public sealed class GameManager
 	public bool playerInputsActive = true;
     public int maxRounds;
 
-	private int roundCount;
+	private int roundCount = 1;
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
@@ -48,6 +48,7 @@ public delegate void ExtendedUpdate();
     public bool AllowOneControllerGameStart => bootstrapper.AllowOneControllerGameStart;
 
     public Material[] CharacterMaterials => bootstrapper.CharacterMaterials;
+    public Material[] TeamMaterials => bootstrapper.TeamMaterials;
     private CScriptableCharacter[] StandardCharacters => bootstrapper.StandardCharacters;
     private CScriptableMap[] StandardMaps => bootstrapper.StandardMaps;
 

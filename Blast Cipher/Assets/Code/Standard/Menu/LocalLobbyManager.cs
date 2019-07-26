@@ -12,7 +12,7 @@ public class LocalLobbyManager : MenuManager
     [SerializeField] private int maxPlayers = 4;
     [SerializeField] [Range(10f, 50f)] private float selectionWheelSpeed = 30f;
     [SerializeField] private LocalLobbyState standartState = 0;
-    [SerializeField] private MaterialsHolder[] selectors, ready, team;
+    [SerializeField] private MaterialsHolder[] selectors, ready, team, playersHeaders, playerFootprints;
     [SerializeField] private PressStartBlinker[] notJoinedBlinker;
     [SerializeField] private Transform[] toggleNodes, readyNode, selectionWheel, teamOne, teamTwo, teamThree, teamFour;
     [SerializeField] private MeshFilter[] selectionBodyFront, selectionBodyBack, selectionBodyLeft, selectionBodyRight;
@@ -95,6 +95,7 @@ public class LocalLobbyManager : MenuManager
                     players[playerID] = ctx.control.device;
                     GameManager.Instance.inputDevices[playerID] = players[playerID];
                     TogglePlayerJoinedTransform(playerID);
+                    mainManager.PlayAudioClip(AudioClipType.Confirm);
                     return;
                 }
             }
@@ -106,13 +107,16 @@ public class LocalLobbyManager : MenuManager
                 if(players[playerID] == ctx.control.device)
                 {
                     if (isReady[playerID])
+                    {
                         DisplayReady(playerID, false);
+                    }
                     else
                     {
                         players[playerID] = null;
                         GameManager.Instance.inputDevices[playerID] = null;
                         TogglePlayerJoinedTransform(playerID);
                     }
+                    mainManager.PlayAudioClip(AudioClipType.Decline);
                     return;
                 }
             }
@@ -124,6 +128,7 @@ public class LocalLobbyManager : MenuManager
                 if (players[i] != null)
                     return;
             }
+            mainManager.PlayAudioClip(AudioClipType.Decline);
             mainManager.ManageSubmenu(false);
         }
     }
@@ -147,6 +152,7 @@ public class LocalLobbyManager : MenuManager
 
     private void ChangeState(bool increment, int playerID)
     {
+        int audioTemp = (int)GetCurrentState(playerID);
         if (isReady[playerID])
             return;
         if (increment)
@@ -157,12 +163,13 @@ public class LocalLobbyManager : MenuManager
         {
             SetCurrentState(playerID, ((int)GetCurrentState(playerID)) - 1 < 0 ? GetCurrentState(playerID) : GetCurrentState(playerID) - 1);
         }
+        if (audioTemp != (int)GetCurrentState(playerID))
+            mainManager.PlayAudioClip(AudioClipType.Swipe);
     }
 
     private void ChangeCharacter(bool increment, int playerID)
     {
         StartCoroutine(RotateSelectionWheel(increment, playerID));
-            
         if (increment)
         {
             inRotation[playerID] = true;
@@ -175,6 +182,7 @@ public class LocalLobbyManager : MenuManager
             currentCharacter[playerID] = (currentCharacter[playerID] + 1 > maxCharacter) ? 0 : currentCharacter[playerID] + 1;
             SetVisibleSelection(playerID, ((int)GetVisibleSelection(playerID)) + 1 > System.Enum.GetValues(typeof(SelectorState)).Length - 1 ? GetVisibleSelection(playerID) - (System.Enum.GetValues(typeof(SelectorState)).Length - 1) : GetVisibleSelection(playerID) + 1, 1);
         }
+        mainManager.PlayAudioClip(AudioClipType.Swipe);
     }
 
     private IEnumerator RotateSelectionWheel(bool increment, int playerID)
@@ -201,6 +209,7 @@ public class LocalLobbyManager : MenuManager
         {
             currentTeam[playerID] = currentTeam[playerID] - 1 < 0 ? maxPlayers-1 : currentTeam[playerID] -1; 
         }
+        mainManager.PlayAudioClip(AudioClipType.Swipe);
         SetTeam(playerID, currentTeam[playerID]);
     }
 
@@ -210,6 +219,9 @@ public class LocalLobbyManager : MenuManager
         teamTwo[playerID].gameObject.SetActive(team == 1 ? true : false); 
         teamThree[playerID].gameObject.SetActive(team == 2 ? true : false);
         teamFour[playerID].gameObject.SetActive(team == 3 ? true : false);
+
+        playersHeaders[playerID].SetMaterials(GameManager.Instance.TeamMaterials[team]);
+        playerFootprints[playerID].SetMaterials(GameManager.Instance.TeamMaterials[team]);
     }
 
     private void SetMaterials(LocalLobbyState defaultMatState, LocalLobbyState highlightedMatState, int playerID)
@@ -244,6 +256,10 @@ public class LocalLobbyManager : MenuManager
                 break;
             case LocalLobbyState.Ready:
                 DisplayReady(playerID, !isReady[playerID]);
+                if(isReady[playerID])
+                    mainManager.PlayAudioClip(AudioClipType.Ready);
+                else
+                    mainManager.PlayAudioClip(AudioClipType.Decline);
                 break;
             case LocalLobbyState.Team:
                 break;

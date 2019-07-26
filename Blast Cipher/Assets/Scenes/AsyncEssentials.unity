@@ -1244,6 +1244,11 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 356d69ab4d0286442a6664d6b97ee10d, type: 2}
   - {fileID: 2100000, guid: 6bcc8a4887762414bbf08b3cbdff938e, type: 2}
   - {fileID: 2100000, guid: 6f92fe79c2bbef143836abc5ae750dcc, type: 2}
+  TeamMaterials:
+  - {fileID: 2100000, guid: a7de0223c77e17048888c782d3185357, type: 2}
+  - {fileID: 2100000, guid: 6a9c6f8870449924ea4a4d88df42e521, type: 2}
+  - {fileID: 2100000, guid: a30b5dab80222c14380c3db2cb5e41eb, type: 2}
+  - {fileID: 2100000, guid: 66cf9f218b353ae4fb7147031632cf95, type: 2}
   shakeMagnitudeDecline: 1
 --- !u!81 &965333598
 AudioListener:

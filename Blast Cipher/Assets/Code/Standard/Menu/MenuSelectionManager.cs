@@ -222,7 +222,7 @@ public class MenuSelectionManager : MenuManager
             currentActiveManager.OnStartPressed(ctx);
         else if (inTitleScreen)
         {
-            PlayAudioClip(AudioClipType.Confirm);
+            PlayAudioClip(AudioClipType.Ready);
             StartCoroutine(RotateCamera(inTitleScreen = false));
         }
     }
@@ -237,11 +237,16 @@ public class MenuSelectionManager : MenuManager
             currentActiveManager.OnConfirmation(ctx);
         else
         {
-            PlayAudioClip(AudioClipType.Confirm);
             if (inTitleScreen)
+            {
+                PlayAudioClip(AudioClipType.Ready);
                 StartCoroutine(RotateCamera(inTitleScreen = false));
+            }
             else
+            {
+                PlayAudioClip(AudioClipType.Confirm);
                 ManageSubmenu(true);
+            }
         }
     }
 

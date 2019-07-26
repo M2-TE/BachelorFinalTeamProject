@@ -5489,6 +5489,7 @@ MonoBehaviour:
   afterImageParticleSystem: {fileID: 152710554}
   aimLineRenderer: {fileID: 159009995}
   bodyMesh: {fileID: 4422398641255969911}
+  footprintMaterial: {fileID: 4422398641717322318}
 --- !u!1 &4422398641255969907
 GameObject:
   m_ObjectHideFlags: 0
