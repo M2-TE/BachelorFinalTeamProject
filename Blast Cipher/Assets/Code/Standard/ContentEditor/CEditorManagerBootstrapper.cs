@@ -11,7 +11,9 @@ public class CEditorManagerBootstrapper : Bootstrapper
     [Range(0.1f, 0.5f)]
     public float ButtonDelayAmount;
     public CameraMovement CamMovement;
+    public CEditorLoader LoadingMenu;
     public CEditorMenu EditorMenu;
+    public BackgroundColorLerp Background;
     public TextMeshProUGUI CurrentWorkingPosition, LookDirection;
 
     public Transform mainCamera;

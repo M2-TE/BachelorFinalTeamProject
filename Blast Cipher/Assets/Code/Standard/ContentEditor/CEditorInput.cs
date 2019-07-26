@@ -70,8 +70,11 @@ public class CEditorInput
 
     private void OpenMenu(InputAction.CallbackContext ctx)
     {
-        LeftButton = !LeftButton;
-        CEditorManager.Instance.ManageMenu();
+        if (!CEditorManager.Instance.LoadingEditor)
+        {
+            LeftButton = !LeftButton;
+            CEditorManager.Instance.ManageMenu();
+        }
     }
 
     public void OpenMenu()

@@ -15,4 +15,6 @@ public class CScriptableCharacter : ScriptableObject
     {
         CharacterID = Guid.NewGuid().ToString();
     }
+
+    public CScriptableCharacter Copy => new CScriptableCharacter() { CharacterID = this.CharacterID, CharacterScaling = this.CharacterScaling, CharacterColor = this.CharacterColor, Offset = this.Offset, CubePositions = this.CubePositions };
 }

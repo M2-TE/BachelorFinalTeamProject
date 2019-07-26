@@ -52,7 +52,7 @@ public class CEditorMenu : MonoBehaviour
                 manager.EditorInput.OpenMenu();
                 break;
             case 1:
-                manager.ReloadScene();
+                manager.Background.ChangeMode();
                 break;
             case 2:
                 manager.CopyCharacter();
@@ -61,9 +61,11 @@ public class CEditorMenu : MonoBehaviour
                 manager.SaveCharacter();
                 break;
             case 4:
-                manager.DeleteCharacter();
+                manager.DeleteCharacter(true);
                 break;
             case 5:
+                manager.LoadCharacter();
+                break;
             case 6:
                 manager.EditorInput.BackToMainMenu();
 				transform.root.gameObject.SetActive(false); // smol hack for the loading screen

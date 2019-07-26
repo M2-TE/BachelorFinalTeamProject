@@ -45,14 +45,14 @@ public class MenuSelectionManager : MenuManager
 
     private IEnumerator SelectorPositionChange()
     {
-        Vector3 Start = selector.position;
+        Vector3 start = selector.position;
         float startTime = Time.time;
-        float length = Vector3.Distance(Start, selectorPoints[(int)CurrentState].position);
+        float length = Vector3.Distance(start, selectorPoints[(int)CurrentState].position);
 
         while(selector.position != selectorPoints[(int)CurrentState].position)
         {
             float distance = (Time.time - startTime) * selectorSpeed * 10;
-            selector.position = Vector3.Lerp(Start, selectorPoints[(int)CurrentState].position,distance / length);
+            selector.position = Vector3.Lerp(start, selectorPoints[(int)CurrentState].position,distance / length);
             yield return new WaitForEndOfFrame();
         }
     }
