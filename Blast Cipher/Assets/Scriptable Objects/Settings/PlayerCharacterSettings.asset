@@ -41,7 +41,7 @@ MonoBehaviour:
   ShotStrength: 25
   PowerUpDuration: 10
   startProjectileCount: 3
-  projectileRespawnTimer: 5
+  projectileRespawnTimer: 1000
   OrbitDelta: {x: 0, y: 100, z: 0}
   MaxOrbitDist: 10
   MovementOrbit: 2.5
