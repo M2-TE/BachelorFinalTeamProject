@@ -1729,7 +1729,7 @@ MonoBehaviour:
   objectPrefab: {fileID: 210828655342638975, guid: 1fadf6adfbaf791428faf8aebac1fe82,
     type: 3}
   camspeed: 2
-  characterDistance: 5
+  characterDistance: 4
 --- !u!1 &947056277
 GameObject:
   m_ObjectHideFlags: 0

@@ -48,6 +48,10 @@ public class CEditorLoader : MonoBehaviour
                 characterSpawn.position = Vector3.Lerp(start, finish, distance / characterDistance);
                 yield return new WaitForEndOfFrame();
             }
+            if (pos >= 0 && pos < meshes.Length)
+                CEditorManager.Instance.PlayEditorSound(EditorEffectSound.SWIPE);
+            else
+                CEditorManager.Instance.PlayEditorSound(EditorEffectSound.SWIPEERROR);
             pos = pos < 0 ? 0 : pos >= meshes.Length ? meshes.Length - 1 : pos;
             currentlyMoving = false;
         }

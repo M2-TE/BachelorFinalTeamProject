@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
@@ -121,12 +122,22 @@ public class CEditorManager
         currentCharColor = character.CharacterColor;
         ChangeColor();
         LoadingEditor = false;
+        EditorInput.OpenMenu();
     }
 
     internal void DeleteCharacter(bool fromDisc)
     {
-        if(fromDisc)
-            GameManager.Instance.ContentHolder.RemoveCharacter(character);
+        if (fromDisc)
+        {
+            try
+            {
+                GameManager.Instance.ContentHolder.RemoveCharacter(character);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
         currentCharColor = 0;
         foreach (var cube in cCubes)
         {
