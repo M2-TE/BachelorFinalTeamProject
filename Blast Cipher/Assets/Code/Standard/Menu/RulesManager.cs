@@ -11,6 +11,8 @@ public enum Rules { General, Cooldown, PowerUp }
 public class RulesManager : MenuManager
 {
     [SerializeField] private Rules standartState = 0;
+    [Tooltip("[0] = RED/Bomb, [1] = GREEN/Bounce, [2] = BLUE/AutoAim")]
+    [SerializeField] private Material[] powerUpMats;
 
     //General
     [SerializeField] private GameObject genTransform;
@@ -26,7 +28,7 @@ public class RulesManager : MenuManager
 
     //Powerups
     [SerializeField] private GameObject puTransform;
-    [SerializeField] private MaterialsHolder headerPU, red, green, blue, enabledPU, spawnrate, duration, startPU;
+    [SerializeField] private MaterialsHolder headerPU, red, green, blue, enabledPU, spawnrate, duration, startPU, descriptors;
     [SerializeField] private PowerUpRules standartStatePU = 0;
     [SerializeField] private Transform[] enabledChoice, spawnDigits, durationDigits;
     private int currentPU = 0;
@@ -171,6 +173,11 @@ public class RulesManager : MenuManager
             default:
                 break;
         }
+    }
+
+    private void SetPowerUpMaterials()
+    {
+        descriptors.SetMaterials(powerUpMats[currentPU]);
     }
 
     #endregion
@@ -470,6 +477,8 @@ public class RulesManager : MenuManager
         green.gameObject.SetActive(currentPU == 1);
         blue.gameObject.SetActive(currentPU == 2);
 
+        SetPowerUpMaterials();
+
         ChangePUEnabled(true);
         ChangeSpawnrate(true, true);
         ChangeDuration(true, true);
@@ -630,6 +639,7 @@ public class RulesManager : MenuManager
         red.gameObject.SetActive(currentPU == 0);
         green.gameObject.SetActive(currentPU == 1);
         blue.gameObject.SetActive(currentPU == 2);
+        SetPowerUpMaterials();
 
         // EnabledPowerUp
         ChangePUEnabled(true);
