@@ -6,13 +6,17 @@ using UnityEngine;
 public class CEditorManagerBootstrapper : Bootstrapper
 {
     public InputMaster Input;
-
+    public GameObject Frame;
     public float Dimension = 30f;
     [Range(0.1f, 0.5f)]
     public float ButtonDelayAmount;
     public CameraMovement CamMovement;
+    public CEditorLoader LoadingMenu;
     public CEditorMenu EditorMenu;
+    public BackgroundColorLerp Background;
     public TextMeshProUGUI CurrentWorkingPosition, LookDirection;
+
+    public Transform mainCamera;
 
     public AudioClip[] AddCube, RemoveCube, Error, Swipe, Confirm, OpenMenu, CloseMenu, Save, SwipeError, ChangeColor;
 

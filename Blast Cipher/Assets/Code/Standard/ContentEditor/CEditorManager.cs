@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
@@ -14,6 +15,8 @@ public class CEditorManager
     private CEditorManagerBootstrapper bootstrapper;
     public CEditorInput EditorInput { get; private set; }
 
+    public BackgroundColorLerp Background => bootstrapper.Background;
+
     private CScriptableCharacter character;
 
     private List<Vector3Int> cPositions = new List<Vector3Int>();
@@ -26,6 +29,10 @@ public class CEditorManager
     private int currentCharColor = 0;
 
     private bool changesSinceLastSave = false;
+
+    private bool loadingEditor = false;
+
+    public bool LoadingEditor { get => loadingEditor; private set => SetLoadingEditor(value); }
 
     public float CurrentOperatingHeight { get => currentOperatingHeight; private set => ChangeOperatingHeight(currentOperatingHeight = value); }
     public Vector3 CurrentOperatingPosition { get => currentOperatingPosition; private set => ChangeOperatingPosition(currentOperatingPosition = value); }
@@ -67,6 +74,7 @@ public class CEditorManager
         bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
         character = ScriptableObject.CreateInstance<CScriptableCharacter>();
         character.GenerateNewGuid();
+        LoadingEditor = false;
     }
 
     internal void CEditorUpdate()
@@ -98,9 +106,38 @@ public class CEditorManager
             PlayEditorSound(EditorEffectSound.ERROR);
     }
 
-    internal void DeleteCharacter()
+    internal void LoadCharacter()
     {
-        GameManager.Instance.ContentHolder.RemoveCharacter(character);
+        DeleteCharacter(false);
+        LoadingEditor = true;
+    }
+
+    internal void LoadCharacter(CScriptableCharacter character)
+    {
+        this.character = character.Copy;
+        foreach (var cube in character.CubePositions)
+        {
+            AddCube(new Vector3(cube.x, cube.y, cube.z));
+        }
+        currentCharColor = character.CharacterColor;
+        ChangeColor();
+        LoadingEditor = false;
+        EditorInput.OpenMenu();
+    }
+
+    internal void DeleteCharacter(bool fromDisc)
+    {
+        if (fromDisc)
+        {
+            try
+            {
+                GameManager.Instance.ContentHolder.RemoveCharacter(character);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
         currentCharColor = 0;
         foreach (var cube in cCubes)
         {
@@ -109,21 +146,30 @@ public class CEditorManager
         character.GenerateNewGuid();
         cPositions = new List<Vector3Int>();
         cCubes = new List<GameObject>();
-        PlayEditorSound(EditorEffectSound.CONFIRM);
+        if(fromDisc)
+            PlayEditorSound(EditorEffectSound.CONFIRM);
     }
 
     internal void CopyCharacter()
     {
-        SaveCharacter();
         character.GenerateNewGuid();
         PlayEditorSound(EditorEffectSound.CONFIRM);
     }
 
-    internal void ReloadScene()
+    internal void SetLoadingEditor(bool activate)
     {
-        PlayEditorSound(EditorEffectSound.CONFIRM);
-        bootstrapper.EditorMenu.SetActive(EditorInput.LeftButton);
-        GameManager.Instance.LoadScene(2);
+        loadingEditor = activate;
+        if (activate)
+        {
+            bootstrapper.LoadingMenu.gameObject.SetActive(activate);
+            bootstrapper.LoadingMenu.Activate();
+        }
+        else
+        {
+            bootstrapper.LoadingMenu.Deactivate();
+            bootstrapper.LoadingMenu.gameObject.SetActive(activate);
+        }
+        
     }
 
     private void ChangeOperatingHeight(float newHeight)
@@ -173,13 +219,24 @@ public class CEditorManager
         if (EditorInput.LeftButton)
         {
             y = (int)input.y;
-            int pos = bootstrapper.EditorMenu.MenuPosition;
-            if (y != 0)
-                bootstrapper.EditorMenu.MenuPosition = y < 0 ? (int)(Mathf.Min(bootstrapper.EditorMenu.MenuOptions.Length - 1, bootstrapper.EditorMenu.MenuPosition + 1)) : (int)(Mathf.Max(bootstrapper.EditorMenu.MenuPosition - 1, 0));
-            if (pos == bootstrapper.EditorMenu.MenuPosition)
-                PlayEditorSound(EditorEffectSound.SWIPEERROR);
+            x = (int)input.x;
+            if (loadingEditor)
+            {
+                if (x > 0)
+                    bootstrapper.StartCoroutine(bootstrapper.LoadingMenu.MoveCamera(true));
+                else if(x < 0)
+                    bootstrapper.StartCoroutine(bootstrapper.LoadingMenu.MoveCamera(false));
+            }
             else
-                PlayEditorSound(EditorEffectSound.SWIPE);
+            {
+                int pos = bootstrapper.EditorMenu.MenuPosition;
+                if (y != 0)
+                    bootstrapper.EditorMenu.MenuPosition = y < 0 ? (int)(Mathf.Min(bootstrapper.EditorMenu.MenuOptions.Length - 1, bootstrapper.EditorMenu.MenuPosition + 1)) : (int)(Mathf.Max(bootstrapper.EditorMenu.MenuPosition - 1, 0));
+                if (pos == bootstrapper.EditorMenu.MenuPosition)
+                    PlayEditorSound(EditorEffectSound.SWIPEERROR);
+                else
+                    PlayEditorSound(EditorEffectSound.SWIPE);
+            }
             return;
         }
 
@@ -241,28 +298,41 @@ public class CEditorManager
     {
         if (CEditorManager.Instance.EditorInput.LeftButton)
         {
-            bootstrapper.EditorMenu.Confirm(this);
+            if (loadingEditor)
+            {
+                LoadCharacter(GameManager.Instance.ContentHolder.Characters[bootstrapper.LoadingMenu.Pos]);
+            }
+            else
+                bootstrapper.EditorMenu.Confirm(this);
             return;
         }
         if (!cPositions.Contains(ConvertVec(currentOperatingPosition)))
         {
             PlayEditorSound(EditorEffectSound.ADD);
-            cPositions.Add(ConvertVec(currentOperatingPosition));
-            var primCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            primCube.transform.position = CurrentOperatingPosition;
-            primCube.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[currentCharColor];
-            cCubes.Add(primCube);
+            AddCube(currentOperatingPosition);
             changesSinceLastSave = true;
         }
         else
             PlayEditorSound(EditorEffectSound.ERROR);
     }
 
+    private void AddCube(Vector3 position)
+    {
+        cPositions.Add(ConvertVec(position));
+        var primCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        primCube.transform.position = position;
+        primCube.transform.localScale = new Vector3(.96f, .96f, .96f);
+        primCube.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[currentCharColor];
+        GameObject.Instantiate(bootstrapper.Frame, primCube.transform).transform.localScale = new Vector3(1.04f, 1.04f, 1.04f);
+        cCubes.Add(primCube);
+    }
+
     private void RemoveCube(InputAction.CallbackContext ctx)
     {
         if (CEditorManager.Instance.EditorInput.LeftButton)
         {
-            bootstrapper.EditorMenu.Decline(this);
+            if(!loadingEditor)
+                bootstrapper.EditorMenu.Decline(this);
             return;
         }
         if (cPositions.Contains(ConvertVec(currentOperatingPosition)))
@@ -380,7 +450,7 @@ public class CEditorManager
     public void PlayEditorSound(EditorEffectSound sound)
     {
         AudioClip clip = bootstrapper.Error[0];
-        Vector3 position = Vector3.zero;
+        Vector3 position = bootstrapper.mainCamera.position + Vector3.forward;
         switch (sound)
         {
             case EditorEffectSound.ADD:

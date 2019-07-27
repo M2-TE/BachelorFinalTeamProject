@@ -5345,6 +5345,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Center cubes
       objectReference: {fileID: 0}
+    - target: {fileID: 5969020010486004749, guid: 34939ba9f9cad5e499ae4ab7b0e3ec52,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5969020010486004753, guid: 34939ba9f9cad5e499ae4ab7b0e3ec52,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -36,6 +36,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	[SerializeField] private ParticleSystem afterImageParticleSystem;
 	[SerializeField] private LineRenderer aimLineRenderer;
     [SerializeField] private MeshFilter bodyMesh;
+    [SerializeField] private MeshRenderer footprintMaterial;
 
 	[NonSerialized] public CharacterController CharController;
 	[NonSerialized] public Vector2 MovementInput;
@@ -146,6 +147,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
         playerID = gameManager.RegisterPlayerCharacter(this);
         playerTeam = gameManager.GetTeamByPlayerID(playerID);
         bodyMesh.mesh = gameManager.GetMeshByPlayerID(playerID);
+        footprintMaterial.material = gameManager.TeamMaterials[playerTeam];
         bodyMesh.gameObject.GetComponent<MeshRenderer>().material = gameManager.GetMaterialByPlayerID(playerID);
 
         startPos = transform.position;

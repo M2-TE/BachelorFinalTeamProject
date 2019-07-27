@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
+public enum AudioClipType { Swipe, Confirm, Decline, GameStart, Error, Ready, SwipeError }
 public enum MenuState { Local, Settings , Editor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
@@ -9,6 +10,7 @@ public class MenuSelectionManager : MenuManager
 {
     [SerializeField] private MaterialsHolder localGame, settings, editors, profile, exit;
     [SerializeField] private MenuState standartState = 0;
+    [SerializeField] private AudioClip[] swipe, confirm, decline, gameStart, error, ready, swipeError;
     [SerializeField] private Transform[] selectorPoints;
     [SerializeField] private Transform selector;
     [SerializeField] [Range(10f,20f)] private float selectorSpeed = 10f;
@@ -29,23 +31,28 @@ public class MenuSelectionManager : MenuManager
 
     private void ChangeState(bool increment)
     {
+        int audioTemp = (int)CurrentState;
         if (increment)
             CurrentState = ((int)CurrentState) + 1 >= System.Enum.GetValues(typeof(MenuState)).Length ? CurrentState : CurrentState + 1;
         else
             CurrentState = ((int)CurrentState) - 1 < 0 ? CurrentState : CurrentState - 1;
+        if(audioTemp == (int) CurrentState)
+            PlayAudioClip(AudioClipType.SwipeError);
+        else
+            PlayAudioClip(AudioClipType.Swipe);
         StartCoroutine(SelectorPositionChange());
     }
 
     private IEnumerator SelectorPositionChange()
     {
-        Vector3 Start = selector.position;
+        Vector3 start = selector.position;
         float startTime = Time.time;
-        float length = Vector3.Distance(Start, selectorPoints[(int)CurrentState].position);
+        float length = Vector3.Distance(start, selectorPoints[(int)CurrentState].position);
 
         while(selector.position != selectorPoints[(int)CurrentState].position)
         {
             float distance = (Time.time - startTime) * selectorSpeed * 10;
-            selector.position = Vector3.Lerp(Start, selectorPoints[(int)CurrentState].position,distance / length);
+            selector.position = Vector3.Lerp(start, selectorPoints[(int)CurrentState].position,distance / length);
             yield return new WaitForEndOfFrame();
         }
     }
@@ -157,6 +164,36 @@ public class MenuSelectionManager : MenuManager
         }
     }
 
+    public void PlayAudioClip(AudioClipType type)
+    {
+        switch (type)
+        {
+            case AudioClipType.Swipe:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(swipe), Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            case AudioClipType.Confirm:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(confirm),Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            case AudioClipType.Decline:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(decline),Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            case AudioClipType.GameStart:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(gameStart), Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            case AudioClipType.Error:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(error), Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            case AudioClipType.Ready:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(ready),Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            case AudioClipType.SwipeError:
+                OneShotAudioManager.PlayOneShotAudio(Utilities.PickAtRandom<AudioClip>(swipeError), mainCamera.position + Vector3.forward, GameManager.Instance.MenuSoundsVolume);
+                break;
+            default:
+                break;
+        }
+    }
+
     public override void OnDPadInput(InputAction.CallbackContext ctx)
     {
         if (buttonDelay > 0)
@@ -183,8 +220,11 @@ public class MenuSelectionManager : MenuManager
             buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnStartPressed(ctx);
-        else if(inTitleScreen)
+        else if (inTitleScreen)
+        {
+            PlayAudioClip(AudioClipType.Ready);
             StartCoroutine(RotateCamera(inTitleScreen = false));
+        }
     }
 
     public override void OnConfirmation(InputAction.CallbackContext ctx)
@@ -198,9 +238,15 @@ public class MenuSelectionManager : MenuManager
         else
         {
             if (inTitleScreen)
+            {
+                PlayAudioClip(AudioClipType.Ready);
                 StartCoroutine(RotateCamera(inTitleScreen = false));
+            }
             else
+            {
+                PlayAudioClip(AudioClipType.Confirm);
                 ManageSubmenu(true);
+            }
         }
     }
 
@@ -212,8 +258,11 @@ public class MenuSelectionManager : MenuManager
             buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnDecline(ctx);
-        else
+        else if(!inTitleScreen)
+        {
+            PlayAudioClip(AudioClipType.Decline);
             StartCoroutine(RotateCamera(inTitleScreen = true));
+        }
     }
 
     private void Start()

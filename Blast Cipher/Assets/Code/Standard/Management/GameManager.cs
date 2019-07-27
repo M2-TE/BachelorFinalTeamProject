@@ -27,10 +27,12 @@ public sealed class GameManager
 	public bool playerInputsActive = true;
     public int maxRounds;
 
-	private int roundCount;
+	private int roundCount = 1;
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
+
+    public float MenuSoundsVolume = .2f;
 
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
     private int[] playerColors = new int[4] { 0, 0, 0, 0};
@@ -43,7 +45,10 @@ public sealed class GameManager
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
 	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
 
+    public bool AllowOneControllerGameStart => bootstrapper.AllowOneControllerGameStart;
+
     public Material[] CharacterMaterials => bootstrapper.CharacterMaterials;
+    public Material[] TeamMaterials => bootstrapper.TeamMaterials;
     private CScriptableCharacter[] StandardCharacters => bootstrapper.StandardCharacters;
     private CScriptableMap[] StandardMaps => bootstrapper.StandardMaps;
 

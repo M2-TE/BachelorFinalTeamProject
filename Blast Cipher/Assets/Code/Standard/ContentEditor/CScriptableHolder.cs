@@ -32,13 +32,16 @@ public class CScriptableHolder : ScriptableObject
 
     public void RemoveCharacter(CScriptableCharacter character)
     {
+        int pos = 0;
         foreach (var c in Characters)
         {
             if (c.CharacterID.Equals(character.CharacterID))
             {
-                Characters.Remove(c);
-                CharacterPaths.Remove("/Characters/" + c.CharacterID + ".json");
+                Characters.RemoveAt(pos);
+                CharacterPaths.RemoveAt(pos);
+                //CharacterPaths.Remove("/Characters/" + c.CharacterID + ".json");
             }
+            pos++;
         }
     }
 
