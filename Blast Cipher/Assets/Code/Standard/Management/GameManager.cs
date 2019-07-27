@@ -25,7 +25,7 @@ public sealed class GameManager
     public CScriptableHolder ContentHolder;
 	public readonly InputDevice[] inputDevices = new InputDevice[4];
 	public bool playerInputsActive = true;
-    public int maxRounds;
+    public MatchSettings matchSettings = new MatchSettings(15, 0, true, new bool[3] { true, true, true }, new int[3] { 9, 9, 9 }, new int[3] { 5, 5, 5 }, 4, 4, 4);
 
 	private int roundCount = 1;
 	private bool nextRoundStarterInProgress = false;
@@ -296,7 +296,6 @@ public sealed class GameManager
     {
         LoadScene(0);
         roundCount = 0;
-        maxRounds = 0;
         for (int i = 0; i < inputDevices.Length; i++)
         {
             inputDevices[i] = null;
