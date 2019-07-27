@@ -43,7 +43,7 @@ public class OneShotAudioManager : MonoBehaviour
 		instance.StartCoroutine(DelayedEnqueue(audioSource, clip.length));
 
 		audioSource.transform.position = worldPos;
-		audioSource.AudioSource.PlayOneShot(clip);
+		audioSource.AudioSource.PlayOneShot(clip, vol);
 
 
 		return audioSource;

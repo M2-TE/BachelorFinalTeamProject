@@ -38,9 +38,6 @@ public sealed class MusicManager : Manager<MusicManager>
 		{
 			// on every beat
 			{
-				// show beat
-				bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
-
 				// invoke OnBeat callbacks
 				if (onBeatCallbacks.Count > 0)
 				{
@@ -52,66 +49,12 @@ public sealed class MusicManager : Manager<MusicManager>
 			// on every bar (bar = 4 beats on 4/4 rhythm)
 			if(currentBeat % 4 == 0)
 			{
-				
 				// invoke OnBar callbacks
 				if (onBarCallbacks.Count > 0)
 				{
 					onBarCallbacks.First.Value?.Invoke();
 					onBarCallbacks.RemoveFirst();
 				}
-
-				// check if next intensity should be switched to
-				//if (intensitySwitchBuffered)
-				//{
-				//	// get playback position
-				//	float bufferedTime = source.time;
-					
-				//	// callback
-				//	bufferedTransitionCall();
-
-				//	// out smoothing
-				//	var snapshot = bootstrapper.musicMixer.FindSnapshot("Main");
-				//	snapshot.TransitionTo(4f * timeBetweenBeats);
-
-				//	// switch to next intensity int
-				//	currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
-
-				//	// play transition
-				//	source.volume = .2f;
-				//	source.PlayOneShot(trackContainer.TransitionTrack[currentActiveTrack], 5f);
-				//	Effects.StartVignetteTransition(1f, .1f);
-
-				//	yield return new WaitForSecondsRealtime(trackContainer.TransitionTrack[currentActiveTrack].length);
-				//	source.volume = 1f;
-
-				//	FadeOutCalls();
-
-				//	// switch to next intensity track
-				//	clip = trackContainer.tracks[currentActiveTrack];
-				//	source.clip = clip;
-
-				//	// calc new time buffer (due to bpm difference)
-				//	//currentBeat = (int)(bufferedTime / timeBetweenBeats);
-				//	//timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
-				//	bufferedTime = /*(currentBeat - 2) * timeBetweenBeats*/0f;
-				//	currentBeat = 0;
-				//	bootstrapper.StartCoroutine(SmoothVolIn());
-
-				//	// set new track 
-				//	source.time = bufferedTime;
-				//	source.Play();
-
-				//	// retoggle main beat since this iteration of the loop is going to be skipped
-				//	bootstrapper.debugImage.enabled = !bootstrapper.debugImage.enabled;
-
-				//	intensitySwitchBuffered = false;
-				//	continue;
-				//}
-				//else
-				//{
-				//	// toggle bar
-				//	bootstrapper.debugImageTwo.enabled = !bootstrapper.debugImageTwo.enabled;
-				//}
 			}
 
 			// calc new targetTime
@@ -128,28 +71,6 @@ public sealed class MusicManager : Manager<MusicManager>
 			waiter = new WaitForSecondsRealtime(targetTime - Source.time);
 			yield return waiter;
 		}
-	}
-
-	private IEnumerator SmoothVolIn()
-	{
-		Source.volume *= .5f;
-		float targetTime = Source.time + .25f;
-		do
-		{
-			Source.volume = Mathf.MoveTowards(Source.volume, 1f, .1f);
-			yield return null;
-		} while (Source.time < targetTime);
-		Source.volume = 1f;
-	}
-
-	private float GetTimeUntilNextBeat()
-	{
-		return default;
-	}
-
-	private float GetTimeUntilNextBar()
-	{
-		return (currentBeat % 4) * timeBetweenBeats + targetTime - (Source.time/* - 0.01f float precision smoothing */);
 	}
 
 	public void PlayMusic(AudioContainer tracks)
@@ -187,6 +108,8 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		if (transitionIntensity)
 		{
+			currentBeat = 0;
+			timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
 			Source.clip = bootstrapper.cont.tracks[currentActiveTrack];
 			Source.Play();
 		}

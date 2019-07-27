@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.unity.transport": "file:com.unity.transport",
     "com.unity.test-framework.performance": "1.0.9-preview",
     "com.unity.burst": "1.0.4",
     "com.unity.entities": "0.0.12-preview.30",

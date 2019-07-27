@@ -50,6 +50,7 @@ public class Projectile : MonoBehaviour, ITeleportable
 		}
 	}
 
+	[HideInInspector] public float wallHitVol = 1f; 
 	public Vector3 actualVelocity; // TODO update this value properly to handle portal physics
 	public Rigidbody rgb;
 	public Collider ownCollider;
@@ -85,7 +86,7 @@ public class Projectile : MonoBehaviour, ITeleportable
 				else
 				{
 					if (_explosive) Explosive = false;
-					else OneShotAudioManager.PlayOneShotAudio(settings.wallHitSounds, transform.position, 1f);
+					else OneShotAudioManager.PlayOneShotAudio(settings.wallHitSounds, transform.position, wallHitVol);
 
 					rgb.angularVelocity = Vector3.zero;
 					rgb.velocity = rgb.velocity.normalized * settings.VelocityChangeOnWallHit;

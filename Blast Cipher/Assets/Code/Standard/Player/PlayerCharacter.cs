@@ -770,4 +770,29 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		transform.position = startPos;
 		CharController.enabled = true;
 	}
+
+	public enum CharacterType { Ranger, Swordsdude, Magicgrill }
+
+	CharacterType chosenCharType = CharacterType.Magicgrill;
+
+	public void EndingMethod()
+	{
+		switch (chosenCharType)
+		{
+			case CharacterType.Ranger:
+				// ending / method call for ending
+				break;
+
+			case CharacterType.Magicgrill:
+				// ending / method call for ending
+				"KUKU".ToLower();
+				break;
+
+			case CharacterType.Swordsdude:
+				// ending / method call for ending
+				break;
+
+			default: break;
+		}
+	}
 }

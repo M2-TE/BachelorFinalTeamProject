@@ -10,21 +10,27 @@ namespace ECS.AudioVisualization.Components
 		public Entity PrefabEntity;
 		public float3 Size;
 		public float3 PrefabSize;
-		public int3 Spacing;
+		public float3 Spacing;
 		public int SpawnMode;
 		public int LockedScaling;
+
+		public float2 TowerSize;
 	}
 
 	[DisallowMultipleComponent, RequireComponent(typeof(ConvertToEntity))]
 	public class AudioVisualizationSpawnerProxy : MonoBehaviour, IDeclareReferencedPrefabs, IConvertGameObjectToEntity
 	{
-		public enum Mode { Standard, CircularCentered }
+		public enum Mode { Standard, CircularCentered, CubeTower }
+
 		public GameObject PrefabGO;
 		public int3 Size;
 		public float3 PrefabSize;
-		public int3 Spacing;
+		public float3 Spacing;
 		public bool LockedScaling;
 		public Mode SpawnMode;
+
+		[Header("CubeTowerOnly")]
+		public float2 TowerSize;
 
 		public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
 		{
@@ -40,7 +46,9 @@ namespace ECS.AudioVisualization.Components
 				Spacing = Spacing,
 				PrefabSize = PrefabSize,
 				SpawnMode = (int)SpawnMode,
-				LockedScaling = LockedScaling ? 1 : 0
+				LockedScaling = LockedScaling ? 1 : 0,
+				TowerSize = TowerSize
+				
 			};
 			dstManager.AddComponentData(entity, spawnerData);
 		}
