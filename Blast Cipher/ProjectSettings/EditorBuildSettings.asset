@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Editor Proto.unity
     guid: 380b42da052fe3b4fa8efb9adf8d9f3b
   - enabled: 1
-    path: Assets/Scenes/Gameplay Proto/Level 1.unity
+    path: Assets/Scenes/Gameplay/Level 1.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 41b6ff6405e506d4f8e54790df3d39ed,

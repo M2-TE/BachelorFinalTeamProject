@@ -60,6 +60,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private Portal portalTwo;
 	private float currentMovespeed;
 	private bool shooting = false;
+	public bool isDashing = false;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
@@ -562,6 +563,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public IEnumerator DashSequence()
 	{
+		isDashing = true;
 		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDashSounds, transform.position);
 
 		CharController.detectCollisions = false;
@@ -573,9 +575,19 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		float baseSpeed = currentMovespeed;
 		currentMovespeed = Settings.DashSpeed;
 
-		yield return new WaitForSeconds(Settings.DashDuration);
+		float timer = Settings.DashDuration;
+		while(isDashing && timer > 0f)
+		{
+			timer -= Time.deltaTime;
+			yield return null;
+		}
+
+		Debug.Log(isDashing);
+
+		//yield return new WaitForSeconds(Settings.DashDuration);
 		currentMovespeed = baseSpeed;
 		CharController.detectCollisions = true;
+		isDashing = false;
 	}
 
 	public void CreatePortal()

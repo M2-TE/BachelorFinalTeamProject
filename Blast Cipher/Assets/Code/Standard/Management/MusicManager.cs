@@ -16,6 +16,7 @@ public sealed class MusicManager : Manager<MusicManager>
 	private int currentBeat = 0;
 	private float targetTime = 0f;
 	private float timeBetweenBeats = 0f;
+	private bool musicPlaying = false;
 	private OnBeatCallback bufferedTransitionCall;
 
 	internal void RegisterBootstrapper(MusicManagerBootstrapper bootstrapper)
@@ -26,13 +27,8 @@ public sealed class MusicManager : Manager<MusicManager>
 
 	private IEnumerator MusicHandler()
 	{
-		timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
-		var waiter = new WaitForSecondsRealtime(timeBetweenBeats);
-
-		var clip = trackContainer.tracks[currentActiveTrack];
-
-		Source.clip = clip;
-		Source.Play();
+		musicPlaying = true;
+		WaitForSecondsRealtime waiter;
 
 		while (true)
 		{
@@ -76,7 +72,18 @@ public sealed class MusicManager : Manager<MusicManager>
 	public void PlayMusic(AudioContainer tracks)
 	{
 		trackContainer = tracks;
-		bootstrapper.StartCoroutine(MusicHandler());
+
+		currentBeat = 0;
+		currentActiveTrack = 0;
+		timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
+
+		Source.clip = trackContainer.tracks[currentActiveTrack];
+		Source.Play();
+
+		if (!musicPlaying)
+		{
+			bootstrapper.StartCoroutine(MusicHandler());
+		}
 	}
 
 	public void RoundTransitionSmoother(OnBeatCallback onTransitionCallback, bool transitionIntensity)

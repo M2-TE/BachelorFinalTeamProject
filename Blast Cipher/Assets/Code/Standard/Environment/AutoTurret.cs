@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class AutoTurret : MonoBehaviour
 {
@@ -77,7 +78,19 @@ public class AutoTurret : MonoBehaviour
 			projectile.wallHitVol = .4f;
 			OneShotAudioManager.PlayOneShotAudio(settings.ProjectileShotSounds, launchPositions[currentIteration].position, .4f);
 		}
+		if(Time.timeScale < .01f)
+		{
+			StartCoroutine(OnBeatDelayed());
+		}
+		else
+		{
+			music.RegisterCallOnNextBeat(OnBeat, 2, false);
+		}
+	}
 
+	private IEnumerator OnBeatDelayed()
+	{
+		while(Time.timeScale < .01f) yield return null;
 		music.RegisterCallOnNextBeat(OnBeat, 2, false);
 	}
 }
