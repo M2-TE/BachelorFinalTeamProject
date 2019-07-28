@@ -522,20 +522,20 @@ public class RulesManager : MenuManager
         {
             if (increment)
             {
-                settings.Dutrations[currentPU]++;
-                if (settings.Dutrations[currentPU] >= durationDigits.Length)
-                    settings.Dutrations[currentPU] = 0;
+                settings.Durations[currentPU]++;
+                if (settings.Durations[currentPU] >= durationDigits.Length)
+                    settings.Durations[currentPU] = 0;
             }
             else
             {
-                settings.Dutrations[currentPU]--;
-                if (settings.Dutrations[currentPU] < 0)
-                    settings.Dutrations[currentPU] = durationDigits.Length - 1;
+                settings.Durations[currentPU]--;
+                if (settings.Durations[currentPU] < 0)
+                    settings.Durations[currentPU] = durationDigits.Length - 1;
             }
         }
         for (int i = 0; i < durationDigits.Length; i++)
         {
-            durationDigits[i].gameObject.SetActive(i == settings.Dutrations[currentPU]);
+            durationDigits[i].gameObject.SetActive(i == settings.Durations[currentPU]);
         }
     }
 

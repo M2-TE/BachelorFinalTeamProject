@@ -364,7 +364,6 @@ public class CEditorManager
         int y = posY - negY + 1;
         int x = posX - negX + 1;
         int z = posZ - negZ + 1;
-        Debug.Log("XDiff: " + x + " | YDiff: " + y + " | ZDiff: " + z);
         y = (y + (y % 2)) / 2;
         int scaling = y;
         scaling = scaling < x ? x : scaling;

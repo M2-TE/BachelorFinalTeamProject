@@ -3,12 +3,12 @@ using UnityEngine;
 using UnityEngine.Experimental.Input;
 
 public enum AudioClipType { Swipe, Confirm, Decline, GameStart, Error, Ready, SwipeError }
-public enum MenuState { Local, Settings , Editor, Profile, Exit }
+public enum MenuState { Local, Credits , Editor, Profile, Exit }
 
 [RequireComponent(typeof(PressStartBlinker))]
 public class MenuSelectionManager : MenuManager
 {
-    [SerializeField] private MaterialsHolder localGame, settings, editors, profile, exit;
+    [SerializeField] private MaterialsHolder localGame, credits, editors, profile, exit;
     [SerializeField] private MenuState standartState = 0;
     [SerializeField] private AudioClip[] swipe, confirm, decline, gameStart, error, ready, swipeError;
     [SerializeField] private Transform[] selectorPoints;
@@ -19,6 +19,7 @@ public class MenuSelectionManager : MenuManager
     [SerializeField] [Range(0.5f, 0.1f)] private float buttonDelayAmount;
     [SerializeField] private LocalLobbyManager localLobbyManager;
     [SerializeField] private RulesManager rulesManager;
+    [SerializeField] private CreditsManager creditsManager;
     [SerializeField] private ProfileSelectionManager profileSelectionManager;
 
     private MenuState currentState;
@@ -110,8 +111,8 @@ public class MenuSelectionManager : MenuManager
             case MenuState.Local:
                 localGame.SetMaterials(mat);
                 break;
-            case MenuState.Settings:
-                settings.SetMaterials(mat);
+            case MenuState.Credits:
+                credits.SetMaterials(mat);
                 break;
             case MenuState.Editor:
                 editors.SetMaterials(mat);
@@ -145,8 +146,10 @@ public class MenuSelectionManager : MenuManager
                     localLobbyManager.ToggleActivation(open);
                 }
                 break;
-            case MenuState.Settings:
-                // Settings
+            case MenuState.Credits:
+                StartCoroutine(CameraSubmenuMovement(!open));
+                currentActiveManager = open ? (MenuManager)creditsManager : this;
+                creditsManager.ToggleActivation(open);
                 break;
             case MenuState.Editor:
                 GameManager.Instance.LoadScene(2);
