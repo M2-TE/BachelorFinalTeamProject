@@ -204,7 +204,6 @@ public class SettingsMenuManager : MonoBehaviour
 
     private void BackToMainMenu()
     {
-        Time.timeScale = 1;
         gameObject.SetActive(false);
         GameManager.Instance.LoadScene(0);
     }

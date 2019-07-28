@@ -22,3 +22,6 @@ MonoBehaviour:
   - SceneName: Level 1
     BuildIndex: 3
     Audio: {fileID: 11400000, guid: 055f25c5c6b28594aaee2e16942bf97b, type: 2}
+  - SceneName: Level 2
+    BuildIndex: 4
+    Audio: {fileID: 11400000, guid: 1a1a5d6ce7a258846818538834fb4cd9, type: 2}

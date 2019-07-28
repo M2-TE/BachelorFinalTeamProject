@@ -16,14 +16,14 @@ public class PlayerCharacterSettings : ReadonlySettings
 
 	[Header("Movement")]
 	public float MovespeedMod = 8f;
-	public float DashCooldown = 5f;
+	//public float DashCooldown = 5f;
 	public float DashDuration = .2f;
 	public float DashSpeed = 30f;
 	public float DashAfterimagePadding = .05f;
 
 	[Header("Combat")]
-	public float ParryCooldown = 5f;
-	public float ShotCooldown = .2f;
+	//public float ParryCooldown = 5f;
+	//public float ShotCooldown = .2f;
 	public float ShotStrength = 30f;
 	public float PowerUpDuration = 10f;
 

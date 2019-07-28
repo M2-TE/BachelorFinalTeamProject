@@ -90,22 +90,28 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void Update()
 	{
-		if (!gameManager.playerInputsActive) return;
+		try
+		{
+			if (!gameManager.playerInputsActive) return;
 
-		if (DebugKBControlsActive) DebugKeyboardInput();
+			if (DebugKBControlsActive) DebugKeyboardInput();
 
-		UpdateMovement();
-		UpdateLookRotation();
+			UpdateMovement();
+			UpdateLookRotation();
 
-		UpdateProjectileOrbit();
-		UpdateShooting();
-		PullInProjectilesGradual();
-		UpdateMiscValues();
+			UpdateProjectileOrbit();
+			UpdateShooting();
+			PullInProjectilesGradual();
+			UpdateMiscValues();
+		}
+		catch (MissingReferenceException e) { }
 	}
 
 	private void OnDestroy()
 	{
 		gameManager.UnregisterPlayerCharacter(this);
+		UnregisterActions();
+		Debug.Log("destroying player");
 	}
 
 	#region Setup
@@ -187,7 +193,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if(Input.GetKeyDown(KeyCode.Q) && CurrentParryCooldown == 0f)
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
-			currentParryCooldown = Settings.ParryCooldown;
+			currentParryCooldown = GameManager.Instance.matchSettings.ShieldCD;
 
 			OneShotAudioManager.PlayOneShotAudio(Settings.ShieldConstructionSounds, transform.position);
 		}
@@ -211,7 +217,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			if (currentDashCooldown == 0f && CharController.velocity.sqrMagnitude > .1f)
 			{
-				currentDashCooldown = Settings.DashCooldown;
+				currentDashCooldown = GameManager.Instance.matchSettings.DashCD;
 				StartCoroutine(DashSequence());
 			}
 		}
@@ -261,7 +267,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			&& currentDashCooldown == 0f 
 			&& CharController.velocity.sqrMagnitude > .1f)
 		{
-			currentDashCooldown = Settings.DashCooldown;
+			currentDashCooldown = GameManager.Instance.matchSettings.DashCD;
 			StartCoroutine(DashSequence());
 		}
 	}
@@ -271,7 +277,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (currentParryCooldown == 0f && IsAssignedDevice(ctx.control.device))
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
-			currentParryCooldown = Settings.ParryCooldown;
+			currentParryCooldown = GameManager.Instance.matchSettings.ShieldCD;
 			OneShotAudioManager.PlayOneShotAudio(Settings.ShieldConstructionSounds, transform.position, .5f);
 		}
 	}
@@ -317,6 +323,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region Regular Updates
 	private void UpdateMovement()
 	{
+		if (CamMover.Instance == null) return;
+
 		Camera mainCam = CamMover.Instance.Cam;
 		if (mainCam == null)
 		{
@@ -416,7 +424,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (shooting && currentShotCooldown == 0f && loadedProjectiles.Count > 0)
 		{
 			Shoot();
-			currentShotCooldown = Settings.ShotCooldown;
+			currentShotCooldown = GameManager.Instance.matchSettings.ReloadTime;
 		}
 	}
 
@@ -484,7 +492,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private void Shoot()
 	{
 		camShakeManager.ShakeMagnitude = Settings.ShotShakeMagnitude;
-		currentShotCooldown = Settings.ShotCooldown;
+		currentShotCooldown = GameManager.Instance.matchSettings.ReloadTime;
 
 		var projectile = loadedProjectiles[0];
 		loadedProjectiles.Remove(projectile);
@@ -675,7 +683,24 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		if (activePowerUps.ContainsKey(type)) activePowerUps[type] += Settings.PowerUpDuration;
 		else
 		{
-			activePowerUps.Add(type, Settings.PowerUpDuration);
+			float duration = 0f;
+			switch (type)
+			{
+				default:
+				case PowerUpType.AutoAim:
+					duration = GameManager.Instance.matchSettings.Durations[2];
+					break;
+
+				case PowerUpType.Bomb:
+					duration = GameManager.Instance.matchSettings.Durations[0];
+					break;
+
+				case PowerUpType.Bounce:
+					duration = GameManager.Instance.matchSettings.Durations[1];
+					break;
+			}
+
+			activePowerUps.Add(type, duration);
 			ApplyPowerUp(type, loadedProjectiles);
 		}
 	}
@@ -782,30 +807,5 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		CharController.enabled = false;
 		transform.position = startPos;
 		CharController.enabled = true;
-	}
-
-	public enum CharacterType { Ranger, Swordsdude, Magicgrill }
-
-	CharacterType chosenCharType = CharacterType.Magicgrill;
-
-	public void EndingMethod()
-	{
-		switch (chosenCharType)
-		{
-			case CharacterType.Ranger:
-				// ending / method call for ending
-				break;
-
-			case CharacterType.Magicgrill:
-				// ending / method call for ending
-				"KUKU".ToLower();
-				break;
-
-			case CharacterType.Swordsdude:
-				// ending / method call for ending
-				break;
-
-			default: break;
-		}
 	}
 }
