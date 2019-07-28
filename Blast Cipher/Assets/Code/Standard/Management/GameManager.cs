@@ -34,6 +34,8 @@ public sealed class GameManager
 
     public float MenuSoundsVolume = .2f;
 
+    public List<int> WinnerIDs = new List<int>();
+
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
     private bool[] playersAlive = new bool[4] { false, false, false, false };
     private int[] playerColors = new int[4] { 0, 0, 0, 0};
