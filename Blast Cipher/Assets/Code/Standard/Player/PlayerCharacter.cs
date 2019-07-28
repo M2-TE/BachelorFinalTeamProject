@@ -688,15 +688,15 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			{
 				default:
 				case PowerUpType.AutoAim:
-					duration = GameManager.Instance.matchSettings.Dutrations[2];
+					duration = GameManager.Instance.matchSettings.Durations[2];
 					break;
 
 				case PowerUpType.Bomb:
-					duration = GameManager.Instance.matchSettings.Dutrations[0];
+					duration = GameManager.Instance.matchSettings.Durations[0];
 					break;
 
 				case PowerUpType.Bounce:
-					duration = GameManager.Instance.matchSettings.Dutrations[1];
+					duration = GameManager.Instance.matchSettings.Durations[1];
 					break;
 			}
 
