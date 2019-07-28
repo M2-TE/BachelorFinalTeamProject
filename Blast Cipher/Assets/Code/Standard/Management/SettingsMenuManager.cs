@@ -118,13 +118,13 @@ public class SettingsMenuManager : MonoBehaviour
          else if (input.y < 0)
              ChangeState(true);
          else if (input.x < 0 && currentState.Equals(PauseMenuState.Music))
-             Decrease(false);
-         else if (input.x < 0 && currentState.Equals(PauseMenuState.Sounds))
              Decrease(true);
+         else if (input.x < 0 && currentState.Equals(PauseMenuState.Sounds))
+             Decrease(false);
          else if (input.x > 0 && currentState.Equals(PauseMenuState.Music))
-             Increase(false);
-         else if (input.x > 0 && currentState.Equals(PauseMenuState.Sounds))
              Increase(true);
+         else if (input.x > 0 && currentState.Equals(PauseMenuState.Sounds))
+             Increase(false);
     }
 
     private void Activate()
