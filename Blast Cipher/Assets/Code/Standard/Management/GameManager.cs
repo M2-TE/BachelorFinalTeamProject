@@ -220,7 +220,20 @@ public sealed class GameManager
 	public PlayerCharacter RequestNearestPlayer(PlayerCharacter requestSender)
 	{
 		if (registeredPlayerCharacters.Count < 2) return null;
-		return registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
+
+		float minDist = float.MaxValue;
+		PlayerCharacter minChar = null;
+		for(int i = 0; i < registeredPlayerCharacters.Count; i++)
+		{
+			if (registeredPlayerCharacters[i] == requestSender) continue;
+
+			float dist = Vector3.Distance(requestSender.transform.position, registeredPlayerCharacters[i].transform.position);
+			if (dist < minDist) minChar = registeredPlayerCharacters[i];
+		}
+
+		return minChar;
+
+		//return registeredPlayerCharacters[registeredPlayerCharacters.IndexOf(requestSender) == 0 ? 1 : 0];
 	}
 
 	public GameObject SpawnObject (GameObject prefab)

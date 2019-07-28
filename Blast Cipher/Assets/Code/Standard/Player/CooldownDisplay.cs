@@ -5,9 +5,9 @@ using UnityEngine.UI;
 
 public class CooldownDisplay : MonoBehaviour
 {
+	public PlayerCharacter player;
 	[SerializeField] private Image dashCooldownImage;
 	[SerializeField] private Image parryCooldownImage;
-	[SerializeField] private PlayerCharacter player;
 	[SerializeField] private float offset;
 	[SerializeField] private float movingOffset;
 	[SerializeField] private float smoothTime;
@@ -26,8 +26,8 @@ public class CooldownDisplay : MonoBehaviour
 				ref currentVelocity,
 				smoothTime, maxSpeed, Time.deltaTime);
 
-			dashCooldownImage.fillAmount = (player.Settings.DashCooldown - player.CurrentDashCooldown) / player.Settings.DashCooldown * .5f;
-			parryCooldownImage.fillAmount = (player.Settings.ParryCooldown - player.CurrentParryCooldown) / player.Settings.ParryCooldown * .5f;
+			dashCooldownImage.fillAmount = (GameManager.Instance.matchSettings.DashCD - player.CurrentDashCooldown) / GameManager.Instance.matchSettings.DashCD * .5f;
+			parryCooldownImage.fillAmount = (GameManager.Instance.matchSettings.ShieldCD - player.CurrentParryCooldown) / GameManager.Instance.matchSettings.ShieldCD * .5f;
 		}
 		else
 		{

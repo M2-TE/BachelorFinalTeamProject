@@ -5,9 +5,9 @@ public class PowerUpDispenser : MonoBehaviour
 {
 	[SerializeField] private GameObject powerUpPrefab;
 	[SerializeField] private Image cooldownImage;
-	[SerializeField] private float respawnCooldown;
+	public float respawnCooldown;
 
-	private PowerUp currentOfferedPU;
+	[HideInInspector] public PowerUp currentOfferedPU;
 	private float currentRespawnTimer;
 
 	private void Awake()

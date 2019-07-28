@@ -61,6 +61,14 @@ public sealed class MusicManager : Manager<MusicManager>
 			{
 				currentBeat = 1;
 				targetTime = timeBetweenBeats;
+
+				if(trackContainer.bpmValues[currentActiveTrack] == 10)
+				{
+					currentActiveTrack = currentActiveTrack + 2 > trackContainer.tracks.Length ? 0 : currentActiveTrack + 1;
+					currentBeat = 0;
+					Source.clip = trackContainer.tracks[currentActiveTrack];
+					Source.Play();
+				}
 			}
 
 			// wait until next beat
