@@ -61,6 +61,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private float currentMovespeed;
 	private bool shooting = false;
 	public bool isDashing = false;
+	public bool portalPlaced = false;
 
 	private PlayerCharacter aimLockTarget;
 	private bool aimLocked = false;
@@ -274,7 +275,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		{
 			parryAnimator.SetTrigger("ConstructParryShield");
 			currentParryCooldown = Settings.ParryCooldown;
-			OneShotAudioManager.PlayOneShotAudio(Settings.ShieldConstructionSounds, transform.position);
+			OneShotAudioManager.PlayOneShotAudio(Settings.ShieldConstructionSounds, transform.position, .5f);
 		}
 	}
 
@@ -564,7 +565,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	public IEnumerator DashSequence()
 	{
 		isDashing = true;
-		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDashSounds, transform.position);
+		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDashSounds, transform.position, .7f);
 
 		CharController.detectCollisions = false;
 
@@ -592,6 +593,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public void CreatePortal()
 	{
+		if (portalPlaced) return;
+
 		if (!Physics.Raycast
 			(transform.position + new Vector3(0f, projectileLaunchPos.position.y, 0f), 
 			transform.forward, 
@@ -650,6 +653,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		}
 
 		portalOne.ConnectPortals(portalTwo);
+		portalPlaced = true;
 	}
 	#endregion
 

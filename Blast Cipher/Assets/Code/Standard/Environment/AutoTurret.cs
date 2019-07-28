@@ -10,6 +10,8 @@ public class AutoTurret : MonoBehaviour
 	[SerializeField] private Transform[] launchPositions;
 	[SerializeField] private float rotationSpeed;
 	[SerializeField] private int amtPerDir;
+	[SerializeField] private int beatDelay;
+	[SerializeField] private int initialBeatDelay = 2;
 	
 	private MusicManager music;
 	private GameManager manager;
@@ -20,7 +22,7 @@ public class AutoTurret : MonoBehaviour
 	{
 		manager = GameManager.Instance;
 		music = MusicManager.Instance;
-		music.RegisterCallOnNextBeat(OnBeat, 2, false);
+		music.RegisterCallOnNextBeat(OnBeat, initialBeatDelay, false);
 		currentIteration = 0;
 
 		for(int i = 0; i < renderers.Length; i++)
@@ -84,13 +86,13 @@ public class AutoTurret : MonoBehaviour
 		}
 		else
 		{
-			music.RegisterCallOnNextBeat(OnBeat, 2, false);
+			music.RegisterCallOnNextBeat(OnBeat, beatDelay, false);
 		}
 	}
 
 	private IEnumerator OnBeatDelayed()
 	{
 		while(Time.timeScale < .01f) yield return null;
-		music.RegisterCallOnNextBeat(OnBeat, 2, false);
+		music.RegisterCallOnNextBeat(OnBeat, beatDelay, false);
 	}
 }

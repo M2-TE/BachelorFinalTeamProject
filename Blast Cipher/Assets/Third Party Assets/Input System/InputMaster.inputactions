@@ -229,6 +229,19 @@
                 },
                 {
                     "name": "",
+                    "id": "f6e71893-a0af-49e3-bf9d-8b8aa6d4e0c6",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Portal",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
                     "id": "d3be82c2-16e6-4932-8645-1be569e75e47",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "Press(behavior=1)",

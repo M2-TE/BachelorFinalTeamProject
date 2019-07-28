@@ -43,7 +43,7 @@ public sealed class GameManager
 
 	public readonly List<GameObject> temporaryObjects = new List<GameObject>();
 	public readonly List<ExtendedUpdate> extendedUpdates = new List<ExtendedUpdate>();
-	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(2);
+	private readonly List<PlayerCharacter> registeredPlayerCharacters = new List<PlayerCharacter>(4);
 
     public bool AllowOneControllerGameStart => bootstrapper.AllowOneControllerGameStart;
 
@@ -242,14 +242,12 @@ public sealed class GameManager
 
 			nextRoundStarterInProgress = true;
 			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
-			//if (/*roundCount != 0 &&*/ roundCount % 2 == 0)
-			//{
-			//}
-			//else
-			//{
-			//	MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, false);
-			//}
 			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
+
+			for(int i = 0; i < registeredPlayerCharacters.Count; i++)
+			{
+				registeredPlayerCharacters[i].portalPlaced = false;
+			}
 
 			roundCount++;
 		}
