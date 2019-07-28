@@ -283,28 +283,28 @@ public class LocalLobbyManager : MenuManager
     private bool CheckIfAllReady()
     {
         int playersConnected = 0;
-        bool[] team = new bool[4] { false, false, false, false };
+        int[] team = new int[4] { 0, 0, 0, 0 };
         for (int playerID = 0; playerID < maxPlayers; playerID++)
         {
             if (players[playerID] != null)
             {
                 playersConnected++;
-                team[currentTeam[playerID]] = true;
+                team[currentTeam[playerID]] += 1;
             }
             if (!isReady[playerID] && players[playerID] != null)
                 return false;
         }
-        if (!GameManager.Instance.AllowOneControllerGameStart && (playersConnected < 1 || CheckIfMoreThenOneTeams(team)))
+        if (!GameManager.Instance.AllowOneControllerGameStart && !(playersConnected > 1 || CheckIfMoreThenOneTeams(team)))
             return false;
         return true;
     }
 
-    private bool CheckIfMoreThenOneTeams(bool[] teams)
+    private bool CheckIfMoreThenOneTeams(int[] teams)
     {
         int differentTeams = 0;
         for (int i = 0; i < teams.Length; i++)
         {
-            if (teams[i])
+            if (teams[i] > 0)
                 differentTeams++;
         }
 
