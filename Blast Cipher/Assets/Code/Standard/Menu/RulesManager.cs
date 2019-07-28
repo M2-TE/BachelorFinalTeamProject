@@ -662,7 +662,7 @@ public class RulesManager : MenuManager
     {
         mainManager.PlayAudioClip(AudioClipType.GameStart);
         GameManager.Instance.SetSettings(settings);
-        GameManager.Instance.LoadScene(3);
+        GameManager.Instance.LoadScene(settings.MapID >= 1 ? 4 : 3);
     }
 
     public override void OnConfirmation(InputAction.CallbackContext ctx)
