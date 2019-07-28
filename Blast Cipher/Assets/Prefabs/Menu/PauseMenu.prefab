@@ -2753,7 +2753,7 @@ MonoBehaviour:
   changeVolumeSound: {fileID: 8300000, guid: c1726e8989e286a4fa33551e1f16f3da, type: 3}
   swipe: {fileID: 8300000, guid: e89ea38dd5ce812449a26e735a424c7a, type: 3}
   swipeError: {fileID: 8300000, guid: 67a0d8ac26416d6469e6f69bfe707857, type: 3}
-  inputDelay: 0.7
+  inputDelay: 0.1
 --- !u!1 &819438257550329071
 GameObject:
   m_ObjectHideFlags: 0

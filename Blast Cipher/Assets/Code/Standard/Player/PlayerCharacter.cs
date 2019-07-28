@@ -93,22 +93,28 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void Update()
 	{
-		if (!gameManager.playerInputsActive) return;
+		try
+		{
+			if (!gameManager.playerInputsActive) return;
 
-		if (DebugKBControlsActive) DebugKeyboardInput();
+			if (DebugKBControlsActive) DebugKeyboardInput();
 
-		UpdateMovement();
-		UpdateLookRotation();
+			UpdateMovement();
+			UpdateLookRotation();
 
-		UpdateProjectileOrbit();
-		UpdateShooting();
-		PullInProjectilesGradual();
-		UpdateMiscValues();
+			UpdateProjectileOrbit();
+			UpdateShooting();
+			PullInProjectilesGradual();
+			UpdateMiscValues();
+		}
+		catch (MissingReferenceException e) { }
 	}
 
 	private void OnDestroy()
 	{
 		gameManager.UnregisterPlayerCharacter(this);
+		UnregisterActions();
+		Debug.Log("destroying player");
 	}
 
 	#region Setup
@@ -320,6 +326,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region Regular Updates
 	private void UpdateMovement()
 	{
+		if (CamMover.Instance == null) return;
+
 		Camera mainCam = CamMover.Instance.Cam;
 		if (mainCam == null)
 		{

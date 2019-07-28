@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -27,6 +28,7 @@ public sealed class GameManager
 	public bool playerInputsActive = true;
     public MatchSettings matchSettings = new MatchSettings(15, 0, true, new bool[3] { true, true, true }, new int[3] { 9, 9, 9 }, new int[3] { 5, 5, 5 }, 4, 4, 4);
 
+	private int cachedIndex = 0;
 	private int roundCount = 1;
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
@@ -78,6 +80,12 @@ public sealed class GameManager
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
+		for(int i = 0; i < registeredPlayerCharacters.Count; i++)
+		{
+			GameObject.Destroy(registeredPlayerCharacters[i].gameObject);
+		}
+		registeredPlayerCharacters.Clear();
+
 		// remove user control from currently unloading scene
 		SceneManager.SetActiveScene(asyncEssentials);
 
@@ -85,7 +93,7 @@ public sealed class GameManager
 		LoadingScreenHandler.ShowLoadingScreen(token);
 
 		while(!token.ScreenFullyShown) { yield return null; }
-		
+
 		// unload all unwanted scenes
 		Scene scene;
 		List<int> scenesToUnload = new List<int>();
@@ -109,25 +117,29 @@ public sealed class GameManager
 		loadOperation.allowSceneActivation = false;
 
 		while (!token.TransitionComplete) { yield return null; } // wait until loading is starting the transition into new scene
+																 // set new scene active
 		loadOperation.allowSceneActivation = true; // now allow to complete loading of level
+		loadOperation.completed += OnLoadDone;
 
 		MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[buildIndex].Audio);
+		cachedIndex = buildIndex;
+	}
 
-		// wait until new scene is fully loaded
-		while (!loadOperation.isDone) { yield return null; }
+	private void OnLoadDone(AsyncOperation obj)
+	{
 		bootstrapper.EmergencyListener.enabled = false;
-
-
-		// set new scene active
-		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(buildIndex));
+		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(cachedIndex));
 
 		// another smol hacc to refresh the post processing volume
 		bootstrapper.PostProcessing.gameObject.SetActive(false);
 		bootstrapper.PostProcessing.gameObject.SetActive(true);
+		Time.timeScale = 1f;
 	}
+
+
 	#endregion
 
-    internal void LoadStreamingAssets()
+	internal void LoadStreamingAssets()
     {
         string path = Application.streamingAssetsPath + "/ContentHolder.json";
         if (File.Exists(path))
