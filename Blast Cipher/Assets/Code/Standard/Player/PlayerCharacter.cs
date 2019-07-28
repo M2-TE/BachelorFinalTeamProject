@@ -48,7 +48,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private readonly List<PowerUpType> bufferedKeys = new List<PowerUpType>();
 
 	private GameManager gameManager;
-	private CamShakeManager camShakeManager;
+    private CamShakeManager camShakeManager;
 	private Hook networkHook;
 
 	private int playerID;
@@ -78,11 +78,8 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	private void Awake()
 	{
-		camShakeManager = CamShakeManager.Instance;
 		gameManager = GameManager.Instance;
-		
-        // ist nun in setup --> hab außerdem playerTeam als private int hinzugefügt
-		
+        camShakeManager = CamShakeManager.Instance;
 		CharController = GetComponent<CharacterController>();
 	}
 
@@ -518,16 +515,14 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 
 	public void TriggerDeath()
 	{
-		for (int i = 0; i < loadedProjectiles.Count; i++)
-		{
-			SetProjectileEnabled(loadedProjectiles[i], true);
-			loadedProjectiles[i].rgb.constraints = RigidbodyConstraints.None;
-			loadedProjectiles[i].CanPickup = true;
-		}
-
-		camShakeManager.ShakeMagnitude = Settings.DeathShakeMagnitude;
-		OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
-		gameManager.StartNextRound();
+        for (int i = 0; i < loadedProjectiles.Count; i++)
+        {
+            SetProjectileEnabled(loadedProjectiles[i], true);
+            loadedProjectiles[i].rgb.constraints = RigidbodyConstraints.None;
+            loadedProjectiles[i].CanPickup = true;
+        }
+        OneShotAudioManager.PlayOneShotAudio(Settings.PlayerDeathSounds, transform.position);
+        gameManager.PlayerDown(playerID);
 
 		gameObject.SetActive(false);
 	}

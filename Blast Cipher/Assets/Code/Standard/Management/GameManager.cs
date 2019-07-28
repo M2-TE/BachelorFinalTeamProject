@@ -35,8 +35,10 @@ public sealed class GameManager
     public float MenuSoundsVolume = .2f;
 
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
+    private bool[] playersAlive = new bool[4] { false, false, false, false };
     private int[] playerColors = new int[4] { 0, 0, 0, 0};
     private int[] playerTeams = new int[4] { 0, 1, 2, 3};
+    private int[] teamPoints = new int[4] { 0, 0, 0, 0 };
 	#endregion
 
 	public delegate void ExtendedUpdate();
@@ -243,15 +245,65 @@ public sealed class GameManager
 			nextRoundStarterInProgress = true;
 			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
 			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
-
+            ResetAlivePlayers();
 			for(int i = 0; i < registeredPlayerCharacters.Count; i++)
 			{
 				registeredPlayerCharacters[i].portalPlaced = false;
 			}
 
 			roundCount++;
+            IngameUIManager.Instance.UpdateUI(teamPoints, roundCount);
 		}
 	}
+
+    public void SetSettings(MatchSettings settings)
+    {
+        this.matchSettings = settings;
+        teamPoints = new int[4] { 0, 0, 0, 0 };
+        ResetAlivePlayers();
+    }
+
+    public void PlayerDown(int playerID)
+    {
+        playersAlive[playerID] = false;
+
+        if (!MoreThenOneTeamLeft())
+        {
+            int winnerPos = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (playersAlive[i])
+                    winnerPos = playerTeams[i];
+            }
+            teamPoints[winnerPos]++;
+            StartNextRound();
+        }
+    }
+
+    private bool MoreThenOneTeamLeft()
+    {
+        int playerAlive = 0;
+        List<int> teamsList = new List<int>();
+        for (int i = 0; i < playersAlive.Length; i++)
+        {
+            if (playersAlive[i] && !teamsList.Contains(playerTeams[i]))
+            {
+                teamsList.Add(playerTeams[i]);
+                playerAlive++;
+            }
+        }
+        return (playerAlive > 1);
+    }
+
+    private void ResetAlivePlayers()
+    {
+        if (playersAlive == null || playerMeshes == null)
+            return;
+        for (int i = 0; i < 4; i++)
+        {
+            playersAlive[i] = !playerMeshes[i].Equals(null);
+        }
+    }
 
     public void AssignPlayerMeshes(Mesh[] playerMeshes)
     {
@@ -288,6 +340,22 @@ public sealed class GameManager
     public int GetTeamByPlayerID(int id)
     {
         return playerTeams[id];
+    }
+
+    public bool[] GetActiveTeams()
+    {
+        bool[] activeTeams = new bool[4];
+        for (int i = 0; i < 4; i++)
+        {
+            bool temp = false;
+            for (int j = 0; j < 4; j++)
+            {
+                if (playerTeams[j].Equals(i) && !inputDevices[j].Equals(null))
+                    temp = true;
+            }
+            activeTeams[i] = temp;
+        }
+        return activeTeams;
     }
 
     private void BackToMenu()

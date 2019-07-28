@@ -28,7 +28,7 @@ TagManager:
   - Explosion
   - OuterWalls
   - HideInEditor
-  - 
+  - IgnoreReflectButLit
   - 
   - 
   - 

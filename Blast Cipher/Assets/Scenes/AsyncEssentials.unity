@@ -1223,6 +1223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GlobalMatRefs: {fileID: 11400000, guid: 08eddee4597fc51448b61cc4c274448a, type: 2}
+  PlayerSettings: {fileID: 11400000, guid: 683932f6b9670d64dab3c0d16676d7a1, type: 2}
   musicDict: {fileID: 11400000, guid: ff42a3fb473fded4fac8e7c2b23ba114, type: 2}
   EmergencyListener: {fileID: 965333598}
   PostProcessing: {fileID: 447803166}

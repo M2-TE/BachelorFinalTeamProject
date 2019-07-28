@@ -661,7 +661,7 @@ public class RulesManager : MenuManager
     private void StartLocalGame()
     {
         mainManager.PlayAudioClip(AudioClipType.GameStart);
-        GameManager.Instance.matchSettings = settings;
+        GameManager.Instance.SetSettings(settings);
         GameManager.Instance.LoadScene(3);
     }
 

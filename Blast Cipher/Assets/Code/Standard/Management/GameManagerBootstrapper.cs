@@ -4,11 +4,12 @@ using UnityEngine.Rendering.PostProcessing;
 public class GameManagerBootstrapper : Bootstrapper
 {
 	public GlobalMatRefs GlobalMatRefs;
+    public PlayerCharacterSettings PlayerSettings;
 	public MusicDictionary musicDict;
 	public AudioListener EmergencyListener;
 	public PostProcessVolume PostProcessing;
 	public InputMaster InputMaster;
-	public float ShakeMagnitude;
+    public float ShakeMagnitude;
 	public float ShakeRoughness;
 
     public bool AllowOneControllerGameStart = true;
@@ -29,7 +30,7 @@ public class GameManagerBootstrapper : Bootstrapper
 		//Cursor.lockState = CursorLockMode.Locked;
 		//Cursor.visible = false;
 		InputMaster.Enable();
-		gameManager = GameManager.Instance;
+        gameManager = GameManager.Instance;
 		EmergencyListener.enabled = false;
 	}
 
