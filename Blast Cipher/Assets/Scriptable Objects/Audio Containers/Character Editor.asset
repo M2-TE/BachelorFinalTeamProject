@@ -15,5 +15,7 @@ MonoBehaviour:
   TransitionTrack: []
   tracks:
   - {fileID: 8300000, guid: ac81f315604dc4c4b923bbf1b9435aeb, type: 3}
+  - {fileID: 8300000, guid: 269fd6e2f0048194186d5abfc4aa204d, type: 3}
   bpmValues:
-  - 100
+  - 10
+  - 10

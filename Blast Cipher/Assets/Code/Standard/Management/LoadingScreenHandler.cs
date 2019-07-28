@@ -54,7 +54,7 @@ public class LoadingScreenHandler : MonoBehaviour
 			anchPos.x = intensity;
 			text.rectTransform.anchoredPosition = anchPos;
 
-			timer += Time.deltaTime;
+			timer += Time.unscaledDeltaTime;
 			yield return null;
 		}
 	}
@@ -67,15 +67,15 @@ public class LoadingScreenHandler : MonoBehaviour
 		{
 			SetOpacities(timer / transitionInDuration);
 
-			timer += Time.deltaTime;
+			timer += Time.unscaledDeltaTime;
 			yield return null;
 		}
 
 		SetOpacities(1f);
 
-		yield return new WaitForSeconds(transitionMainDuration * .5f);
+		yield return new WaitForSecondsRealtime(transitionMainDuration * .5f);
 		token.ScreenFullyShown = true;
-		yield return new WaitForSeconds(transitionMainDuration * .5f);
+		yield return new WaitForSecondsRealtime(transitionMainDuration * .5f);
 		token.TransitionComplete = true;
 
 		MusicManager.Instance.LoadingScreenTransitionEffect(transitionOutDuration, false);
@@ -84,7 +84,7 @@ public class LoadingScreenHandler : MonoBehaviour
 		{
 			SetOpacities(1f - timer / transitionInDuration);
 
-			timer += Time.deltaTime;
+			timer += Time.unscaledDeltaTime;
 			yield return null;
 		}
 
