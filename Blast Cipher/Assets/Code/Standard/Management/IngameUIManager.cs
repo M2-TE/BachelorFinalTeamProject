@@ -5,7 +5,7 @@ using UnityEngine;
 public class IngameUIManager : MonoBehaviour
 {
     private static IngameUIManager instance;
-    public static IngameUIManager Instance { get => instance ?? (instance = new IngameUIManager()); }
+    public static IngameUIManager Instance { get => instance; }
 
     public GameObject[] Teams, SingleDigits1, DoubleDigits1, SingleDigits2, DoubleDigits2, SingleDigits3, DoubleDigits3, SingleDigits4, DoubleDigits4, SingleDigitsClock, DoubleDigitsClock;
 
@@ -13,27 +13,32 @@ public class IngameUIManager : MonoBehaviour
 
     private void Start()
     {
-        Set(activeTeams = GameManager.Instance.GetActiveTeams(), new int[4] { 0, 0, 0, 0 }, 1);
+        instance = this;
+        activeTeams = GameManager.Instance.GetActiveTeams();
+        for (int i = 0; i < 4; i++)
+        {
+            Teams[i].SetActive(activeTeams[i]);
+        }
+        Set(new int[4] { 0, 0, 0, 0 }, 1);
     }
 
     public void UpdateUI(int[] scores, int round)
     {
-        Set(activeTeams, scores, round);
+        Set(scores, round);
     }
 
-    private void Set(bool[] teamsActive, int[] scores, int round)
+    private void Set(int[] scores, int round)
     {
         for (int i = 0; i < 4; i++)
         {
-            Set(i, scores[i], teamsActive[i]);
+            Set(i, scores[i]);
         }
 
         Set(round);
     }
 
-    private void Set(int team, int score, bool active)
+    private void Set(int team, int score)
     {
-        Teams[team].SetActive(active);
         int singleDigits = score % 10;
         int doubleDigits = Mathf.FloorToInt(score / 10f);
         switch (team)

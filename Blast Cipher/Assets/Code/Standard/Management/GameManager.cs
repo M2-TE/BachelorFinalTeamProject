@@ -348,7 +348,7 @@ public sealed class GameManager
             bool temp = false;
             for (int j = 0; j < 4; j++)
             {
-                if (playerTeams[j].Equals(i) && !inputDevices[j].Equals(null))
+                if (playerTeams[j].Equals(i) && playerMeshes[j] != null)
                     temp = true;
             }
             activeTeams[i] = temp;
