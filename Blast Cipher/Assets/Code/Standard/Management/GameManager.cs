@@ -297,11 +297,9 @@ public sealed class GameManager
 
     private void ResetAlivePlayers()
     {
-        if (playersAlive == null || playerMeshes == null)
-            return;
         for (int i = 0; i < 4; i++)
         {
-            playersAlive[i] = !playerMeshes[i].Equals(null);
+            playersAlive[i] = playerMeshes[i] != null;
         }
     }
 
