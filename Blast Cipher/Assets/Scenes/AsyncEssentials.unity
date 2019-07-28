@@ -1231,7 +1231,7 @@ MonoBehaviour:
       type: 3}
   ShakeMagnitude: 0.4
   ShakeRoughness: 3
-  AllowOneControllerGameStart: 1
+  AllowOneControllerGameStart: 0
   StandardMaps: []
   StandardCharacters:
   - {fileID: 11400000, guid: 27cf12b6e48957848b801bea8ad08e81, type: 2}

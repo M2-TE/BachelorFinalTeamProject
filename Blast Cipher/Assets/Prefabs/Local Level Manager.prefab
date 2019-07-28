@@ -116,6 +116,11 @@ MonoBehaviour:
   - {fileID: 2545319661432490845}
   - {fileID: 2545319662907383885}
   - {fileID: 2545319662032704010}
+  dispensers:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &2545319662907383884
 GameObject:
   m_ObjectHideFlags: 0

@@ -247,11 +247,11 @@ public sealed class GameManager
 	{
 		if (!nextRoundStarterInProgress)
 		{
-			//if (roundCount >= maxRounds - 1)
-			//{
-			//	BackToMenu();
-			//	return;
-			//}
+			if (roundCount >= matchSettings.Rounds - 1)
+			{
+				BackToMenu();
+				return;
+			}
 
 			nextRoundStarterInProgress = true;
 			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
