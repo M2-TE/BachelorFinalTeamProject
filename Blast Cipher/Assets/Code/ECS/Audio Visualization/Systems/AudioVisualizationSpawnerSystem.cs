@@ -14,7 +14,30 @@ namespace ECS.AudioVisualization.Systems
 
 		protected override void OnCreate()
 		{
+			GameManager.Instance.OnLevelChange = DestroyEntities;
 			bufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+		}
+
+		public void DestroyEntities()
+		{
+			var query = GetEntityQuery(typeof(AudioAmplitude));
+			var entities = query.ToEntityArray(Allocator.TempJob);
+
+			for (int i = 0; i < entities.Length; i++)
+			{
+				var buffer = bufferSystem.CreateCommandBuffer();
+				buffer.DestroyEntity(entities[i]);
+			}
+
+			entities.Dispose();
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			Debug.Log("Closing Down");
+			DestroyEntities();
 		}
 
 		struct AudioVisualizationSpawnerJob : IJobForEachWithEntity<AudioVisualizationSpawner, Translation, Rotation>

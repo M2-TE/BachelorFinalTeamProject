@@ -111,7 +111,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		gameManager.UnregisterPlayerCharacter(this);
 		UnregisterActions();
-		Debug.Log("destroying player");
 	}
 
 	#region Setup

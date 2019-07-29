@@ -1642,7 +1642,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2031698779}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 769a16616211e014aa12c322f504f785, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2199,7 +2199,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 997268281247571249}
-  - component: {fileID: 743324451}
   m_Layer: 0
   m_Name: Auto Turret Obstacle
   m_TagString: Untagged
@@ -2229,19 +2228,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &743324451
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 997268281247571250}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &997268281448544919
 GameObject:
   m_ObjectHideFlags: 0
@@ -2396,6 +2382,7 @@ MonoBehaviour:
   rotationSpeed: 20
   amtPerDir: 3
   beatDelay: 2
+  initialBeatDelay: 2
 --- !u!1 &997268281755617749
 GameObject:
   m_ObjectHideFlags: 0

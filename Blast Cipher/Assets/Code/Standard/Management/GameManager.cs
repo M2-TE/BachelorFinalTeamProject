@@ -7,6 +7,7 @@ using UnityEngine.Experimental.Input;
 using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.SceneManagement;
 
+public delegate void CaseDelegate();
 public sealed class GameManager
 {
 	#region Singleton Implementation
@@ -26,7 +27,12 @@ public sealed class GameManager
     public CScriptableHolder ContentHolder;
 	public readonly InputDevice[] inputDevices = new InputDevice[4];
 	public bool playerInputsActive = true;
-    public MatchSettings matchSettings = new MatchSettings(15, 0, true, new bool[3] { true, true, true }, new int[3] { 9, 9, 9 }, new int[3] { 5, 5, 5 }, 4, 4, 4);
+    public MatchSettings matchSettings = new MatchSettings
+		(15, 0, true, 
+		new bool[3] { true, true, true }, 
+		new int[3] { 3, 3, 3 }, 
+		new int[3] { 5, 5, 5 }, 
+		6, 4, 1);
 
 	private int cachedIndex = 0;
 	private int roundCount = 1;
@@ -34,7 +40,8 @@ public sealed class GameManager
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
-    public float MenuSoundsVolume = .2f;
+	public CaseDelegate OnLevelChange;
+	public float MenuSoundsVolume = .2f;
 
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
     private bool[] playersAlive = new bool[4] { false, false, false, false };
@@ -82,7 +89,7 @@ public sealed class GameManager
 	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
-		for(int i = 0; i < registeredPlayerCharacters.Count; i++)
+		for (int i = 0; i < registeredPlayerCharacters.Count; i++)
 		{
 			GameObject.Destroy(registeredPlayerCharacters[i].gameObject);
 		}
@@ -95,6 +102,8 @@ public sealed class GameManager
 		LoadingScreenHandler.ShowLoadingScreen(token);
 
 		while(!token.ScreenFullyShown) { yield return null; }
+
+		OnLevelChange();
 
 		// unload all unwanted scenes
 		Scene scene;
@@ -123,7 +132,6 @@ public sealed class GameManager
 		loadOperation.allowSceneActivation = true; // now allow to complete loading of level
 		loadOperation.completed += OnLoadDone;
 
-		MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[buildIndex].Audio);
 		cachedIndex = buildIndex;
 	}
 
@@ -136,6 +144,8 @@ public sealed class GameManager
 		bootstrapper.PostProcessing.gameObject.SetActive(false);
 		bootstrapper.PostProcessing.gameObject.SetActive(true);
 		Time.timeScale = 1f;
+
+		MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[cachedIndex].Audio);
 	}
 
 

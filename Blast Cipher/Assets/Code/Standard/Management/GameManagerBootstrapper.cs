@@ -27,8 +27,8 @@ public class GameManagerBootstrapper : Bootstrapper
 
 	private void Awake()
 	{
-		//Cursor.lockState = CursorLockMode.Locked;
-		//Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
 		InputMaster.Enable();
         gameManager = GameManager.Instance;
 		EmergencyListener.enabled = false;
