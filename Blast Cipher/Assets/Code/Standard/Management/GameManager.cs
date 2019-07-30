@@ -43,6 +43,8 @@ public sealed class GameManager
 	public CaseDelegate OnLevelChange;
 	public float MenuSoundsVolume = .2f;
 
+    public List<Mesh> WinnerMeshes = new List<Mesh>();
+
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
     private bool[] playersAlive = new bool[4] { false, false, false, false };
     private int[] playerColors = new int[4] { 0, 0, 0, 0};
@@ -393,11 +395,31 @@ public sealed class GameManager
 
     private void BackToMenu()
     {
-        LoadScene(0);
+        AddWinners();
+        LoadScene(5);
         roundCount = 0;
         for (int i = 0; i < inputDevices.Length; i++)
         {
             inputDevices[i] = null;
+        }
+    }
+
+    private void AddWinners()
+    {
+        int winnerTeam = 0;
+        int pointholder = 0;
+        for (int i = 0; i < teamPoints.Length; i++)
+        {
+            if (pointholder < teamPoints[i])
+            {
+                pointholder = teamPoints[i];
+                winnerTeam = i;
+            }
+        }
+        for (int i = 0; i < playerMeshes.Length; i++)
+        {
+            if (playerTeams[i] == winnerTeam && playerMeshes[i] != null)
+                WinnerMeshes.Add(playerMeshes[i]);
         }
     }
 
