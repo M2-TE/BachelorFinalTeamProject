@@ -5491,6 +5491,7 @@ MonoBehaviour:
   bodyMesh: {fileID: 4422398641255969911}
   footprintMaterial: {fileID: 4422398641717322318}
   isDashing: 0
+  portalPlaced: 0
 --- !u!1 &4422398641255969907
 GameObject:
   m_ObjectHideFlags: 0
@@ -5650,7 +5651,7 @@ Transform:
   m_GameObject: {fileID: 4422398641717322315}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.05, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.1, z: 0.5}
+  m_LocalScale: {x: 0.9, y: 0.1, z: 0.9}
   m_Children: []
   m_Father: {fileID: 4422398642320433469}
   m_RootOrder: 1

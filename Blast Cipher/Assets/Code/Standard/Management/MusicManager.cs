@@ -125,7 +125,7 @@ public sealed class MusicManager : Manager<MusicManager>
 		{
 			currentBeat = 0;
 			timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
-			Source.clip = bootstrapper.cont.tracks[currentActiveTrack];
+			Source.clip = trackContainer.tracks[currentActiveTrack];
 			Source.Play();
 		}
 

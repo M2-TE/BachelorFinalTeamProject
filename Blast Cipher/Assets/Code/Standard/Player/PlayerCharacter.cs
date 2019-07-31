@@ -264,7 +264,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	{
 		if (IsAssignedDevice(ctx.control.device)
 			&& currentDashCooldown == 0f 
-			&& CharController.velocity.sqrMagnitude > .1f)
+			/*&& (CharController.velocity.sqrMagnitude > .1f*/)
 		{
 			currentDashCooldown = GameManager.Instance.matchSettings.DashCD;
 			StartCoroutine(DashSequence());

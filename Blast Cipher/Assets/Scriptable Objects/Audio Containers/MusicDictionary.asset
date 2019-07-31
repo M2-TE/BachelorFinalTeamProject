@@ -25,3 +25,6 @@ MonoBehaviour:
   - SceneName: Level 2
     BuildIndex: 4
     Audio: {fileID: 11400000, guid: 1a1a5d6ce7a258846818538834fb4cd9, type: 2}
+  - SceneName: Winner Screen
+    BuildIndex: 5
+    Audio: {fileID: 11400000, guid: 8122e65d04ef5f04cbcd7fe8c1b85c91, type: 2}

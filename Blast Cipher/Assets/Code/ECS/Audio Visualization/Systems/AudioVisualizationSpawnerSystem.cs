@@ -61,7 +61,7 @@ namespace ECS.AudioVisualization.Systems
 									Buffer.AddComponent(instance, new AudioSampleIndex { Value = x });
 									Buffer.AddComponent(instance, new AudioAmplitude());
 
-									var position = translation.Value + new float3(x, y, z);
+									var position = translation.Value + new float3(x * spawner.Spacing.x, y * spawner.Spacing.y, z * spawner.Spacing.z);
 									var scale = spawner.PrefabSize;
 
 									Buffer.SetComponent(instance, new Translation { Value = position });

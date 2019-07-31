@@ -1,8 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class CamMover : MonoBehaviour
 {
 	public Camera Cam;
+	[HideInInspector] public List<PlayerCharacter> Players;
+
 	[SerializeField] private PlayerCharacter playerOne;
 	[SerializeField] private PlayerCharacter playerTwo;
 	[SerializeField] private Transform reflectionProbeTransform;
@@ -12,10 +15,8 @@ public class CamMover : MonoBehaviour
 	[SerializeField] private float targetMod;
 	[SerializeField] private float smoothTime;
 	[SerializeField] private float maxSpeed;
-	[SerializeField] private float targetPlayerDistSqr;
-	[SerializeField] private float heightAdjustmentMod;
-	
-	//[SerializeField] private float minHeight;
+	[SerializeField] private float heightMod;
+
 
 	public static CamMover Instance { get; private set; }
 	private Vector3 camVelocity = default;
@@ -28,6 +29,8 @@ public class CamMover : MonoBehaviour
 
 	private void Awake()
 	{
+		Players = new List<PlayerCharacter>(4);
+
 		targetHeight = transform.position.y;
 		baseHeight = transform.position.y;
 		reflectionProbeOffset = reflectionProbeTransform.position.y + transform.position.y;
@@ -35,36 +38,53 @@ public class CamMover : MonoBehaviour
 
 	private void Update()
 	{
-		if (playerOne == null || playerTwo == null) return;
+		if (Players.Count == 0) return;
 
-		UpdateStuff();
+		try
+		{
+			UpdateValues();
+		}
+		catch(MissingReferenceException e)
+		{
+			// bugfixing is for idiots. exceptions are for real men
+		}
 	}
 
-	private void UpdateStuff()
+	private void UpdateValues()
 	{
-		Vector2 playerOneViewportPos = Cam.WorldToViewportPoint(playerOne.transform.position);
-		Vector2 playerTwoViewportPos = Cam.WorldToViewportPoint(playerTwo.transform.position);
-		Vector2 middle = playerTwoViewportPos + (playerOneViewportPos - playerTwoViewportPos) * .5f;
+		Vector3 target = default;
+		int i;
+		for(i = 0; i < Players.Count; i++)
+		{
+			target += Players[i].transform.position;
+		}
+		target /= Players.Count;
 
-		Vector2 target = middle - new Vector2(.5f, .5f) + centerOffset;
-		target *= targetMod;
+		float maxDist = 0f, dist;
+		for(i = 0; i < Players.Count; i++)
+		{
+			dist = Vector3.Distance(Players[i].transform.position, target);
+			if(maxDist < dist) maxDist = dist;
+		}
 
-		float distanceSqr = (playerOneViewportPos - playerTwoViewportPos).sqrMagnitude;
-		targetHeight = baseHeight + (distanceSqr - targetPlayerDistSqr) * heightAdjustmentMod;
+		target += new Vector3(centerOffset.x, 0f, centerOffset.y);
+		float targetHeight = baseHeight + maxDist * heightMod;
 
-		Vector3 targetPos = new Vector3(transform.position.x + target.x, targetHeight, transform.position.z + target.y);
+		Vector3 targetPos = new Vector3(target.x, targetHeight, target.z);
 
+		// reposition camera
 		transform.position = Vector3.SmoothDamp
-			(transform.position, 
+			(transform.position,
 			targetPos,
 			ref camVelocity,
 			smoothTime,
 			maxSpeed,
 			Time.deltaTime);
 
+		// reposition reflection probe (realtime for ground reflections)
 		reflectionProbeTransform.position = new Vector3
-			(transform.position.x, 
-			-transform.position.y - reflectionProbeOffset, 
+			(transform.position.x,
+			-transform.position.y - reflectionProbeOffset,
 			transform.position.z);
 	}
 }

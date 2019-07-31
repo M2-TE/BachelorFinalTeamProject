@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Experimental.Input;
 
 public enum PauseMenuState { Continue, Music, Sounds, MainMenu }
 
 public class SettingsMenuManager : MonoBehaviour
 {
+	[SerializeField] private AudioMixerGroup soundMixer, musicMixer;
     [SerializeField] private GameObject toggleNode;
     [SerializeField] private InputMaster input;
     [SerializeField] private Material defaultMat, hightlightedMat;
@@ -29,7 +31,7 @@ public class SettingsMenuManager : MonoBehaviour
     private void Awake()
     {
         toggleNode.SetActive(false);
-    }
+	}
 
     private void OnEnable()
     {
@@ -168,7 +170,11 @@ public class SettingsMenuManager : MonoBehaviour
             else
                 music[musicSteps+1].SetActive(false);
             OneShotAudioManager.PlayOneShotAudio(changeVolumeSound, transform.position, MusicVolume);
-        }
+
+			float vol = Mathf.Lerp(-70f, -20f, MusicVolume);
+			musicMixer.audioMixer.SetFloat("MusicVolume", vol);
+
+		}
         else
         {
             soundSteps--;
@@ -177,7 +183,10 @@ public class SettingsMenuManager : MonoBehaviour
             else
                 sounds[soundSteps + 1].SetActive(false);
             OneShotAudioManager.PlayOneShotAudio(changeVolumeSound, transform.position, SoundEffectsVolume);
-        }
+
+			float vol = Mathf.Lerp(-40f, 10f, SoundEffectsVolume);
+			musicMixer.audioMixer.SetFloat("SfxVolume", vol);
+		}
     }
 
     private void Increase(bool isMusic)
@@ -190,7 +199,11 @@ public class SettingsMenuManager : MonoBehaviour
             else
                 music[musicSteps].SetActive(true);
             OneShotAudioManager.PlayOneShotAudio(changeVolumeSound, transform.position, MusicVolume);
-        }
+
+
+			float vol = Mathf.Lerp(-70f, -20f, MusicVolume);
+			musicMixer.audioMixer.SetFloat("MusicVolume", vol);
+		}
         else
         {
             soundSteps++;
@@ -199,7 +212,10 @@ public class SettingsMenuManager : MonoBehaviour
             else
                 sounds[soundSteps].SetActive(true);
             OneShotAudioManager.PlayOneShotAudio(changeVolumeSound, transform.position, SoundEffectsVolume);
-        }
+
+			float vol = Mathf.Lerp(-40f, 10f, SoundEffectsVolume);
+			musicMixer.audioMixer.SetFloat("SfxVolume", vol);
+		}
     }
 
     private void BackToMainMenu()

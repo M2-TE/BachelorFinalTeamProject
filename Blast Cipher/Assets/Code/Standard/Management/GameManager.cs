@@ -30,9 +30,9 @@ public sealed class GameManager
     public MatchSettings matchSettings = new MatchSettings
 		(15, 0, true, 
 		new bool[3] { true, true, true }, 
+		new int[3] { 9, 9, 9 }, 
 		new int[3] { 3, 3, 3 }, 
-		new int[3] { 5, 5, 5 }, 
-		6, 4, 1);
+		6, 4, 2);
 
 	private int cachedIndex = 0;
 	private int roundCount = 1;
@@ -77,6 +77,7 @@ public sealed class GameManager
 
 	public int RegisterPlayerCharacter(PlayerCharacter playerCharacter)
 	{
+		CamMover.Instance.Players.Add(playerCharacter);
 		registeredPlayerCharacters.Add(playerCharacter);
 		return registeredPlayerCharacters.Count - 1;
 	}
@@ -93,7 +94,7 @@ public sealed class GameManager
 	{
 		for (int i = 0; i < registeredPlayerCharacters.Count; i++)
 		{
-			GameObject.Destroy(registeredPlayerCharacters[i].gameObject);
+			//GameObject.Destroy(registeredPlayerCharacters[i].gameObject);
 		}
 		registeredPlayerCharacters.Clear();
 
@@ -147,7 +148,10 @@ public sealed class GameManager
 		bootstrapper.PostProcessing.gameObject.SetActive(true);
 		Time.timeScale = 1f;
 
-		MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[cachedIndex].Audio);
+		if (bootstrapper.musicDict.MusicDict.ContainsKey(cachedIndex))
+		{
+			MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[cachedIndex].Audio);
+		}
 	}
 
 

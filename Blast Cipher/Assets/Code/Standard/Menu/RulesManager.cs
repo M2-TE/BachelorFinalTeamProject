@@ -398,21 +398,21 @@ public class RulesManager : MenuManager
     {
         if (increment)
         {
-            settings.ReloadTime++;
-            if (settings.ReloadTime >= reloadDigits.Length)
+            settings.ReloadTime += .1f;
+            if (settings.ReloadTime >= /*reloadDigits.Length*/1f)
                 settings.ReloadTime = 0;
         }
         else
         {
-            settings.ReloadTime--;
-            if (settings.ReloadTime < 0)
-                settings.ReloadTime = reloadDigits.Length - 1;
+            settings.ReloadTime -= .1f;
+            if (settings.ReloadTime < 0f)
+                settings.ReloadTime = ((float)reloadDigits.Length - 1f) * .1f;
         }
 
         for (int i = 0; i < reloadDigits.Length; i++)
         {
-            reloadDigits[i].gameObject.SetActive(i == settings.ReloadTime);
-        }
+            reloadDigits[i].gameObject.SetActive(i == (int)(settings.ReloadTime * 10f));
+		}
     }
 
     private void ChangeDash(bool increment)
@@ -522,20 +522,20 @@ public class RulesManager : MenuManager
         {
             if (increment)
             {
-                settings.Durations[currentPU]++;
-                if (settings.Durations[currentPU] >= durationDigits.Length)
+                settings.Durations[currentPU] += 10;
+                if (settings.Durations[currentPU] / 10 >= durationDigits.Length)
                     settings.Durations[currentPU] = 0;
             }
             else
             {
-                settings.Durations[currentPU]--;
+                settings.Durations[currentPU] -= 10;
                 if (settings.Durations[currentPU] < 0)
-                    settings.Durations[currentPU] = durationDigits.Length - 1;
+                    settings.Durations[currentPU] = (durationDigits.Length - 1) * 10;
             }
         }
         for (int i = 0; i < durationDigits.Length; i++)
         {
-            durationDigits[i].gameObject.SetActive(i == settings.Durations[currentPU]);
+            durationDigits[i].gameObject.SetActive(i == (int)(settings.Durations[currentPU] / 10));
         }
     }
 
@@ -578,7 +578,7 @@ public class RulesManager : MenuManager
 
     private void Start()
     {
-        settings = new MatchSettings(15, 0, true, new bool[3] { true, true, true }, new int[3] { 9, 9, 9 }, new int[3] { 5, 5, 5 }, 4, 4, 4);
+        settings = new MatchSettings(15, 0, true, new bool[3] { true, true, true }, new int[3] { 9, 9, 9 }, new int[3] { 3, 3, 3 }, 4, 4, 2);
         CurrentState = standartState;
         CurrentStateGen = standartStateGen;
         CurrentStateCD = standartStateCD;
@@ -620,7 +620,7 @@ public class RulesManager : MenuManager
         // Reload Time
         for (int i = 0; i < reloadDigits.Length; i++)
         {
-            reloadDigits[i].gameObject.SetActive(i == settings.ReloadTime);
+            reloadDigits[i].gameObject.SetActive(i == (int)(settings.ReloadTime * 10f));
         }
 
         // Dash Time

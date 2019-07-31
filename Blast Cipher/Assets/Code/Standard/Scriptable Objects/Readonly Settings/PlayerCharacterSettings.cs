@@ -23,7 +23,7 @@ public class PlayerCharacterSettings : ReadonlySettings
 
 	[Header("Combat")]
 	//public float ParryCooldown = 5f;
-	//public float ShotCooldown = .2f;
+	public float ShotCooldown = .2f;
 	public float ShotStrength = 30f;
 	public float PowerUpDuration = 10f;
 

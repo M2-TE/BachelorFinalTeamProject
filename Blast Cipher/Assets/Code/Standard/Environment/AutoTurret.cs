@@ -55,6 +55,7 @@ public class AutoTurret : MonoBehaviour
 		for(int i = 0; i < amtPerDir; i++)
 		{
 			renderer = renderers[startIndex + i];
+			if (renderer == null) return;
 			renderer.material = globalColor;
 			oldIterationRenderers[i] = renderer;
 		}
