@@ -106,23 +106,17 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		FadeInCalls(standardInDuration);
 
-		if (transitionIntensity)
-		{
-			Source.PlayOneShot(bootstrapper.cont.TransitionTrack[0], 2f);
-			currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
-		}
+		Source.PlayOneShot(bootstrapper.cont.TransitionTrack[0], 2f);
 
 		var snapshot = bootstrapper.musicMixer.FindSnapshot("RoundEnding");
-		if (transitionIntensity)
-		{
-			snapshot.TransitionTo(standardInDuration);
-		}
+		snapshot.TransitionTo(standardInDuration);
 		
 		yield return new WaitForSecondsRealtime(standardInDuration);
 		onTransitionCallback();
 
 		if (transitionIntensity)
 		{
+			currentActiveTrack = (currentActiveTrack + 1) % trackContainer.tracks.Length;
 			currentBeat = 0;
 			timeBetweenBeats = 60f / trackContainer.bpmValues[currentActiveTrack];
 			Source.clip = trackContainer.tracks[currentActiveTrack];

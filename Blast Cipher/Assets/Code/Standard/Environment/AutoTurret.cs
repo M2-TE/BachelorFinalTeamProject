@@ -39,6 +39,8 @@ public class AutoTurret : MonoBehaviour
 
 	private void OnBeat()
 	{
+		if (!GameManager.Instance.gameInProgress) return;
+
 		// cache
 		Renderer renderer;
 

@@ -36,10 +36,12 @@ public sealed class GameManager
 
 	private int cachedIndex = 0;
 	private int roundCount = 1;
+	private int currentPhase = 0;
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
 
+	public bool gameInProgress = false;
 	public CaseDelegate OnLevelChange;
 	public float MenuSoundsVolume = .2f;
 
@@ -77,6 +79,8 @@ public sealed class GameManager
 
 	public int RegisterPlayerCharacter(PlayerCharacter playerCharacter)
 	{
+		UpdateGlobalColorScheme();
+		gameInProgress = true;
 		CamMover.Instance.Players.Add(playerCharacter);
 		registeredPlayerCharacters.Add(playerCharacter);
 		return registeredPlayerCharacters.Count - 1;
@@ -223,23 +227,6 @@ public sealed class GameManager
 	internal void TriggerExtendedUpdates()
 	{
 		for (int i = 0; i < extendedUpdates.Count; i++) extendedUpdates[i]();
-
-		var cols = bootstrapper.GlobalMatRefs;
-		if (Input.GetKeyDown(KeyCode.R))
-		{
-			cols.GlobalMat.SetColor("_EmissionColor", cols.red);
-			cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimRed);
-		}
-		else if (Input.GetKeyDown(KeyCode.G))
-		{
-			cols.GlobalMat.SetColor("_EmissionColor", cols.green);
-			cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimGreen);
-		}
-		else if (Input.GetKeyDown(KeyCode.B))
-		{
-			cols.GlobalMat.SetColor("_EmissionColor", cols.blue);
-			cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimBlue);
-		}
 	}
 
 	internal void SetAsyncEssentialsScene(Scene scene)
@@ -273,27 +260,59 @@ public sealed class GameManager
 		return go;
 	}
 
+	private void UpdateGlobalColorScheme()
+	{
+		float thirdRounds = (float)roundCount / (float)matchSettings.Rounds;
+
+		var cols = bootstrapper.GlobalMatRefs;
+		switch (currentPhase)
+		{
+			default:
+			case 0:
+				cols.GlobalMat.SetColor("_EmissionColor", cols.blue);
+				cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimBlue);
+				break;
+
+			case 1:
+				cols.GlobalMat.SetColor("_EmissionColor", cols.green);
+				cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimGreen);
+				break;
+
+			case 2:
+				cols.GlobalMat.SetColor("_EmissionColor", cols.red);
+				cols.GlobalDimMat.SetColor("_EmissionColor", cols.dimRed);
+				break;
+		}
+	}
+
 	public void StartNextRound()
 	{
 		if (!nextRoundStarterInProgress)
 		{
-			if (roundCount >= matchSettings.Rounds - 1)
-			{
-				BackToMenu();
-				return;
-			}
+			UpdateGlobalColorScheme();
 
 			nextRoundStarterInProgress = true;
-			MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
+			
+			if ((float)roundCount / (float)matchSettings.Rounds >= 3f / (float)matchSettings.Rounds * ((float)currentPhase + 1f))
+			{
+				Debug.Log("switch buffered");
+				currentPhase++;
+				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
+			}
+			else
+			{
+				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, false);
+			}
+
+			IngameUIManager.Instance.UpdateUI(teamPoints, roundCount);
+
+
 			bootstrapper.StartCoroutine(TimeScalerOnRoundTransition());
             ResetAlivePlayers();
 			for(int i = 0; i < registeredPlayerCharacters.Count; i++)
 			{
 				registeredPlayerCharacters[i].portalPlaced = false;
 			}
-
-			roundCount++;
-            IngameUIManager.Instance.UpdateUI(teamPoints, roundCount);
 		}
 	}
 
@@ -402,7 +421,10 @@ public sealed class GameManager
         AddWinners();
         LoadScene(5);
         roundCount = 0;
-        for (int i = 0; i < inputDevices.Length; i++)
+		currentPhase = 0;
+		gameInProgress = false;
+
+		for (int i = 0; i < inputDevices.Length; i++)
         {
             inputDevices[i] = null;
         }
@@ -448,6 +470,16 @@ public sealed class GameManager
 
 		playerInputsActive = true;
 		nextRoundStarterInProgress = false;
+
+		UpdateGlobalColorScheme();
+		roundCount++;
+		IngameUIManager.Instance.UpdateUI(teamPoints, roundCount);
+
+		if (roundCount > matchSettings.Rounds)
+		{
+			BackToMenu();
+			return;
+		}
 	}
 
 	private void ResetLevel()
