@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Input;
 
@@ -26,7 +27,8 @@ public class MenuSelectionManager : MenuManager
     private bool inTitleScreen;
     private MenuManager currentActiveManager;
 
-    private float buttonDelay = 0f;
+    private List<InputDevice> buttonDelay = new List<InputDevice>();
+    private List<float> buttonDelayTime = new List<float>();
 
     public MenuState CurrentState { get => currentState; private set => SetMaterials(currentState,currentState = value); }
 
@@ -199,10 +201,8 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnDPadInput(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (ManageButtonDelay(ctx.control.device))
             return;
-        else
-            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnDPadInput(ctx);
         else
@@ -217,10 +217,8 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnStartPressed(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (ManageButtonDelay(ctx.control.device))
             return;
-        else
-            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnStartPressed(ctx);
         else if (inTitleScreen)
@@ -232,10 +230,8 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnConfirmation(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (ManageButtonDelay(ctx.control.device))
             return;
-        else
-            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnConfirmation(ctx);
         else
@@ -255,10 +251,8 @@ public class MenuSelectionManager : MenuManager
 
     public override void OnDecline(InputAction.CallbackContext ctx)
     {
-        if (buttonDelay > 0)
+        if (ManageButtonDelay(ctx.control.device))
             return;
-        else
-            buttonDelay = buttonDelayAmount;
         if (!currentActiveManager.Equals(this))
             currentActiveManager.OnDecline(ctx);
         else if(!inTitleScreen)
@@ -268,6 +262,22 @@ public class MenuSelectionManager : MenuManager
         }
     }
 
+    private bool ManageButtonDelay(InputDevice device)
+    {
+        if (buttonDelay.Contains(device))
+        {
+            if (buttonDelayTime[buttonDelay.IndexOf(device)] > Time.fixedUnscaledTime)
+                return true;
+            buttonDelayTime[buttonDelay.IndexOf(device)] = Time.fixedUnscaledTime + buttonDelayAmount;
+        }
+        else
+        {
+            buttonDelay.Add(device);
+            buttonDelayTime.Add(0f);
+        }
+        return false;
+    }
+
     private void Start()
     {
         mainManager = this;
@@ -275,12 +285,6 @@ public class MenuSelectionManager : MenuManager
         currentActiveManager = this;
         inTitleScreen = true;
         GameManager.Instance.CheckForStandardContent();
-    }
-
-    private void Update()
-    {
-        if(buttonDelay > 0)
-            buttonDelay -= Time.deltaTime;
     }
 
     private void OnEnable() => RegisterActions();
