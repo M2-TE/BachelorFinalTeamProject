@@ -45,6 +45,7 @@ public sealed class GameManager
 	public CaseDelegate OnLevelChange;
 	public float MenuSoundsVolume = .2f;
 
+    public int WinnerTeamColor = 0;
     public List<Mesh> WinnerMeshes = new List<Mesh>();
 
     private Mesh[] playerMeshes = new Mesh[4] { null, null, null, null };
@@ -416,7 +417,7 @@ public sealed class GameManager
         return activeTeams;
     }
 
-    private void BackToMenu()
+    private void EnableWinnerScreen()
     {
         AddWinners();
         LoadScene(5);
@@ -442,10 +443,14 @@ public sealed class GameManager
                 winnerTeam = i;
             }
         }
+        WinnerTeamColor = winnerTeam;
         for (int i = 0; i < playerMeshes.Length; i++)
         {
             if (playerTeams[i] == winnerTeam && playerMeshes[i] != null)
+            {
                 WinnerMeshes.Add(playerMeshes[i]);
+                Debug.Log("Added Mesh" + i);
+            }
         }
     }
 
@@ -477,7 +482,7 @@ public sealed class GameManager
 
 		if (roundCount > matchSettings.Rounds)
 		{
-			BackToMenu();
+			EnableWinnerScreen();
 			return;
 		}
 	}
