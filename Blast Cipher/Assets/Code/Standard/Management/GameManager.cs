@@ -161,6 +161,12 @@ public sealed class GameManager
 		{
 			MusicManager.Instance.PlayMusic(bootstrapper.musicDict.MusicDict[cachedIndex].Audio);
 		}
+
+		if(matchSettings.AnnouncerVoices && bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip != null)
+		{
+			OneShotAudioManager.PlayOneShotAudio(bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip, Vector3.zero, 1.35f);
+			//MusicManager.Instance.PlayGlobalOneshot(bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip, 1f);
+		}
 	}
 
 

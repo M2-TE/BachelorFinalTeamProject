@@ -32,18 +32,27 @@ public class Portal : MonoBehaviour
 		}
 		else
 		{
-			var player = other.transform.root.GetComponent<PlayerCharacter>();
-			if(player != null && player.isDashing)
-			{
-				Debug.Log(Time.time);
-				player.isDashing = false;
+			PlayerTeleportationCheck(other);
+		}
+	}
+
+	private void OnTriggerStay(Collider other)
+	{
+		PlayerTeleportationCheck(other);
+	}
+
+	private void PlayerTeleportationCheck(Collider other)
+	{
+		var player = other.transform.root.GetComponent<PlayerCharacter>();
+		if (player != null && player.isDashing)
+		{
+			player.isDashing = false;
 
 
-				// teleport char controller to opposite portal
-				player.CharController.enabled = false;
-				player.transform.position = opposingPortal.postTeleportPosition.position;
-				player.CharController.enabled = true;
-			}
+			// teleport char controller to opposite portal
+			player.CharController.enabled = false;
+			player.transform.position = opposingPortal.postTeleportPosition.position;
+			player.CharController.enabled = true;
 		}
 	}
 

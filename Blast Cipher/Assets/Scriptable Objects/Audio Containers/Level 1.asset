@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b784e6a532d3f2d4482c6e4304679c50, type: 3}
   m_Name: Level 1
   m_EditorClassIdentifier: 
+  FirstLoadTransitionClip: {fileID: 8300000, guid: 529f4a96599942b439e6708ae9b4e052,
+    type: 3}
   TransitionTrack:
   - {fileID: 8300000, guid: 2dc20a618c0f48f4e9e5ab7d13ba2d3b, type: 3}
   tracks:

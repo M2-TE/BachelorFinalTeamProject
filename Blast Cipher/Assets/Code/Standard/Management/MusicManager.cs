@@ -171,4 +171,9 @@ public sealed class MusicManager : Manager<MusicManager>
 
 		node.Value += callback;
 	}
+
+	public void PlayGlobalOneshot(AudioClip clip, float vol)
+	{
+		Source.PlayOneShot(clip, vol);
+	}
 }
