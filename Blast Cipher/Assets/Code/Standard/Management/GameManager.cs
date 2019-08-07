@@ -145,6 +145,10 @@ public sealed class GameManager
 
 	private void OnLoadDone(AsyncOperation obj)
 	{
+		for(int i= 0; i < temporaryObjects.Count; i++)
+		{
+			GameObject.Destroy(temporaryObjects[i]);
+		}
 		bootstrapper.EmergencyListener.enabled = false;
 		SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(cachedIndex));
 
@@ -293,11 +297,12 @@ public sealed class GameManager
 			UpdateGlobalColorScheme();
 
 			nextRoundStarterInProgress = true;
-			
-			if ((float)roundCount / (float)matchSettings.Rounds >= 3f / (float)matchSettings.Rounds * ((float)currentPhase + 1f))
+
+			Debug.Log((float)roundCount / (float)matchSettings.Rounds + " " + .3f * ((float)currentPhase + 1f));
+			if ((float)roundCount / (float)matchSettings.Rounds >= .3f * ((float)currentPhase + 1f))
 			{
-				Debug.Log("switch buffered");
 				currentPhase++;
+				if (currentPhase > 2) currentPhase = 2;
 				MusicManager.Instance.RoundTransitionSmoother(OnNextMusicBar, true);
 			}
 			else
@@ -417,11 +422,11 @@ public sealed class GameManager
         return activeTeams;
     }
 
-    private void EnableWinnerScreen()
+    public void EnableWinnerScreen()
     {
         AddWinners();
         LoadScene(5);
-        roundCount = 0;
+        roundCount = 1;
 		currentPhase = 0;
 		gameInProgress = false;
 

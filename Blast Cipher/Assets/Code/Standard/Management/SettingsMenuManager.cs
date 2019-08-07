@@ -221,7 +221,7 @@ public class SettingsMenuManager : MonoBehaviour
     private void BackToMainMenu()
     {
         gameObject.SetActive(false);
-        GameManager.Instance.LoadScene(0);
+		GameManager.Instance.EnableWinnerScreen();
     }
 
 }

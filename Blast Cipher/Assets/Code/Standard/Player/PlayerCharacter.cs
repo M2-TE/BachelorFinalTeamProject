@@ -585,8 +585,6 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 			yield return null;
 		}
 
-		Debug.Log(isDashing);
-
 		//yield return new WaitForSeconds(Settings.DashDuration);
 		currentMovespeed = baseSpeed;
 		CharController.detectCollisions = true;
