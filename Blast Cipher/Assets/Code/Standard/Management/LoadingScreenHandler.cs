@@ -14,6 +14,7 @@ public class LoadingScreenHandler : MonoBehaviour
 
 	private static LoadingScreenHandler Instance;
 
+	[SerializeField, TextArea] private string[] loadingMessages;
 	[SerializeField] private Image[] miscImages;
 	[SerializeField] private Image loadingImage;
 	[SerializeField] private TextMeshProUGUI text;
@@ -42,6 +43,8 @@ public class LoadingScreenHandler : MonoBehaviour
 	private IEnumerator TextMover()
 	{
 		Vector2 anchPos = text.rectTransform.anchoredPosition;
+
+		text.SetText(loadingMessages[Random.Range(0, loadingMessages.Length)]);
 
 		float target = transitionInDuration + transitionOutDuration + transitionMainDuration;
 		float lerpVal, intensity, timer = 0f;
