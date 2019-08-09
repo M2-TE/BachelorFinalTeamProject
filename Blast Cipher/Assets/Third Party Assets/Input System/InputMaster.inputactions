@@ -216,19 +216,6 @@
                 },
                 {
                     "name": "",
-                    "id": "ebf8b1cb-2387-4b11-866b-b433ac036c06",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "Press(pressPoint=1)",
-                    "processors": "",
-                    "groups": ";MainGamepadScheme",
-                    "action": "Portal",
-                    "chainWithPrevious": false,
-                    "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
-                },
-                {
-                    "name": "",
                     "id": "f6e71893-a0af-49e3-bf9d-8b8aa6d4e0c6",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "Press",
@@ -243,19 +230,6 @@
                 {
                     "name": "",
                     "id": "d3be82c2-16e6-4932-8645-1be569e75e47",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "Press(behavior=1)",
-                    "processors": "",
-                    "groups": ";MainGamepadScheme",
-                    "action": "Shoot",
-                    "chainWithPrevious": false,
-                    "isComposite": false,
-                    "isPartOfComposite": false,
-                    "modifiers": ""
-                },
-                {
-                    "name": "",
-                    "id": "ad4ffd39-a182-4fdc-adf0-57c0770f4ab1",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "Press",
                     "processors": "",

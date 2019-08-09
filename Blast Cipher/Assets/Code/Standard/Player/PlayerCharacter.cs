@@ -123,7 +123,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		Settings.InputMaster.Player.Shoot.performed += TriggerShotControlled;
 		Settings.InputMaster.Player.Jump.performed += TriggerDash;
 		Settings.InputMaster.Player.Parry.performed += TriggerParry;
-		Settings.InputMaster.Player.LockAim.performed += TriggerAimLock;
+		//Settings.InputMaster.Player.LockAim.performed += TriggerAimLock;
 		Settings.InputMaster.Player.Portal.performed += TriggerPortalOne;
 		Settings.InputMaster.Player.ProjectileCollect.performed += CollectProjectiles;
 
@@ -139,7 +139,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		Settings.InputMaster.Player.Shoot.performed -= TriggerShotControlled;
 		Settings.InputMaster.Player.Jump.performed -= TriggerDash;
 		Settings.InputMaster.Player.Parry.performed -= TriggerParry;
-		Settings.InputMaster.Player.LockAim.performed -= TriggerAimLock;
+		//Settings.InputMaster.Player.LockAim.performed -= TriggerAimLock;
 		Settings.InputMaster.Player.Portal.performed -= TriggerPortalOne;
 		Settings.InputMaster.Player.ProjectileCollect.performed -= CollectProjectiles;
 

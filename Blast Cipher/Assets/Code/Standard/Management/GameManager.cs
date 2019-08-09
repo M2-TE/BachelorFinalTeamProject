@@ -164,7 +164,7 @@ public sealed class GameManager
 
 		if(matchSettings.AnnouncerVoices && bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip != null)
 		{
-			OneShotAudioManager.PlayOneShotAudio(bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip, Vector3.zero, 1.35f);
+			OneShotAudioManager.PlayOneShotAudio(bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip, Vector3.zero, 4f);
 			//MusicManager.Instance.PlayGlobalOneshot(bootstrapper.musicDict.MusicDict[cachedIndex].Audio.FirstLoadTransitionClip, 1f);
 		}
 	}
