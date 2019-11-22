@@ -162,7 +162,8 @@ public class MenuSelectionManager : MenuManager
                 profileSelectionManager.ToggleActivation(open);
                 break;
             case MenuState.Exit:
-                Application.Quit();
+                //Application.Quit();
+                Debug.Log("App Exit Disabled");
                 break;
             default:
                 break;

@@ -37,6 +37,7 @@ public sealed class GameManager
 	private int cachedIndex = 0;
 	private int roundCount = 1;
 	private int currentPhase = 0;
+    private bool sceneLoading = false;
 	private bool nextRoundStarterInProgress = false;
 	private Scene asyncEssentials;
 	private Scene currentMainScene;
@@ -94,7 +95,14 @@ public sealed class GameManager
 
 	#region Scene Loader
 	//public void LoadScene(string sceneName) => bootstrapper.StartCoroutine(LoadSceneCo(SceneManager.GetSceneByName(sceneName).buildIndex));
-	public void LoadScene(int buildIndex) => bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
+	public void LoadScene(int buildIndex)
+    {
+        if(!sceneLoading)
+        {
+            sceneLoading = true;
+            bootstrapper.StartCoroutine(LoadSceneCo(buildIndex));
+        }
+    }
 	private IEnumerator LoadSceneCo(int buildIndex)
 	{
 		for (int i = 0; i < registeredPlayerCharacters.Count; i++)
@@ -141,7 +149,8 @@ public sealed class GameManager
 		loadOperation.completed += OnLoadDone;
 
 		cachedIndex = buildIndex;
-	}
+        sceneLoading = false;
+    }
 
 	private void OnLoadDone(AsyncOperation obj)
 	{
