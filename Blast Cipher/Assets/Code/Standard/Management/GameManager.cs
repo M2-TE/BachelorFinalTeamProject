@@ -66,6 +66,8 @@ public sealed class GameManager
 
     public Material[] CharacterMaterials => bootstrapper.CharacterMaterials;
     public Material[] TeamMaterials => bootstrapper.TeamMaterials;
+	//KAKA:
+	public int WinnerColor;
     private CScriptableCharacter[] StandardCharacters => bootstrapper.StandardCharacters;
     private CScriptableMap[] StandardMaps => bootstrapper.StandardMaps;
 
@@ -469,6 +471,7 @@ public sealed class GameManager
             if (playerTeams[i] == winnerTeam && playerMeshes[i] != null)
             {
                 WinnerMeshes.Add(playerMeshes[i]);
+				WinnerColor = playerColors[i];
                 Debug.Log("Added Mesh" + i);
             }
         }

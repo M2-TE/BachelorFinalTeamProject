@@ -13,14 +13,14 @@ public class WinnerScript : MonoBehaviour
     private void Start()
     {
         List<Mesh> meshes = GameManager.Instance.WinnerMeshes;
-        int winnerTeamColor = GameManager.Instance.WinnerTeamColor;
+        int winnerTeamColor = GameManager.Instance.WinnerColor;
         int i = 0;
         foreach (var item in filter)
         {
             if (i < meshes.Count)
             {
                 item.mesh = meshes[i];
-                item.gameObject.GetComponent<MeshRenderer>().material = TeamColors[winnerTeamColor];
+                item.gameObject.GetComponent<MeshRenderer>().material = GameManager.Instance.CharacterMaterials[winnerTeamColor];
             }
             else
                 parents[i].SetActive(false);

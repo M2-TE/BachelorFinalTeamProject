@@ -4,6 +4,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour, ITeleportable
 {
 	[SerializeField] private ProjectileSettings settings;
+	[SerializeField] private Material pickupableMaterial;
 	
 	private bool _canPickUp;
 	public bool CanPickup
@@ -12,8 +13,16 @@ public class Projectile : MonoBehaviour, ITeleportable
 		set
 		{
 			_canPickUp = value;
-			if (value) rgb.constraints = RigidbodyConstraints.None;
-			else rgb.constraints = RigidbodyConstraints.FreezePositionY;
+			if (value)
+			{
+				rgb.constraints = RigidbodyConstraints.None;
+				ownRenderer.material = pickupableMaterial;
+			}
+			else
+			{
+				ownRenderer.material = settings.StandardProjectileMaterial;
+				rgb.constraints = RigidbodyConstraints.FreezePositionY;
+			}
 		}
 	}
 
@@ -92,6 +101,7 @@ public class Projectile : MonoBehaviour, ITeleportable
 					rgb.velocity = rgb.velocity.normalized * settings.VelocityChangeOnWallHit;
 					CanPickup = true;
 					ExplicitTarget = null;
+					ownRenderer.material = pickupableMaterial;
 				}
 			}
 			else if (go.CompareTag(settings.ShieldWallTag))

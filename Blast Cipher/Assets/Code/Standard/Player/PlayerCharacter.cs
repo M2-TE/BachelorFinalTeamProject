@@ -61,6 +61,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	private float currentMovespeed;
 	private bool shooting = false;
 	public bool isDashing = false;
+	private bool inputEnabled = true;
 	public bool portalPlaced = false;
 
 	private PlayerCharacter aimLockTarget;
@@ -176,6 +177,7 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 	#region InputSystem event calls
 	private bool IsAssignedDevice(InputDevice controller)
 	{
+		if (!inputEnabled) return false;
 		if (playerID >= gameManager.inputDevices.Length) return false;
 		return gameManager.inputDevices[playerID] == controller;
 	}
@@ -804,5 +806,13 @@ public class PlayerCharacter : InputSystemMonoBehaviour
 		CharController.enabled = false;
 		transform.position = startPos;
 		CharController.enabled = true;
+		StartCoroutine(ReenableControlsDelayed());
+		inputEnabled = false;
+	}
+
+	private IEnumerator ReenableControlsDelayed()
+	{
+		yield return new WaitForSecondsRealtime(.4f);
+		inputEnabled = true;
 	}
 }

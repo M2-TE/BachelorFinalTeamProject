@@ -101,6 +101,7 @@ public sealed class MusicManager : Manager<MusicManager>
 
 	private IEnumerator RoundTransitionSmoothingEffect(OnBeatCallback onTransitionCallback, bool transitionIntensity)
 	{
+		yield return new WaitForSecondsRealtime(.2f);
 		float standardInDuration = 2.0f;
 		float standardOutDuration = 3f;
 
@@ -139,8 +140,8 @@ public sealed class MusicManager : Manager<MusicManager>
 	private void FadeInCalls(float duration)
 	{
 		Effects.StartVignetteTransition(.5f, duration);
-		Effects.StartDigitalGlitchTransition(.35f, duration);
-		Effects.StartAnalogGlitchTransition(.7f, .5f, 0f, .4f, duration);
+		Effects.StartDigitalGlitchTransition(.2f, duration);
+		Effects.StartAnalogGlitchTransition(.4f, .25f, 0f, .4f, duration);
 	}
 
 	private void FadeOutCalls(float duration)

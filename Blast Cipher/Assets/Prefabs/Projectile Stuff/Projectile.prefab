@@ -123,6 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings: {fileID: 11400000, guid: ab4feec513b84b7409846cb37af34b5f, type: 2}
+  pickupableMaterial: {fileID: 2100000, guid: 83977a3ab7430744991c5e238fbb5eea, type: 2}
+  wallHitVol: 1
   actualVelocity: {x: 0, y: 0, z: 0}
   rgb: {fileID: 8900639728585163242}
   ownCollider: {fileID: 8900639728585163243}
