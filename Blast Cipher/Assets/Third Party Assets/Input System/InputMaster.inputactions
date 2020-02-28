@@ -1,0 +1,732 @@
+{
+    "name": "InputMaster",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "5e13ab77-ceee-4d11-827a-35f1c899cac8",
+            "actions": [
+                {
+                    "name": "Movement",
+                    "id": "d5c88f08-27de-48a7-a9af-2fe14e693b77",
+                    "expectedControlLayout": "",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Aim",
+                    "id": "c054c45c-6e5f-4d9d-8cb8-2b29da672eb2",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Debug",
+                    "id": "e2c9a030-202a-4444-8644-786d9dc4c287",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "Jump",
+                    "id": "a222af30-5322-4a60-9f99-50ffa77d96e2",
+                    "expectedControlLayout": "Button",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "Parry",
+                    "id": "e6fc2243-b2ee-4b74-8965-1ccf8b038271",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "LockAim",
+                    "id": "3d8b3dbd-e039-4a66-84f8-c52cbd53eba2",
+                    "expectedControlLayout": "Button",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Portal",
+                    "id": "bc00c7c3-0cad-40d6-906a-2ea88a5eea69",
+                    "expectedControlLayout": "Button",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "Shoot",
+                    "id": "4c21e7e4-81b8-4e57-af39-9a20f2f72c50",
+                    "expectedControlLayout": "Button",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "ProjectileCollect",
+                    "id": "8feb83a2-8796-401b-8bdf-50d1635a22e8",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "39d2d934-8e95-4b9d-90e8-1773cef85ce0",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad;MainGamepadScheme",
+                    "action": "Movement",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "d131bb02-1d6c-471c-9ecd-530a15f2e16f",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad;MainGamepadScheme",
+                    "action": "Aim",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "2ecadf7c-f726-43ad-85e3-2143c3db58b5",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Debug",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "234d1d3c-3a88-424a-8ad7-201fa5aa17ce",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Jump",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "9923e98a-a41b-486c-a5dd-2fb7e5b05531",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Jump",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "ab751518-f79c-4da8-bb78-d816e6fabc55",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MainGamepadScheme",
+                    "action": "Parry",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "469bae93-8049-4d9e-b1c0-0841fb948888",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Parry",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "92c54321-a7e4-4b0b-8b6a-0f5b1040d6e4",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Parry",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "cda99926-f724-42ce-a843-114381c83b24",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "LockAim",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "f6e71893-a0af-49e3-bf9d-8b8aa6d4e0c6",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Portal",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "d3be82c2-16e6-4932-8645-1be569e75e47",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Shoot",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "950335ae-88e9-4679-ac77-0c13ffc78eb5",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "ProjectileCollect",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                }
+            ]
+        },
+        {
+            "name": "General",
+            "id": "05c40d6c-ea73-4803-acf6-37e082fffc9d",
+            "actions": [
+                {
+                    "name": "RegisterDevice",
+                    "id": "97cfcb5d-3407-473a-b5fd-3a98fc24c03a",
+                    "expectedControlLayout": "",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "DPadInput",
+                    "id": "ed2fd65d-dddb-4a4d-8ca6-63a5ca7cffb3",
+                    "expectedControlLayout": "Dpad",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "Start",
+                    "id": "c9a1d9cb-f801-43f0-a707-18a42d9dfdc6",
+                    "expectedControlLayout": "",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "12a1a6fc-a9bd-4a18-8591-2992077d6e6e",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad;MainGamepadScheme",
+                    "action": "RegisterDevice",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "DPad",
+                    "id": "0f298309-dd4e-48bc-ba25-d8ec0d713c4f",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": true,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "up",
+                    "id": "37f7381a-f166-4a6b-b59a-67af18535932",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "down",
+                    "id": "7208852f-3133-4495-9ea1-007c31a60f59",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "left",
+                    "id": "133f2aa6-da0f-4df0-807e-1ae9c12dcb10",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "right",
+                    "id": "ce689ff2-47e3-4451-b1a6-1b2afc023d3d",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DPadInput",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "20e1dac5-7d87-49a1-9d06-778d24cd5425",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Start",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                }
+            ]
+        },
+        {
+            "name": "CEditor",
+            "id": "231f5674-fbca-423b-9142-0f0dd244bb1c",
+            "actions": [
+                {
+                    "name": "LeftStick",
+                    "id": "10506c44-b48d-49c3-9900-714450fa1304",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "RightStick",
+                    "id": "0b9825d9-2f35-4fea-93d9-2d659da05fcd",
+                    "expectedControlLayout": "",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "NorthButton",
+                    "id": "6b0306a6-03e5-4eec-a722-3b904ba958fb",
+                    "expectedControlLayout": "",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "SouthButton",
+                    "id": "7baf4efb-04ef-4c13-a965-d8a48fda4599",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "LeftTrigger",
+                    "id": "71322ee3-390e-4a3b-8908-377ac5c90325",
+                    "expectedControlLayout": "Axis",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "RightStickPress",
+                    "id": "191ab99c-ca0c-43b3-ac6b-50dcb13f0810",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "LeftShoulder",
+                    "id": "be4df9be-216e-421f-aabf-9f0c75139365",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "RightShoulder",
+                    "id": "3c5bf42b-99d0-481d-b673-fd6fc1433539",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "RightTrigger",
+                    "id": "1491a894-0552-4d3a-b64b-16bb541ec8fd",
+                    "expectedControlLayout": "Axis",
+                    "continuous": true,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "",
+                    "bindings": []
+                },
+                {
+                    "name": "EastButton",
+                    "id": "71abe519-4c4e-423c-a611-38f4836e6907",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "LeftStickPress",
+                    "id": "a62b96f6-6ff9-4243-b0f2-e5be0f00ba5d",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "WestButton",
+                    "id": "5cc9ff2c-c0dc-4f94-bcc7-7da7346b7620",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "Start",
+                    "id": "f91ad15e-2ca0-4900-9073-fd7480cffb1b",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                },
+                {
+                    "name": "Select",
+                    "id": "a28c062a-957a-47b7-adf2-0c55e4b1ead1",
+                    "expectedControlLayout": "Button",
+                    "continuous": false,
+                    "passThrough": true,
+                    "processors": "",
+                    "interactions": "Press",
+                    "bindings": []
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "79161151-c438-4779-8474-5b814ff1fbfd",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad;MainGamepadScheme",
+                    "action": "LeftStick",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "90e48168-a19e-4fb6-ab3c-4c930632fa6c",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad;MainGamepadScheme",
+                    "action": "RightStick",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "9a7022cc-5cb6-43e9-b49b-5df0152f6123",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "NorthButton",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "67dcdd4f-52b9-4a5e-91ee-e4362afec90c",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "SouthButton",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "7bf42ef3-4b41-4eeb-bdeb-8bcba746032d",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "MainGamepadScheme",
+                    "action": "LeftTrigger",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "0a6d457a-924a-46dc-9eba-0705e286fba1",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "RightStickPress",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "245b54c9-71a1-443d-a0d6-abe7bf4cc1bd",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "Press(pressPoint=1)",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "LeftShoulder",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "6ef1f7c9-6423-497e-8aab-69447150ce4b",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "Press(pressPoint=1)",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "RightShoulder",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "fa024cf1-02b7-4824-84a5-539d3d0ae207",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "RightTrigger",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "600daccb-5eb2-4149-8ec1-c975ca9aa501",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "EastButton",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "aa97f665-8d88-4d24-90d0-1931cfaa6780",
+                    "path": "<Gamepad>/leftStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "LeftStickPress",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "fe2c1ec9-6275-4eb3-a9e8-4cfa1cb3b980",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "WestButton",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "1463dc07-b161-4706-8319-324fc5b07dc5",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Start",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "",
+                    "id": "54bbcc6c-2d06-4cb8-b3ec-99cb8c40c9ec",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MainGamepadScheme",
+                    "action": "Select",
+                    "chainWithPrevious": false,
+                    "isComposite": false,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "MainGamepadScheme",
+            "basedOn": "",
+            "bindingGroup": "MainGamepadScheme",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

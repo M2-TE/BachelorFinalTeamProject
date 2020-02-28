@@ -1,0 +1,23 @@
+{
+    "name": "Standard",
+    "references": [
+        "GUID:1a6a79fb9f5b9d145b25d8381514a431",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:1262288369142064b9531eef3647adb6",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:d60799ab2a985554ea1a39cd38695018",
+        "GUID:a35efad8797223d499f8c68b1f545dbc",
+        "GUID:a022ba7cc163ade4e8ea4fffdb8f484b",
+        "GUID:f2d49d9fa7e7eb3418e39723a7d3b92f",
+        "GUID:e0cd26848372d4e5c891c569017e11f1"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

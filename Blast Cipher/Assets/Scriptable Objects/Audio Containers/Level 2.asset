@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b784e6a532d3f2d4482c6e4304679c50, type: 3}
+  m_Name: Level 2
+  m_EditorClassIdentifier: 
+  FirstLoadTransitionClip: {fileID: 8300000, guid: 529f4a96599942b439e6708ae9b4e052,
+    type: 3}
+  TransitionTrack:
+  - {fileID: 8300000, guid: 2dc20a618c0f48f4e9e5ab7d13ba2d3b, type: 3}
+  tracks:
+  - {fileID: 8300000, guid: 10e8368c33d522841930884018af4747, type: 3}
+  - {fileID: 8300000, guid: 7427658f7bca3274aaf30baf7c8552b9, type: 3}
+  - {fileID: 8300000, guid: d440c6d91414daa45977863e57668d5c, type: 3}
+  bpmValues:
+  - 125
+  - 130
+  - 134

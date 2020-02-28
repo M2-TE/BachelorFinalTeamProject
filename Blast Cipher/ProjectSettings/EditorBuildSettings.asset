@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Menu Proto.unity
+    guid: aaa18c2a0b71da743b3c677e7e1e5bb0
+  - enabled: 1
+    path: Assets/Scenes/AsyncEssentials.unity
+    guid: bb0be9d6a20952541b4c0960691c9753
+  - enabled: 1
+    path: Assets/Scenes/Editor Proto.unity
+    guid: 380b42da052fe3b4fa8efb9adf8d9f3b
+  - enabled: 1
+    path: Assets/Scenes/Gameplay/Level 1.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Gameplay/Level 2.unity
+    guid: fafbeb31c6cb69d40b4a4f915d57e424
+  - enabled: 1
+    path: Assets/Scenes/Winner.unity
+    guid: d8b073312aedd7e4d8cf5e74ba6203bf
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 41b6ff6405e506d4f8e54790df3d39ed,
+      type: 2}
